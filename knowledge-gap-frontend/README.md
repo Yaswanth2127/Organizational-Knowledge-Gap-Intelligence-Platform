@@ -1,9 +1,12 @@
+# Organizational Knowledge Gap Intelligence Platform
 
-# Infosys Springboard Internship
+## Frontend
 
-## Organizational Knowledge Gap Intelligence Platform
+React + Vite frontend for the Organizational Knowledge Gap Intelligence Platform.
 
-### Project Structure
-- Spring Boot Backend
-- React Frontend
-- PostgreSQL Database
+### Tech Stack
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Recharts
