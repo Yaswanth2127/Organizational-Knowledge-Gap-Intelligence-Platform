@@ -1,0 +1,10 @@
+function DashboardCard({ title, value }) {
+  return (
+    <div className="bg-white shadow rounded-lg p-5">
+      <h3 className="text-gray-600">{title}</h3>
+      <p className="text-3xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+export default DashboardCard;
