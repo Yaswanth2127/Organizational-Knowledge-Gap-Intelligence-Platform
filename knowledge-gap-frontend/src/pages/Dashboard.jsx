@@ -1,25 +1,3 @@
-// import React from 'react';
-
-// export default function Dashboard() {
-//   return (
-//     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-//       <h1>Employee Portal & Dashboard</h1>
-//       <p>Welcome to the Organizational Knowledge Gap Intelligence Platform.</p>
-
-//       <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-//         <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px', flex: 1, background: '#f9f9f9' }}>
-//           <h3>My Skill Profile</h3>
-//           <p>Proficiency Level: Intermediate</p>
-//         </div>
-//         <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px', flex: 1, background: '#f9f9f9' }}>
-//           <h3>Recommended Learning</h3>
-//           <p>No recommendations yet (Milestone 2 Task)</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 import React from 'react';
 import { Shield, Target, AlertTriangle, TrendingUp, Users, Award } from 'lucide-react';
 
@@ -71,7 +49,7 @@ const Dashboard = () => {
             <h3 className="font-bold text-gray-900">Current Competency Breakdown vs Target</h3>
             <span className="text-xs bg-indigo-50 text-indigo-600 font-semibold px-2 py-1 rounded-md">Realtime</span>
           </div>
-          
+
           <div className="space-y-4">
             {[
               { skill: 'React / NextJS Frameworks', level: 'Intermediate', progress: 65, status: 'Moderate Gap' },
@@ -81,17 +59,15 @@ const Dashboard = () => {
               <div key={index} className="space-y-1.5">
                 <div className="flex justify-between text-sm">
                   <span className="font-semibold text-gray-800">{item.skill}</span>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-                    item.status === 'Critical Gap' ? 'bg-red-50 text-red-600' :
-                    item.status === 'Moderate Gap' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
-                  }`}>{item.status}</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${item.status === 'Critical Gap' ? 'bg-red-50 text-red-600' :
+                      item.status === 'Moderate Gap' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+                    }`}>{item.status}</span>
                 </div>
                 <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full transition-all duration-500 rounded-full ${
-                      item.status === 'Critical Gap' ? 'bg-red-500' :
-                      item.status === 'Moderate Gap' ? 'bg-amber-500' : 'bg-emerald-500'
-                    }`} 
+                  <div
+                    className={`h-full transition-all duration-500 rounded-full ${item.status === 'Critical Gap' ? 'bg-red-500' :
+                        item.status === 'Moderate Gap' ? 'bg-amber-500' : 'bg-emerald-500'
+                      }`}
                     style={{ width: `${item.progress}%` }}
                   ></div>
                 </div>
