@@ -2,6 +2,7 @@ package com.knowledgegap.knowledge_gap_platform.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(
@@ -17,7 +18,7 @@ import lombok.*;
 @Builder
 
 
-public class FrameworkRequiredSkills {
+public class FrameworkRequiredSkill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +35,6 @@ public class FrameworkRequiredSkills {
     @Column(name = "required_proficiency", nullable = false)
     private ProficiencyLevel requiredProficiency;
 
-    @Column(nullable = false)
-    private Double weight = 1.0;
+    @Column(name = "weight", precision = 4, scale = 2,nullable = false)
+    private BigDecimal weight = BigDecimal.valueOf(1.0);
 }
