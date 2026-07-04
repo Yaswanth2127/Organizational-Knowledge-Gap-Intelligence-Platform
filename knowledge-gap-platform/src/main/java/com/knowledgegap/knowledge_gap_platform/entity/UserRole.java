@@ -3,8 +3,6 @@ package com.knowledgegap.knowledge_gap_platform.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.security.PrivateKey;
-
 @Entity
 @Table(name="user_roles")
 @AllArgsConstructor
