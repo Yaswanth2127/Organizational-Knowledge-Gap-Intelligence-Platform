@@ -5,15 +5,15 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-
 @Entity
-@Table(name="employee_skills")
+@Table(name = "employee_skills")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 public class EmployeeSkill {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,11 +45,11 @@ public class EmployeeSkill {
     @Column(name = "last_assessed_at")
     private LocalDateTime lastAssessedAt;
 
-    @Column(name = "created_at",nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void prePersist(){
-        createdAt=LocalDateTime.now();
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
     }
 }
