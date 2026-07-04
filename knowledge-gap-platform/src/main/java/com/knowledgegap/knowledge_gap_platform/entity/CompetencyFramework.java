@@ -3,33 +3,38 @@ package com.knowledgegap.knowledge_gap_platform.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "skills")
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "competency_frameworks")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Skill {
-
+public class CompetencyFramework {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 150)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_role_id", nullable = false)
+    private JobRole jobRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private SkillCategory skillCategory;
+    @JoinColumn(name = "department_id")
+    private Department department;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false)
+    private Integer version = 1;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;
+    private Boolean isActive = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -38,4 +43,6 @@ public class Skill {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
 }
+
