@@ -1,2 +1,3 @@
-# Organizational-Knowledge-Gap-Intelligence-Platform
-An intelligent system for identifying skill and knowledge gaps within organizations using data-driven insights.
+# Organizational Knowledge Gap Intelligence Platform
+
+Spring Boot + React application for identifying employee knowledge gaps.
