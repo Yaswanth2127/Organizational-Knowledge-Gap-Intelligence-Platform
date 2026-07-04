@@ -1,3 +1,3 @@
 # Organizational Knowledge Gap Intelligence Platform
 
-Spring Boot + React application for analyzing employee knowledge gaps.
+Spring Boot + React application for identifying employee knowledge gaps.
