@@ -1,0 +1,17 @@
+package com.knowledgegap.knowledge_gap_platform.dto;
+
+import com.knowledgegap.knowledge_gap_platform.entity.Department;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class JobRoleRequest {
+    private  String title;
+    private Long departmentId;
+    private String description;
+}
