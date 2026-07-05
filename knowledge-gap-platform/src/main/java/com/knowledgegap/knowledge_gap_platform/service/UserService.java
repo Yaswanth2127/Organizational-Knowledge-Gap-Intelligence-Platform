@@ -7,7 +7,7 @@ import com.knowledgegap.knowledge_gap_platform.dto.UserResponse;
 import java.util.List;
 
 public interface UserService{
-    UserResponse Register(RegisterRequest request);
+
     List<UserResponse> getAllUsers();
      UserResponse getUser(Long id);
      UserResponse updateUser(Long id,RegisterRequest request);
