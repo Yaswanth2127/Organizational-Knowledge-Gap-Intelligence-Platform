@@ -21,7 +21,21 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public String getAllUsers(){
-        return  "All Users";
+    public List<UserResponse> getAllUsers(){
+        return  userService.getAllUsers();
+    }
+
+    @GetMapping("/{id}")
+    public UserResponse getUser(@PathVariable Long id){
+        return userService.getUser(id);
+    }
+
+    @PutMapping("/{id}")
+    public UserResponse updateUser(@PathVariable Long id,@RequestBody RegisterRequest request){
+        return userService.updateUser(id,request);
+    }
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id){
+        userService.delete(id);
     }
 }
