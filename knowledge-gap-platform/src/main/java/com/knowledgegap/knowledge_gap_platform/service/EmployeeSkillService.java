@@ -15,6 +15,5 @@ public interface EmployeeSkillService {
 
     EmployeeSkillResponse updateEmployeeSkill(Long id,
                                               EmployeeSkillRequest request);
-
-    void deleteEmployeeSkill(Long id);
+    void deleteEmployeeSkillById(Long id);
 }

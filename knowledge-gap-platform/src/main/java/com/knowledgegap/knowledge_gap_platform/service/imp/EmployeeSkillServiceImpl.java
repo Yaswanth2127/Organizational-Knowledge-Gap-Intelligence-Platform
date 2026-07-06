@@ -5,6 +5,7 @@ import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.EmployeeSkill;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
+import com.knowledgegap.knowledge_gap_platform.repository.CompetencyFrameworkRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.EmployeeSkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
@@ -25,6 +26,7 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
     @Override
     public EmployeeSkillResponse addEmployeeSkill(EmployeeSkillRequest request) {
+
 
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -132,7 +134,7 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
     }
 
     @Override
-    public void deleteEmployeeSkill(Long id) {
+    public void deleteEmployeeSkillById(Long id) {
 
         if (!employeeSkillRepository.existsById(id)) {
             throw new RuntimeException("Employee Skill not found");
