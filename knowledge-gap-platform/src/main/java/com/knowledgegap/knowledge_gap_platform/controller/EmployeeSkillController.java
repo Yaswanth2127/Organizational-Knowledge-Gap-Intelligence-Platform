@@ -45,9 +45,9 @@ public class EmployeeSkillController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> deleteById(@PathVariable Long id){
 
-        employeeSkillService.deleteEmployeeSkill(id);
+        employeeSkillService.deleteEmployeeSkillById(id);
         return ResponseEntity.noContent().build();
     }
 }
