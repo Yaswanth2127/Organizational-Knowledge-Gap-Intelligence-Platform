@@ -5,7 +5,6 @@ import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.EmployeeSkill;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
-import com.knowledgegap.knowledge_gap_platform.repository.CompetencyFrameworkRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.EmployeeSkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
