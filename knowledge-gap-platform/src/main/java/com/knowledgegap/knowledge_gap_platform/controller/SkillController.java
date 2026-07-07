@@ -5,10 +5,12 @@ import com.knowledgegap.knowledge_gap_platform.dto.SkillResponse;
 import com.knowledgegap.knowledge_gap_platform.service.SkillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
 @RestController
 @RequestMapping("/api/skills")
 @CrossOrigin("*")
