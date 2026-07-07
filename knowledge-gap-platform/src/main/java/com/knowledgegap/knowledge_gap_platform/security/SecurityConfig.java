@@ -33,11 +33,23 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/skills/**"
-                        ).permitAll()
 
+                        // Public APIs
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Admin only
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("SYS_ADMIN")
+
+                        // Admin and HR
+                        .requestMatchers("/api/hr/**")
+                        .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST")
+
+                        // Employee, HR and Admin
+                        .requestMatchers("/api/employee/**")
+                        .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST", "EMPLOYEE")
+
+                        // Everything else requires login
                         .anyRequest()
                         .authenticated()
                 )

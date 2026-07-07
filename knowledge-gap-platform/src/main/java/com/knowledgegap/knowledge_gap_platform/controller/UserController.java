@@ -6,10 +6,12 @@ import com.knowledgegap.knowledge_gap_platform.dto.UserResponse;
 import com.knowledgegap.knowledge_gap_platform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('SYS_ADMIN')")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor

@@ -1,6 +1,7 @@
 package com.knowledgegap.knowledge_gap_platform.security;
 
 import com.knowledgegap.knowledge_gap_platform.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,6 +9,7 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
+    @Getter
     private final User user;
     private final Collection<? extends GrantedAuthority> authorities;
 
@@ -52,7 +54,4 @@ public class CustomUserDetails implements UserDetails {
         return user.getIsActive();
     }
 
-    public User getUser() {
-        return user;
-    }
 }
