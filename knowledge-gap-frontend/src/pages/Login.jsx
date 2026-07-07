@@ -1,26 +1,38 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
+import { loginUser } from '../services/authService';
 
 const Login = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.email || !formData.password) {
             setError('Please fill in all mandatory fields.');
             return;
         }
         setError('');
-        // Call baseline auth API here. Simulating progress for now:
-        navigate('/dashboard');
+        setLoading(true);
+        try {
+            const res = await loginUser(formData.email, formData.password);
+            localStorage.setItem('token', res.data.token);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(
+                err.response?.data?.message || 'Invalid email or password.'
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -65,7 +77,7 @@ const Login = () => {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="••••••••"
+                                placeholder="********"
                                 className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm"
                             />
                             <button
@@ -78,8 +90,8 @@ const Login = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-md shadow-indigo-200">
-                        Sign In <ArrowRight size={16} />
+                    <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-md shadow-indigo-200 disabled:opacity-60">
+                        {loading ? 'Signing in...' : 'Sign In'} <ArrowRight size={16} />
                     </button>
                 </form>
 
@@ -88,7 +100,6 @@ const Login = () => {
                     <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-3 text-gray-400 font-medium">Or continue with</span></div>
                 </div>
 
-                {/* Enterprise SSO Integration Trigger */}
                 <button className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2.5 text-sm">
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
                         <path fill="#EA4335" d="M12 5.04c1.65 0 3.13.57 4.3 1.69l3.21-3.21C17.56 1.76 14.97 1 12 1 7.35 1 3.4 3.65 1.5 7.5l3.72 2.88C6.1 7.55 8.84 5.04 12 5.04z" />

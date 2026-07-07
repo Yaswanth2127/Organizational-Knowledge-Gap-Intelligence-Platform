@@ -58,9 +58,15 @@ const AdminLayout = ({ children }) => {
             <Bell size={20} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
-          <Link to="/login" className="flex items-center gap-1 text-sm bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-gray-200 transition">
+          <button
+            onClick={() => {
+              localStorage.removeItem('token');
+              window.location.href = '/login';
+            }}
+            className="flex items-center gap-1 text-sm bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-gray-200 transition"
+          >
             <LogOut size={16} /> <span className="hidden sm:inline">Logout</span>
-          </Link>
+          </button>
         </div>
       </header>
 
