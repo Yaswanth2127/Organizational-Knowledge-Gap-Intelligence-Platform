@@ -24,8 +24,15 @@ const Login = () => {
         setLoading(true);
         try {
             const res = await loginUser(formData.email, formData.password);
-            localStorage.setItem('token', res.data.token);
-            navigate('/dashboard');
+
+            console.log(res.data);
+
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("role", res.data.role);
+            localStorage.setItem("userId", res.data.userId);
+            localStorage.setItem("fullName", res.data.fullName);
+
+            navigate("/dashboard");
         } catch (err) {
             setError(
                 err.response?.data?.message || 'Invalid email or password.'
