@@ -68,6 +68,9 @@ public class AuthenticationService {
 
         return AuthenticationResponse.builder()
                 .token(token)
+                .role("EMPLOYEE")
+                .userId(user.getId())
+                .fullName(user.getFullName())
                 .build();
     }
 
@@ -88,6 +91,9 @@ public class AuthenticationService {
                         .stream()
                         .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getName()))
                         .toList();
+        String role = authorities.get(0)
+                .getAuthority()
+                .replace("ROLE_", "");
 
         CustomUserDetails userDetails =
                 new CustomUserDetails(user, authorities);
@@ -96,6 +102,9 @@ public class AuthenticationService {
 
         return AuthenticationResponse.builder()
                 .token(token)
+                .role(role)
+                .userId(user.getId())
+                .fullName(user.getFullName())
                 .build();
     }
 }
