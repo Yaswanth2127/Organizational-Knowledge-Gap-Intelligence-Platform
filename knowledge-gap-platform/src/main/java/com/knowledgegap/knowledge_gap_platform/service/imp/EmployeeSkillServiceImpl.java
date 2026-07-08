@@ -23,6 +23,33 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
 
+    private EmployeeSkillResponse mapToResponse(EmployeeSkill employeeSkill){
+        return new EmployeeSkillResponse(
+                employeeSkill.getId(),
+                employeeSkill.getUser().getId(),
+                employeeSkill.getUser().getFullName(),
+                employeeSkill.getUser().getProfileImageUrl(),
+                employeeSkill.getUser().getDepartment() != null
+                        ? employeeSkill.getUser().getDepartment().getId()
+                        : null,
+                employeeSkill.getUser().getDepartment() != null
+                        ? employeeSkill.getUser().getDepartment().getName()
+                        : null,
+                employeeSkill.getUser().getJobRole() != null
+                        ? employeeSkill.getUser().getJobRole().getId()
+                        : null,
+                employeeSkill.getUser().getJobRole() != null
+                        ? employeeSkill.getUser().getJobRole().getTitle()
+                        : null,
+                employeeSkill.getSkill().getId(),
+                employeeSkill.getSkill().getName(),
+                employeeSkill.getSelfRating(),
+                employeeSkill.getPeerRating(),
+                employeeSkill.getManagerRating(),
+                employeeSkill.getFinalRating()
+        );
+    }
+
     @Override
     public EmployeeSkillResponse addEmployeeSkill(EmployeeSkillRequest request) {
 
@@ -45,17 +72,7 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
         employeeSkill = employeeSkillRepository.save(employeeSkill);
 
-        return new EmployeeSkillResponse(
-                employeeSkill.getId(),
-                employeeSkill.getUser().getId(),
-                employeeSkill.getUser().getFullName(),
-                employeeSkill.getSkill().getId(),
-                employeeSkill.getSkill().getName(),
-                employeeSkill.getSelfRating(),
-                employeeSkill.getPeerRating(),
-                employeeSkill.getManagerRating(),
-                employeeSkill.getFinalRating()
-        );
+        return mapToResponse(employeeSkill);
     }
 
     @Override
@@ -63,17 +80,7 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
         return employeeSkillRepository.findAll()
                 .stream()
-                .map(employeeSkill -> new EmployeeSkillResponse(
-                        employeeSkill.getId(),
-                        employeeSkill.getUser().getId(),
-                        employeeSkill.getUser().getFullName(),
-                        employeeSkill.getSkill().getId(),
-                        employeeSkill.getSkill().getName(),
-                        employeeSkill.getSelfRating(),
-                        employeeSkill.getPeerRating(),
-                        employeeSkill.getManagerRating(),
-                        employeeSkill.getFinalRating()
-                ))
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -83,17 +90,7 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
         EmployeeSkill employeeSkill = employeeSkillRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee Skill not found"));
 
-        return new EmployeeSkillResponse(
-                employeeSkill.getId(),
-                employeeSkill.getUser().getId(),
-                employeeSkill.getUser().getFullName(),
-                employeeSkill.getSkill().getId(),
-                employeeSkill.getSkill().getName(),
-                employeeSkill.getSelfRating(),
-                employeeSkill.getPeerRating(),
-                employeeSkill.getManagerRating(),
-                employeeSkill.getFinalRating()
-        );
+        return mapToResponse(employeeSkill);
     }
 
     @Override
@@ -119,17 +116,8 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
         employeeSkill = employeeSkillRepository.save(employeeSkill);
 
-        return new EmployeeSkillResponse(
-                employeeSkill.getId(),
-                employeeSkill.getUser().getId(),
-                employeeSkill.getUser().getFullName(),
-                employeeSkill.getSkill().getId(),
-                employeeSkill.getSkill().getName(),
-                employeeSkill.getSelfRating(),
-                employeeSkill.getPeerRating(),
-                employeeSkill.getManagerRating(),
-                employeeSkill.getFinalRating()
-        );
+
+        return mapToResponse(employeeSkill);
     }
 
     @Override
@@ -140,5 +128,14 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
         }
 
         employeeSkillRepository.deleteById(id);
+    }
+
+    @Override
+    public List<EmployeeSkillResponse> getEmployeeSkillsByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found ");
+        }
+        return employeeSkillRepository.findByUserId(userId).stream().
+                map(this::mapToResponse).toList();
     }
 }
