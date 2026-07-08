@@ -22,18 +22,48 @@
 
 // export default AdminLayout;
 
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, User, LogOut, Bell, BookOpen } from 'lucide-react';
+import {Menu,X,
+  LayoutDashboard,
+  User,
+  LogOut,
+  Bell,
+  BookOpen,
+  Brain
+} from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+const role = localStorage.getItem("role");
 
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Profile', href: '/profile', icon: User },
-  ];
+const navigation = [
+
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard
+  },
+
+  {
+    name: "Profile",
+    href: "/profile",
+    icon: User
+  },
+
+  ...(role === "SYS_ADMIN" || role === "HR_SPECIALIST"
+    ? [
+        {
+          name: "Employee Skills",
+          href: "/employee-skills",
+          icon: Brain
+        }
+      ]
+    : [])
+
+];
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
