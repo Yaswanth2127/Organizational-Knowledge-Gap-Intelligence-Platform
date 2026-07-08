@@ -1,6 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.controller;
 
-import com.knowledgegap.knowledge_gap_platform.dto.RegisterRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.UpdateProfileRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.UserResponse;
 
 import com.knowledgegap.knowledge_gap_platform.service.UserService;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('SYS_ADMIN')")
+@PreAuthorize("hasAnyRole('SYS_ADMIN','EMPLOYEE','HR_SPECIALIST')")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,@RequestBody RegisterRequest request){
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,@RequestBody UpdateProfileRequest request){
         return ResponseEntity.ok(userService.updateUser(id,request));
     }
     @DeleteMapping("/{id}")

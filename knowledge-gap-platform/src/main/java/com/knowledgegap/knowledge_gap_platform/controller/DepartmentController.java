@@ -23,6 +23,7 @@ public class DepartmentController {
        return ResponseEntity.ok(departmentService.addDepartment(department));
     }
 
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
     @GetMapping("/all")
     public ResponseEntity<List<DepartmentResponse>> getAllDepartments(){
         return ResponseEntity.ok(departmentService.getAllDepartments());
