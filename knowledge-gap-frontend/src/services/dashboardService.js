@@ -1,0 +1,24 @@
+import api from "./api";
+
+export const getUsers = () => {
+    return api.get("/api/users");
+};
+
+export const getDepartments = () => {
+    return api.get("/api/departments/all");
+};
+
+export const getJobRoles = () => {
+    return api.get("/api/job-roles/all");
+};
+
+export const getSkills = () => {
+    return api.get("/api/skills/all");
+};
+
+export const getCertifications = () => {
+    return api.get("/api/certifications/all");
+}
+export const getCompetencyFrameworks = () => {
+    return api.get("/api/competency-frameworks/all");
+};

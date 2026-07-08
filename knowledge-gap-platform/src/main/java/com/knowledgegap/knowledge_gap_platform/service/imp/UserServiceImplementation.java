@@ -1,6 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.service.imp;
 
-import com.knowledgegap.knowledge_gap_platform.dto.RegisterRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.UpdateProfileRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.UserResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
@@ -20,13 +20,12 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
-       return  userRepository.findAll()
+        return userRepository.findAll()
                 .stream()
-                .map(user -> new UserResponse(
-                        user.getId(),
-                        user.getFullName(),
-                        user.getEmail()))
+                .map(this::mapToUserResponse)
                 .toList();
+
+
     }
 
     @Override
@@ -34,28 +33,23 @@ public class UserServiceImplementation implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new UserResponse(
-                user.getId(),
-                user.getFullName(),
-                user.getEmail()
-        );
+        return mapToUserResponse(user);
+
     }
 
 
 
     @Override
-    public UserResponse updateUser(Long id, RegisterRequest request) {
+    public UserResponse updateUser(Long id, UpdateProfileRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if(userRepository.existsByEmail(request.getEmail())){
-            throw new RuntimeException("New Email Already Exists");
-        }
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user =userRepository.save(user);
 
-        return  new UserResponse(user.getId(),user.getFullName(), user.getEmail());
+        user.setFullName(request.getFullName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setProfileImageUrl(request.getProfileImageUrl());
+        user =userRepository.save(user);
+        return mapToUserResponse(user);
 
     }
     @Override
@@ -66,5 +60,28 @@ public class UserServiceImplementation implements UserService {
 
         userRepository.deleteById(id);
 
+    }
+    private UserResponse mapToUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+
+                .departmentId(user.getDepartment() != null ? user.getDepartment().getId() : null)
+                .departmentName(user.getDepartment() != null ? user.getDepartment().getName() : null)
+
+                .jobRoleId(user.getJobRole() != null ? user.getJobRole().getId() : null)
+                .jobRoleName(user.getJobRole() != null ? user.getJobRole().getTitle() : null)
+
+                .managerId(user.getManager() != null ? user.getManager().getId() : null)
+                .managerName(user.getManager() != null ? user.getManager().getFullName() : null)
+
+                .phoneNumber(user.getPhoneNumber())
+                .profileImageUrl(user.getProfileImageUrl())
+
+                .isActive(user.getIsActive())
+                .emailVerified(user.getEmailVerified())
+
+                .build();
     }
 }
