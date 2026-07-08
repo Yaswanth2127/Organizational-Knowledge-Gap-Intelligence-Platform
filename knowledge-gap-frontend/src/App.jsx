@@ -8,6 +8,7 @@ import AdminLayout from './layouts/AdminLayout';
 import SkillAssessment from "./pages/SkillAssessment";
 import NotFound from "./pages/NotFound";
 import EditProfile from "./pages/EditProfile";
+import EmployeeSkills from "./pages/EmployeeSkills";
 
 // Protected Route wrapper — token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -37,6 +38,16 @@ function App() {
         } />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route
+          path="/employee-skills"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <EmployeeSkills />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
       </Routes>
     </BrowserRouter>
   );

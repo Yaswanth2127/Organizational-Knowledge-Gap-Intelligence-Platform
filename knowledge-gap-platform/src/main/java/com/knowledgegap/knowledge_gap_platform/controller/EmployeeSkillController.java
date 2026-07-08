@@ -52,4 +52,13 @@ public class EmployeeSkillController {
         employeeSkillService.deleteEmployeeSkillById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<EmployeeSkillResponse>> getByUserId(
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                employeeSkillService.getEmployeeSkillsByUserId(userId)
+        );
+    }
 }
