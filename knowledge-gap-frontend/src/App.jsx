@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import AdminLayout from './layouts/AdminLayout';
 import SkillAssessment from "./pages/SkillAssessment";
 import NotFound from "./pages/NotFound";
+import EditProfile from "./pages/EditProfile";
 
 // Protected Route wrapper — token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/dashboard" element={
           <ProtectedRoute><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>
         } />

@@ -23,6 +23,7 @@ public class JobRoleController {
         return ResponseEntity.ok(jobRoleService.addJobRole(jobRoleRequest));
     }
 
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
     @GetMapping("/all")
     public ResponseEntity<List<JobRoleResponse>> getAllJobRoles(){
         return ResponseEntity.ok(jobRoleService.getAllJobRoles());
