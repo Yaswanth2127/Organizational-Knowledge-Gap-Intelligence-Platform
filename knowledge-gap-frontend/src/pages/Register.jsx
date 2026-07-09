@@ -1,157 +1,537 @@
+// import React, { useState } from 'react';
+// import { Link, useNavigate } from 'react-router-dom';
+// import { Briefcase, Building, User, Mail, Lock, ShieldAlert } from 'lucide-react';
+// import { registerUser } from '../services/authService';
+
+// const Register = () => {
+//     const navigate = useNavigate();
+//     const [formData, setFormData] = useState({
+//         fullName: '', email: '', password: '', role: 'Employee', department: 'Engineering'
+//     });
+//     const [error, setError] = useState('');
+//     const [loading, setLoading] = useState(false);
+
+//     const handleChange = (e) => {
+//         setFormData({ ...formData, [e.target.name]: e.target.value });
+//     };
+
+//     const [otp, setOtp] = useState("");
+//     const [otpSent, setOtpSent] = useState(false);
+
+//     const handleRegister = async (e) => {
+//         e.preventDefault();
+//         setError('');
+//         setLoading(true);
+//         try {
+//             const res = await sendOTP(
+//                 formData.fullName,
+//                 formData.email,
+//                 formData.password
+//             );
+//             setOtpSent(true);
+//         } catch (err) {
+//             setError(
+//                 err.response?.data?.message || 'Registration failed. Please try again.'
+//             );
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     return (
+//         <div className="min-h-[85vh] flex items-center justify-center p-4 bg-gray-50">
+//             <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+//                 <div className="text-center mb-6">
+//                     <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Onboarding Portal</h2>
+//                     <p className="text-sm text-gray-500 mt-2">Initialize your organizational profiling metrics</p>
+//                 </div>
+
+//                 {error && (
+//                     <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
+//                         {error}
+//                     </div>
+//                 )}
+
+//                 <form onSubmit={handleRegister} className="space-y-4">
+//                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//                         <div>
+//                             <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Full Name</label>
+//                             <div className="relative">
+//                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+//                                 <input
+//                                     type="text"
+//                                     name="fullName"
+//                                     required
+//                                     value={formData.fullName}
+//                                     onChange={handleChange}
+//                                     placeholder="John Doe"
+//                                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+//                                 />
+//                             </div>
+//                         </div>
+
+//                         <div>
+//                             <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Corporate Email</label>
+//                             <div className="relative">
+//                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+//                                 <input
+//                                     type="email"
+//                                     name="email"
+//                                     required
+//                                     value={formData.email}
+//                                     onChange={handleChange}
+//                                     placeholder="name@organization.com"
+//                                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+//                                 />
+//                             </div>
+//                         </div>
+//                     </div>
+
+//                     <div>
+//                         <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Secure Password</label>
+//                         <div className="relative">
+//                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+//                             <input
+//                                 type="password"
+//                                 name="password"
+//                                 required
+//                                 value={formData.password}
+//                                 onChange={handleChange}
+//                                 placeholder="Minimum 8 characters"
+//                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+//                             />
+//                         </div>
+//                     </div>
+
+//                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//                         <div>
+//                             <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Primary Business Unit</label>
+//                             <div className="relative">
+//                                 <Building className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+//                                 <select
+//                                     name="department"
+//                                     value={formData.department}
+//                                     onChange={handleChange}
+//                                     className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm appearance-none"
+//                                 >
+//                                     <option>Engineering</option>
+//                                     <option>Data Science</option>
+//                                     <option>Product Management</option>
+//                                     <option>Human Resources</option>
+//                                 </select>
+//                             </div>
+//                         </div>
+
+//                         <div>
+//                             <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Functional System Role</label>
+//                             <div className="relative">
+//                                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+//                                 <select
+//                                     name="role"
+//                                     value={formData.role}
+//                                     onChange={handleChange}
+//                                     className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm appearance-none"
+//                                 >
+//                                     <option>Employee</option>
+//                                     <option>Team Lead / Manager</option>
+//                                     <option>HR Specialist</option>
+//                                 </select>
+//                             </div>
+//                         </div>
+//                     </div>
+
+//                     <div className="flex items-start gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 mt-2">
+//                         <ShieldAlert className="text-indigo-600 shrink-0 mt-0.5" size={16} />
+//                         <p className="text-xs text-indigo-700 leading-relaxed">
+//                             Upon registering, access levels will automatically map with default permissions. Verification will trigger with your admin workspace group.
+//                         </p>
+//                     </div>
+
+//                     <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition mt-4 text-sm shadow-md disabled:opacity-60">
+//                         {loading ? 'Creating account...' : 'Complete Registration'}
+//                     </button>
+//                 </form>
+
+//                 <p className="text-center text-sm text-gray-600 mt-6">
+//                     Already mapped? <Link to="/login" className="text-indigo-600 font-semibold hover:underline">Sign in here</Link>
+//                 </p>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default Register;
+
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Briefcase, Building, User, Mail, Lock, ShieldAlert } from 'lucide-react';
-import { registerUser } from '../services/authService';
+import {
+    Briefcase,
+    Building,
+    User,
+    Mail,
+    Lock,
+    ShieldAlert
+} from 'lucide-react';
+
+import {
+    sendOTP,
+    verifyOTP,
+    resendOTP
+} from '../services/authService';
 
 const Register = () => {
+
     const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
-        fullName: '', email: '', password: '', role: 'Employee', department: 'Engineering'
+        fullName: '',
+        email: '',
+        password: '',
+        role: 'Employee',
+        department: 'Engineering'
     });
-    const [error, setError] = useState('');
+
+    const [otp, setOtp] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
+
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
     };
 
-    const handleRegister = async (e) => {
+    const handleSubmit = async (e) => {
+
         e.preventDefault();
+
         setError('');
+        setSuccess('');
         setLoading(true);
+
         try {
-            const res = await registerUser(formData.fullName, formData.email, formData.password);
-            localStorage.setItem('token', res.data.token);
-            navigate('/dashboard');
+
+            // STEP 1 : SEND OTP
+
+            if (!otpSent) {
+
+                await sendOTP(
+                    formData.fullName,
+                    formData.email,
+                    formData.password
+                );
+
+                setOtpSent(true);
+                setSuccess("OTP sent successfully. Please check your email.");
+
+            }
+
+            // STEP 2 : VERIFY OTP
+
+            else {
+
+                await verifyOTP(formData.email, otp);
+
+                alert("Registration successful. Please login.");
+
+                navigate("/login");
+
+            }
+
         } catch (err) {
+
             setError(
-                err.response?.data?.message || 'Registration failed. Please try again.'
+                err.response?.data?.message ||
+                "Something went wrong."
             );
+
         } finally {
             setLoading(false);
         }
+
+    };
+
+    const handleResendOtp = async () => {
+
+        try {
+
+            await resendOTP(formData.email);
+
+            setSuccess("OTP resent successfully.");
+
+        } catch (err) {
+
+            setError(
+                err.response?.data?.message ||
+                "Unable to resend OTP."
+            );
+
+        }
+
     };
 
     return (
+
         <div className="min-h-[85vh] flex items-center justify-center p-4 bg-gray-50">
+
             <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+
                 <div className="text-center mb-6">
-                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Onboarding Portal</h2>
-                    <p className="text-sm text-gray-500 mt-2">Initialize your organizational profiling metrics</p>
+
+                    <h2 className="text-3xl font-extrabold text-gray-900">
+                        Onboarding Portal
+                    </h2>
+
+                    <p className="text-sm text-gray-500 mt-2">
+                        Initialize your organizational profiling metrics
+                    </p>
+
                 </div>
 
                 {error && (
-                    <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
+                    <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg border border-red-200 text-sm">
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleRegister} className="space-y-4">
+                {success && (
+                    <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-lg border border-green-200 text-sm">
+                        {success}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Full Name</label>
+
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Full Name
+                            </label>
+
                             <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+
+                                <User
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    size={18}
+                                />
+
                                 <input
                                     type="text"
                                     name="fullName"
                                     required
+                                    disabled={otpSent}
                                     value={formData.fullName}
                                     onChange={handleChange}
-                                    placeholder="John Doe"
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                    className="w-full pl-10 pr-4 py-2 border rounded-xl"
                                 />
+
                             </div>
+
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Corporate Email</label>
+
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Corporate Email
+                            </label>
+
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+
+                                <Mail
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    size={18}
+                                />
+
                                 <input
                                     type="email"
                                     name="email"
                                     required
+                                    disabled={otpSent}
                                     value={formData.email}
                                     onChange={handleChange}
-                                    placeholder="name@organization.com"
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                    className="w-full pl-10 pr-4 py-2 border rounded-xl"
                                 />
+
                             </div>
+
                         </div>
+
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Secure Password</label>
+
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                            Password
+                        </label>
+
                         <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+
+                            <Lock
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                size={18}
+                            />
+
                             <input
                                 type="password"
                                 name="password"
                                 required
+                                disabled={otpSent}
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="Minimum 8 characters"
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                className="w-full pl-10 pr-4 py-2 border rounded-xl"
                             />
+
                         </div>
+
                     </div>
+
+                    {/* Keep your existing Department & Role UI */}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Primary Business Unit</label>
+
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Primary Business Unit
+                            </label>
+
                             <div className="relative">
-                                <Building className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+
+                                <Building
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    size={18}
+                                />
+
                                 <select
-                                    name="department"
-                                    value={formData.department}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm appearance-none"
+                                    disabled
+                                    className="w-full pl-10 pr-4 py-2 border rounded-xl bg-gray-100"
                                 >
                                     <option>Engineering</option>
-                                    <option>Data Science</option>
-                                    <option>Product Management</option>
+                
+                                     <option>Data Science</option>
+                                     <option>Product Management</option>
                                     <option>Human Resources</option>
                                 </select>
+
                             </div>
+
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Functional System Role</label>
+
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Functional System Role
+                            </label>
+
                             <div className="relative">
-                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+
+                                <Briefcase
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    size={18}
+                                />
+
                                 <select
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm appearance-none"
+                                    disabled
+                                    className="w-full pl-10 pr-4 py-2 border rounded-xl bg-gray-100"
                                 >
                                     <option>Employee</option>
-                                    <option>Team Lead / Manager</option>
-                                    <option>HR Specialist</option>
                                 </select>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <div className="flex items-start gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 mt-2">
-                        <ShieldAlert className="text-indigo-600 shrink-0 mt-0.5" size={16} />
-                        <p className="text-xs text-indigo-700 leading-relaxed">
-                            Upon registering, access levels will automatically map with default permissions. Verification will trigger with your admin workspace group.
+                    {otpSent && (
+
+                        <div>
+
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Enter OTP
+                            </label>
+
+                            <input
+                                type="text"
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value)}
+                                placeholder="Enter 6-digit OTP"
+                                maxLength={6}
+                                required
+                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                            />
+
+                            <button
+                                type="button"
+                                onClick={handleResendOtp}
+                                className="mt-2 text-indigo-600 text-sm hover:underline"
+                            >
+                                Resend OTP
+                            </button>
+
+                        </div>
+
+                    )}
+
+                    <div className="flex items-start gap-2 bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+
+                        <ShieldAlert
+                            className="text-indigo-600 shrink-0 mt-0.5"
+                            size={16}
+                        />
+
+                        <p className="text-xs text-indigo-700">
+
+                            {otpSent
+                                ? "Enter the OTP sent to your email to complete registration."
+                                : "Click Send OTP to verify your email before creating your account."}
+
                         </p>
+
                     </div>
 
-                    <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition mt-4 text-sm shadow-md disabled:opacity-60">
-                        {loading ? 'Creating account...' : 'Complete Registration'}
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition disabled:opacity-60"
+                    >
+
+                        {loading
+                            ? "Please wait..."
+                            : otpSent
+                                ? "Verify OTP"
+                                : "Send OTP"}
+
                     </button>
+
                 </form>
 
                 <p className="text-center text-sm text-gray-600 mt-6">
-                    Already mapped? <Link to="/login" className="text-indigo-600 font-semibold hover:underline">Sign in here</Link>
+
+                    Already have an account?{" "}
+
+                    <Link
+                        to="/login"
+                        className="text-indigo-600 font-semibold hover:underline"
+                    >
+                        Sign in
+                    </Link>
+
                 </p>
+
             </div>
+
         </div>
+
     );
+
 };
 
 export default Register;

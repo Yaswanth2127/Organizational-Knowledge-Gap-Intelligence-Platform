@@ -11,4 +11,5 @@ public interface UserService{
      UserResponse getUser(Long id);
      UserResponse updateUser(Long id, UpdateProfileRequest request);
      void delete(Long id);
+     List<UserResponse> findLast7ByCreatedAtDesc();
 }
