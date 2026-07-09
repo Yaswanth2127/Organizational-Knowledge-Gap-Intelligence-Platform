@@ -61,6 +61,14 @@ public class UserServiceImplementation implements UserService {
         userRepository.deleteById(id);
 
     }
+
+    @Override
+    public List<UserResponse> findLast7ByCreatedAtDesc() {
+        return userRepository.findTop7ByOrderByCreatedAtDesc().stream().map(
+                this::mapToUserResponse
+        ).toList();
+    }
+
     private UserResponse mapToUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())

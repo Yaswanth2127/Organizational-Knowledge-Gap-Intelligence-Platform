@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import {
+    getRecentUsers,
     getUsers,
     getDepartments,
     getJobRoles,
@@ -24,6 +25,7 @@ export default function AdminDashboard() {
 
     const [loading, setLoading] = useState(true);
 
+    const [recentUsers, setRecentUsers] = useState([]);  
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [jobRoles, setJobRoles] = useState([]);
@@ -141,12 +143,15 @@ export default function AdminDashboard() {
 
             const [
                 usersRes,
+                recentUsersRes,
                 departmentsRes,
                 jobRolesRes,
                 skillsRes
             ] = await Promise.all([
 
                 getUsers(),
+                getRecentUsers(),
+                
                 getDepartments(),
                 getJobRoles(),
                 getSkills()
@@ -154,6 +159,7 @@ export default function AdminDashboard() {
             ]);
 
         
+            setRecentUsers(recentUsersRes);
             setUsers(usersRes.data);
 
             setDepartments(departmentsRes.data);
@@ -559,7 +565,7 @@ return (
 
                     <tbody>
 
-                        {users.slice(0, 7).map((user) => (
+                        {recentUsers.map((user) => (
 
                             <tr
                                 key={user.id}
