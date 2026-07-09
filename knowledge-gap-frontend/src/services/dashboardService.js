@@ -22,3 +22,8 @@ export const getCertifications = () => {
 export const getCompetencyFrameworks = () => {
     return api.get("/api/competency-frameworks/all");
 };
+
+export const getRecentUsers = async () => {
+    const response = await api.get("/api/users/recent");
+    return response.data;
+};
