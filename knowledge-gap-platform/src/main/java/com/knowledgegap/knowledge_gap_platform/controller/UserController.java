@@ -39,4 +39,12 @@ public class UserController {
         userService.delete(id);
       return   ResponseEntity.noContent().build();
     }
+
+
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<UserResponse>> latestUsers(){
+        return ResponseEntity.ok(userService.findLast7ByCreatedAtDesc());
+    }
+
 }
