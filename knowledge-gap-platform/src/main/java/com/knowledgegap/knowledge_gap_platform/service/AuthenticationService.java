@@ -1,14 +1,12 @@
 package com.knowledgegap.knowledge_gap_platform.service;
 
 import com.knowledgegap.knowledge_gap_platform.config.RedisConfig;
-import com.knowledgegap.knowledge_gap_platform.dto.AuthenticationRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.AuthenticationResponse;
-import com.knowledgegap.knowledge_gap_platform.dto.OtpRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.RegisterRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.*;
 import com.knowledgegap.knowledge_gap_platform.entity.Role;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.entity.UserRole;
 import com.knowledgegap.knowledge_gap_platform.entity.UserRoleId;
+import com.knowledgegap.knowledge_gap_platform.model.PasswordResetRequest;
 import com.knowledgegap.knowledge_gap_platform.model.PendingRegistration;
 import com.knowledgegap.knowledge_gap_platform.repository.RoleRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
@@ -38,6 +36,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
     private final  EmailService emailService;
+    private final PasswordRedisService passwordRedisService;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -209,5 +208,47 @@ public class AuthenticationService {
 
         // Send email
         emailService.sendOtp(email,pendingRegistration.getFullName(), otp);
+    }
+
+    public void sendOtpForPwd(ForgetPasswordRequest forgetPasswordRequest){
+        String otp=OtpGenerator.generateOtp();
+
+        String email=forgetPasswordRequest.getEmail();
+        if(!userRepository.existsByEmail(email)){
+            throw new RuntimeException("Email doesn't exists");
+        }
+
+        PasswordResetRequest request=new PasswordResetRequest(email,otp);
+
+        passwordRedisService.SavePasswordResetRequest(request);
+        emailService.sendOtp(email,"User",otp);
+    }
+
+    public void verifyOtpForPwd(PasswordOtpRequest passwordOtpRequest){
+        PasswordResetRequest request=passwordRedisService.getPasswordResetRequest(passwordOtpRequest.getEmail());
+
+        if(request==null){
+            throw new RuntimeException("OTP expired or not found");
+        }
+
+        System.out.println("Entered OTP: " + request.getOtp());
+        System.out.println("Stored OTP: " + passwordOtpRequest.getOtp());
+        if (!Objects.equals(passwordOtpRequest.getOtp(), request.getOtp())) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        User user=userRepository.findByEmail(request.getEmail()).orElseThrow(()->new RuntimeException("Email not found "));
+
+        user.setPasswordHash(passwordEncoder.encode(passwordOtpRequest.getPassword()));
+
+        userRepository.save(user);
+
+        passwordRedisService.deletePasswordResetRequest(request.getEmail());
+
+    }
+
+    public void resendOtpForPwd(ForgetPasswordRequest forgetPasswordRequest){
+
+        sendOtpForPwd(forgetPasswordRequest);
     }
 }
