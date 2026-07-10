@@ -1,7 +1,5 @@
 package com.knowledgegap.knowledge_gap_platform.config;
 
-
-import com.knowledgegap.knowledge_gap_platform.model.PendingRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,17 +10,17 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
     @Bean
-    public RedisTemplate<String, PendingRegistration> redisTemplate(
+    public RedisTemplate<String, Object> redisTemplate(
             RedisConnectionFactory connectionFactory) {
 
-        RedisTemplate<String, PendingRegistration> template = new RedisTemplate<>();
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
 
         template.setConnectionFactory(connectionFactory);
-
         template.setKeySerializer(new StringRedisSerializer());
-
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         return template;
     }
+
+
 }
