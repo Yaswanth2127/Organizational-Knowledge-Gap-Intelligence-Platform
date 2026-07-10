@@ -12,7 +12,6 @@ import {
     ShieldCheck,
     Calendar,
     Edit2,
-    Award,
     Loader2
 } from "lucide-react";
 
@@ -701,99 +700,6 @@ export default function Profile() {
     </div>
 
 </div>
-{/* ===========================
-        SKILL INVENTORY
-=========================== */}
-
-<div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mt-6">
-
-    <div className="flex items-center gap-3 mb-6">
-
-        <Award
-            className="text-indigo-600"
-            size={24}
-        />
-
-        <h2 className="text-xl font-bold text-gray-800">
-
-            Skill Inventory
-
-        </h2>
-
-    </div>
-
-    <div className="flex flex-col items-center justify-center py-12">
-
-        <Award
-            size={52}
-            className="text-gray-300"
-        />
-
-        <h3 className="text-lg font-semibold text-gray-700 mt-4">
-
-            No Skills Assigned
-
-        </h3>
-
-        <p className="text-gray-500 text-sm text-center mt-2 max-w-md">
-
-            Your assigned technical and functional skills will appear here
-            once they are added by your HR team.
-
-        </p>
-
-    </div>
-
-</div>
-
-
-
-{/* ===========================
-        CERTIFICATIONS
-=========================== */}
-
-<div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mt-6">
-
-    <div className="flex items-center gap-3 mb-6">
-
-        <ShieldCheck
-            className="text-green-600"
-            size={24}
-        />
-
-        <h2 className="text-xl font-bold text-gray-800">
-
-            Certifications
-
-        </h2>
-
-    </div>
-
-    <div className="flex flex-col items-center justify-center py-12">
-
-        <ShieldCheck
-            size={52}
-            className="text-gray-300"
-        />
-
-        <h3 className="text-lg font-semibold text-gray-700 mt-4">
-
-            No Certifications Available
-
-        </h3>
-
-        <p className="text-gray-500 text-sm text-center mt-2 max-w-md">
-
-            Certifications assigned by HR will be displayed here.
-
-        </p>
-
-    </div>
-
-</div>
-
-
-
 {/* ===========================
         PROFILE COMPLETION
 =========================== */}

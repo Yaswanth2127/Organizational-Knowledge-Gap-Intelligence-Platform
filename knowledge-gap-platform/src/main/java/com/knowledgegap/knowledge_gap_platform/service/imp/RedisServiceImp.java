@@ -7,31 +7,37 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.List;
+
+
 
 @Service
 @RequiredArgsConstructor
 public class RedisServiceImp implements RedisService {
-
-    private final RedisTemplate<String ,PendingRegistration> redisTemplate;
+    private final static String PENDING_PREFIX="pending:";
+    private static final Duration OTP_EXPIRY = Duration.ofMinutes(5);
+    private final RedisTemplate<String ,Object> redisTemplate;
     @Override
     public void savePendingRegistration(PendingRegistration pendingRegistration) {
-        String key= "pending:"+pendingRegistration.getEmail();
-        redisTemplate.opsForValue().set(key,pendingRegistration, Duration.ofMinutes(5));
+
+        redisTemplate.opsForValue().set(buildKey(pendingRegistration.getEmail()),pendingRegistration, OTP_EXPIRY);
     }
 
     @Override
     public PendingRegistration getPendingRegistration(String email) {
-        String key = "pending:" + email;
+        String key = buildKey(email);
 
-        return redisTemplate.opsForValue().get(key);
+        return (PendingRegistration) redisTemplate.opsForValue().get(key);
 
     }
 
     @Override
     public void deletePendingRegistration(String email) {
-        String key = "pending:" + email;
 
-        redisTemplate.delete(key);
+
+        redisTemplate.delete(buildKey(email));
+    }
+
+    private String buildKey(String email) {
+        return PENDING_PREFIX + email;
     }
 }
