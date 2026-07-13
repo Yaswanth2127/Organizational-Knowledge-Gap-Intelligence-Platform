@@ -42,6 +42,11 @@ const Login = () => {
         }
     };
 
+    const handleGoogleLogin = () => {
+    window.location.href =
+        "http://localhost:8080/oauth2/authorization/google";
+    };
+
     return (
         <div className="min-h-[85vh] flex items-center justify-center p-4 bg-gray-50">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
@@ -107,7 +112,10 @@ const Login = () => {
                     <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-3 text-gray-400 font-medium">Or continue with</span></div>
                 </div>
 
-                <button className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2.5 text-sm">
+                <button
+                        onClick={handleGoogleLogin}
+                        className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2.5 text-sm"
+                    >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
                         <path fill="#EA4335" d="M12 5.04c1.65 0 3.13.57 4.3 1.69l3.21-3.21C17.56 1.76 14.97 1 12 1 7.35 1 3.4 3.65 1.5 7.5l3.72 2.88C6.1 7.55 8.84 5.04 12 5.04z" />
                         <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.43h6.46c-.28 1.48-1.12 2.74-2.38 3.58l3.7 2.87c2.16-1.99 3.41-4.92 3.41-8.54z" />
