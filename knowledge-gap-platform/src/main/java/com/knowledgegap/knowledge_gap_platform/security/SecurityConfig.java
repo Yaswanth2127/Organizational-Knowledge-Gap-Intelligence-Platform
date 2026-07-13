@@ -47,8 +47,14 @@ public class SecurityConfig {
                         .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST")
 
                         // Employee, HR and Admin
-                        .requestMatchers("/api/employee/**")
-                        .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST", "EMPLOYEE")
+                       .requestMatchers("/api/users/**")
+                       .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST", "EMPLOYEE")
+
+                       .requestMatchers("/api/employee-skills/**")
+                       .hasAnyRole("EMPLOYEE","HR_SPECIALIST","SYS_ADMIN")
+
+                       .requestMatchers("/api/certifications/**")
+                       .hasAnyRole("EMPLOYEE","HR_SPECIALIST","SYS_ADMIN")
 
                         // Everything else requires login
                         .anyRequest()
