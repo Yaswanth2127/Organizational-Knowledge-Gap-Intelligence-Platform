@@ -12,6 +12,7 @@ import EmployeeSkills from "./pages/EmployeeSkills";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DepartmentManagement from "./pages/DepartmentManagement";
+import OAuthSuccess from "./pages/OAuthSuccess";
 
 // Protected Route wrapper — token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -29,6 +30,10 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route
+            path="/oauth-success"
+            element={<OAuthSuccess />}
+        />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/dashboard" element={
           <ProtectedRoute><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>

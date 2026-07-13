@@ -58,6 +58,15 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false)
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_id", unique = true, length = 100)
+    private String providerId;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
