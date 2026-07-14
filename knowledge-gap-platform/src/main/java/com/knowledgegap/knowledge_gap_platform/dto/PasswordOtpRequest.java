@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DepartmentRequest {
-    private String name;
-    private String description;
-    private Long parentDeptId;
+public class PasswordOtpRequest {
+    private String email;
+    private String password;
+    private String Otp;
 }

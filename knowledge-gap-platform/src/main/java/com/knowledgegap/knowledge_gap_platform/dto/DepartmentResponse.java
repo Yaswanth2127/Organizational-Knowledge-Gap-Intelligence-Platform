@@ -14,4 +14,5 @@ public class DepartmentResponse {
     private String name;
     private String description;
     private Long parentDeptId;
+    private String parentDepartmentName;
 }

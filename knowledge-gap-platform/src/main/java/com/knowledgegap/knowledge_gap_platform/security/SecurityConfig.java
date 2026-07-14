@@ -1,4 +1,5 @@
 package com.knowledgegap.knowledge_gap_platform.security;
+import org.springframework.context.annotation.Lazy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
+    private final @Lazy OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -36,7 +38,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // Public APIs
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers( "/api/auth/**",
+                                "/oauth2/**",
+                                "/login/**").permitAll()
 
                         // Admin only
                         .requestMatchers("/api/admin/**")
@@ -62,6 +66,9 @@ public class SecurityConfig {
                 )
 
                 .userDetailsService(customUserDetailsService)
+                .oauth2Login(oauth -> oauth
+                .successHandler(oAuth2LoginSuccessHandler)
+        )
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,

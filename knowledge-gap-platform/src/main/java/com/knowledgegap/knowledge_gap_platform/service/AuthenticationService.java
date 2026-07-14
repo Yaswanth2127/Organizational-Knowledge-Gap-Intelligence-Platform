@@ -1,14 +1,9 @@
 package com.knowledgegap.knowledge_gap_platform.service;
 
 import com.knowledgegap.knowledge_gap_platform.config.RedisConfig;
-import com.knowledgegap.knowledge_gap_platform.dto.AuthenticationRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.AuthenticationResponse;
-import com.knowledgegap.knowledge_gap_platform.dto.OtpRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.RegisterRequest;
-import com.knowledgegap.knowledge_gap_platform.entity.Role;
-import com.knowledgegap.knowledge_gap_platform.entity.User;
-import com.knowledgegap.knowledge_gap_platform.entity.UserRole;
-import com.knowledgegap.knowledge_gap_platform.entity.UserRoleId;
+import com.knowledgegap.knowledge_gap_platform.dto.*;
+import com.knowledgegap.knowledge_gap_platform.entity.*;
+import com.knowledgegap.knowledge_gap_platform.model.PasswordResetRequest;
 import com.knowledgegap.knowledge_gap_platform.model.PendingRegistration;
 import com.knowledgegap.knowledge_gap_platform.repository.RoleRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
@@ -38,6 +33,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
     private final  EmailService emailService;
+    private final PasswordRedisService passwordRedisService;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -45,41 +41,22 @@ public class AuthenticationService {
             throw new RuntimeException("Email already exists");
         }
 
-
         User user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .isActive(true)
+                .authProvider(AuthProvider.LOCAL)
                 .emailVerified(false)
                 .build();
 
         userRepository.save(user);
 
-        Role employeeRole = roleRepository.findByName("EMPLOYEE")
-                .orElseThrow(() -> new RuntimeException("EMPLOYEE role not found"));
+        //assign employee role
+        assignEmployeeRole(user);
 
-        UserRole userRole = UserRole.builder()
-                .id(new UserRoleId(user.getId(), employeeRole.getId()))
-                .user(user)
-                .role(employeeRole)
-                .build();
 
-        userRoleRepository.save(userRole);
-
-        CustomUserDetails userDetails = new CustomUserDetails(
-                user,
-                List.of(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))
-        );
-
-        String token = jwtService.generateToken(userDetails);
-
-        return AuthenticationResponse.builder()
-                .token(token)
-                .role("EMPLOYEE")
-                .userId(user.getId())
-                .fullName(user.getFullName())
-                .build();
+        return buildAuthenticationResponse(user);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -94,26 +71,9 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<SimpleGrantedAuthority> authorities =
-                userRoleRepository.findByUser(user)
-                        .stream()
-                        .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getName()))
-                        .toList();
-        String role = authorities.get(0)
-                .getAuthority()
-                .replace("ROLE_", "");
 
-        CustomUserDetails userDetails =
-                new CustomUserDetails(user, authorities);
 
-        String token = jwtService.generateToken(userDetails);
-
-        return AuthenticationResponse.builder()
-                .token(token)
-                .role(role)
-                .userId(user.getId())
-                .fullName(user.getFullName())
-                .build();
+        return buildAuthenticationResponse(user);
     }
 
 
@@ -151,7 +111,8 @@ public class AuthenticationService {
         User user = User.builder()
                 .fullName(pendingRegistration.getFullName())
                 .email(pendingRegistration.getEmail())
-                .passwordHash(pendingRegistration.getPassword()) // already encoded
+                .passwordHash(pendingRegistration.getPassword())
+                .authProvider(AuthProvider.LOCAL)// already encoded
                 .isActive(true)
                 .emailVerified(true)
                 .build();
@@ -159,34 +120,13 @@ public class AuthenticationService {
         userRepository.save(user);
 
         // Assign EMPLOYEE Role
-        Role employeeRole = roleRepository.findByName("EMPLOYEE")
-                .orElseThrow(() -> new RuntimeException("EMPLOYEE role not found"));
+        assignEmployeeRole(user);
 
-        UserRole userRole = UserRole.builder()
-                .id(new UserRoleId(user.getId(), employeeRole.getId()))
-                .user(user)
-                .role(employeeRole)
-                .build();
-
-        userRoleRepository.save(userRole);
-
-        // Generate JWT
-        CustomUserDetails userDetails = new CustomUserDetails(
-                user,
-                List.of(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))
-        );
-
-        String token = jwtService.generateToken(userDetails);
 
         // Remove pending registration from Redis
         redisService.deletePendingRegistration(user.getEmail());
 
-        return AuthenticationResponse.builder()
-                .token(token)
-                .role("EMPLOYEE")
-                .userId(user.getId())
-                .fullName(user.getFullName())
-                .build();
+        return buildAuthenticationResponse(user);
     }
 
     public void resendOtp(String email) {
@@ -209,5 +149,84 @@ public class AuthenticationService {
 
         // Send email
         emailService.sendOtp(email,pendingRegistration.getFullName(), otp);
+    }
+
+    public void sendOtpForPwd(ForgetPasswordRequest forgetPasswordRequest){
+        String otp=OtpGenerator.generateOtp();
+
+        String email=forgetPasswordRequest.getEmail();
+        if(!userRepository.existsByEmail(email)){
+            throw new RuntimeException("Email doesn't exists");
+        }
+
+        PasswordResetRequest request=new PasswordResetRequest(email,otp);
+
+        passwordRedisService.SavePasswordResetRequest(request);
+        emailService.sendOtp(email,"User",otp);
+    }
+
+    public void verifyOtpForPwd(PasswordOtpRequest passwordOtpRequest){
+        PasswordResetRequest request=passwordRedisService.getPasswordResetRequest(passwordOtpRequest.getEmail());
+
+        if(request==null){
+            throw new RuntimeException("OTP expired or not found");
+        }
+
+        System.out.println("Entered OTP: " + request.getOtp());
+        System.out.println("Stored OTP: " + passwordOtpRequest.getOtp());
+        if (!Objects.equals(passwordOtpRequest.getOtp(), request.getOtp())) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        User user=userRepository.findByEmail(request.getEmail()).orElseThrow(()->new RuntimeException("Email not found "));
+
+        user.setPasswordHash(passwordEncoder.encode(passwordOtpRequest.getPassword()));
+
+        userRepository.save(user);
+
+        passwordRedisService.deletePasswordResetRequest(request.getEmail());
+
+    }
+
+    public void resendOtpForPwd(ForgetPasswordRequest forgetPasswordRequest){
+
+        sendOtpForPwd(forgetPasswordRequest);
+    }
+
+
+
+    private AuthenticationResponse buildAuthenticationResponse(User user){
+        List<SimpleGrantedAuthority> authorities =
+                userRoleRepository.findByUser(user)
+                        .stream()
+                        .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getName()))
+                        .toList();
+
+        String role = authorities.get(0)
+                .getAuthority()
+                .replace("ROLE_", "");
+
+        String token=jwtService.generateToken(new CustomUserDetails(user,authorities));
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .role(role)
+                .userId(user.getId())
+                .fullName(user.getFullName())
+                .build();
+    }
+    private void assignEmployeeRole(User user){
+        Role employeeRole = roleRepository.findByName("EMPLOYEE")
+                .orElseThrow(() -> new RuntimeException("EMPLOYEE role not found"));
+
+        UserRole userRole = UserRole.builder()
+                .id(new UserRoleId(user.getId(), employeeRole.getId()))
+                .user(user)
+                .role(employeeRole)
+                .build();
+
+        userRoleRepository.save(userRole);
+
+
     }
 }
