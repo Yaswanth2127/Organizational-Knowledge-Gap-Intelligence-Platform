@@ -31,7 +31,8 @@ public class DepartmentServiceImplementation implements DepartmentService {
         Long parentId = department.getParentDepartment() != null
                 ? department.getParentDepartment().getId()
                 : null;
-        return new DepartmentResponse(department.getId(),department.getName(),department.getDescription(),parentId);
+        String name =parentId!=null?department.getParentDepartment().getName():null;
+        return new DepartmentResponse(department.getId(),department.getName(),department.getDescription(),parentId,name);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class DepartmentServiceImplementation implements DepartmentService {
                         dept.getId(),
                         dept.getName(),
                         dept.getDescription(),
-                        dept.getParentDepartment()!=null?dept.getParentDepartment().getId():null)).toList();
+                        dept.getParentDepartment()!=null?dept.getParentDepartment().getId():null,dept.getParentDepartment()!=null?dept.getParentDepartment().getName():null)).toList();
 
     }
 
@@ -54,7 +55,8 @@ public class DepartmentServiceImplementation implements DepartmentService {
         Long parentId = department.getParentDepartment() != null
                 ? department.getParentDepartment().getId()
                 : null;
-        return new DepartmentResponse(department.getId(),department.getName(),department.getDescription(),parentId);
+        String name =parentId!=null?department.getParentDepartment().getName():null;
+        return new DepartmentResponse(department.getId(),department.getName(),department.getDescription(),parentId,name);
 
     }
 
@@ -87,8 +89,9 @@ public class DepartmentServiceImplementation implements DepartmentService {
                 ? department.getParentDepartment().getId()
                 : null;
 
+        String name =parentId!=null?department.getParentDepartment().getName():null;
 
-        return new DepartmentResponse(department.getId(),department.getName(),department.getDescription(),parentId);
+        return new DepartmentResponse(department.getId(),department.getName(),department.getDescription(),parentId,name);
     }
 
     @Override

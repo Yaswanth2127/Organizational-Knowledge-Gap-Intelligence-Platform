@@ -60,4 +60,22 @@ public class AuthController {
                 authenticationService.authenticate(request)
         );
     }
+
+    @PostMapping("/forgot-password/send-otp")
+    public ResponseEntity<OtpResponse> sendOtpForPwd(@RequestBody ForgetPasswordRequest forgetPasswordRequest){
+        authenticationService.sendOtpForPwd(forgetPasswordRequest);
+        return ResponseEntity.ok(new OtpResponse("Otp sent successfully"));
+    }
+
+    @PostMapping("/forgot-password/resend-otp")
+    public ResponseEntity<OtpResponse> resendPasswordResetOtp(@RequestBody ForgetPasswordRequest request) {
+        authenticationService.resendOtpForPwd(request);
+        return ResponseEntity.ok(new OtpResponse("Otp resend successfully "));
+    }
+
+    @PostMapping("/forgot-password/reset")
+    public ResponseEntity<OtpResponse> resetPassword(@RequestBody PasswordOtpRequest request) {
+        authenticationService.verifyOtpForPwd(request);
+        return ResponseEntity.ok(new OtpResponse("otp successfully verified"));
+    }
 }
