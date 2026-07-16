@@ -152,3 +152,15 @@ INSERT INTO roles (name) VALUES
     ('LND_ADMIN'),
     ('SYS_ADMIN');
 
+
+ALTER TABLE users
+ADD COLUMN auth_provider VARCHAR(20) NOT NULL DEFAULT 'LOCAL';
+
+Alter table users
+add column provider_id varchar(100) unique;
+
+
+select * from users;
+
+
+
