@@ -13,4 +13,6 @@ public class UpdateProfileRequest {
     private String fullName;
     private String phoneNumber;
     private String profileImageUrl;
+    private Long departmentId;
+    private Long jobRoleId;
 }
