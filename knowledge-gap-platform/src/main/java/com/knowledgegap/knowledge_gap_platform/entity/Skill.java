@@ -28,6 +28,7 @@ public class Skill {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 

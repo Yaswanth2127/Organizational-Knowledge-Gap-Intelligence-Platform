@@ -26,9 +26,11 @@ public class CompetencyFramework {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer version = 1;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
