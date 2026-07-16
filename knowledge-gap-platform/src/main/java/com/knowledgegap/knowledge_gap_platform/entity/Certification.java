@@ -47,6 +47,14 @@ public class Certification {
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assessment_id")
+    private Assessment assessment;
+
     @PrePersist
     public void prePersist(){
         createdAt=LocalDateTime.now();

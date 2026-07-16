@@ -35,6 +35,7 @@ public class FrameworkRequiredSkill {
     @Column(name = "required_proficiency", nullable = false)
     private ProficiencyLevel requiredProficiency;
 
+    @Builder.Default
     @Column(name = "weight", precision = 4, scale = 2,nullable = false)
     private BigDecimal weight = BigDecimal.valueOf(1.0);
 }
