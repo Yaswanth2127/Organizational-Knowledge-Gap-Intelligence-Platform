@@ -2,16 +2,15 @@ package com.knowledgegap.knowledge_gap_platform.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ForgetPasswordRequest {
+public class LoginRequest {
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Please enter a valid email")
+    @Email(message = "Invalid email")
     private String email;
+
+    @NotBlank(message = "Password is required")
+    private String password;
 }

@@ -4,29 +4,42 @@ import com.knowledgegap.knowledge_gap_platform.dto.CertificationRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.CertificationResponse;
 import com.knowledgegap.knowledge_gap_platform.service.CertificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
 @RestController
 @RequestMapping("/api/certifications")
-@CrossOrigin("*")
 @RequiredArgsConstructor
+@CrossOrigin("*")
+@PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
 public class CertificationController {
+
     private final CertificationService certificationService;
 
-    @PostMapping("/add")
+    // Upload Certification
+    @PostMapping(
+            value = "/add",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<CertificationResponse> addCertification(
-            @RequestBody CertificationRequest certificationRequest) {
+
+            @RequestPart("data")
+            CertificationRequest request,
+
+            @RequestPart(value = "file", required = false)
+            MultipartFile file) {
 
         return ResponseEntity.ok(
-                certificationService.addCertification(certificationRequest)
+                certificationService.addCertification(request, file)
         );
     }
 
+    // Get All Certifications
     @GetMapping("/all")
     public ResponseEntity<List<CertificationResponse>> getAllCertifications() {
 
@@ -35,6 +48,7 @@ public class CertificationController {
         );
     }
 
+    // Get Certification By Id
     @GetMapping("/{id}")
     public ResponseEntity<CertificationResponse> getById(
             @PathVariable Long id) {
@@ -44,20 +58,37 @@ public class CertificationController {
         );
     }
 
-    @PutMapping("/{id}")
+    // Update Certification
+    @PutMapping(
+            value = "/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<CertificationResponse> update(
+
             @PathVariable Long id,
-            @RequestBody CertificationRequest certificationRequest) {
+
+            @RequestPart("data")
+            CertificationRequest request,
+
+            @RequestPart(value = "file", required = false)
+            MultipartFile file) {
 
         return ResponseEntity.ok(
-                certificationService.updateCertification(id, certificationRequest)
+                certificationService.updateCertification(
+                        id,
+                        request,
+                        file
+                )
         );
     }
 
+    // Delete Certification
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
 
         certificationService.deleteCertificationById(id);
+
         return ResponseEntity.noContent().build();
     }
 }
