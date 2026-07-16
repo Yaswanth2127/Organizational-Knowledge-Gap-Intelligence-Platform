@@ -1,9 +1,9 @@
 package com.knowledgegap.knowledge_gap_platform.security;
-import org.springframework.context.annotation.Lazy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,47 +28,84 @@ public class SecurityConfig {
             throws Exception {
 
         http
-
-                 .cors(cors -> {})
+                .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Public APIs
-                        .requestMatchers( "/api/auth/**",
+                        // ==========================
+                        // PUBLIC ENDPOINTS
+                        // ==========================
+                        .requestMatchers(
+                                "/api/auth/**",
                                 "/oauth2/**",
-                                "/login/**").permitAll()
+                                "/login/**",
 
-                        // Admin only
+                                // Swagger
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml"
+                        ).permitAll()
+
+                        // ==========================
+                        // SYS ADMIN
+                        // ==========================
                         .requestMatchers("/api/admin/**")
                         .hasRole("SYS_ADMIN")
 
-                        // Admin and HR
+                        // ==========================
+                        // HR + SYS ADMIN
+                        // ==========================
                         .requestMatchers("/api/hr/**")
                         .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST")
 
-                        // Employee, HR and Admin
-                       .requestMatchers("/api/users/**")
-                       .hasAnyRole("SYS_ADMIN", "HR_SPECIALIST", "EMPLOYEE")
+                        // ==========================
+                        // USERS
+                        // ==========================
+                        .requestMatchers("/api/users/**")
+                        .hasAnyRole(
+                                "SYS_ADMIN",
+                                "HR_SPECIALIST",
+                                "EMPLOYEE"
+                        )
 
-                       .requestMatchers("/api/employee-skills/**")
-                       .hasAnyRole("EMPLOYEE","HR_SPECIALIST","SYS_ADMIN")
+                        // ==========================
+                        // EMPLOYEE SKILLS
+                        // ==========================
+                        .requestMatchers("/api/employee-skills/**")
+                        .hasAnyRole(
+                                "EMPLOYEE",
+                                "HR_SPECIALIST",
+                                "SYS_ADMIN"
+                        )
 
-                       .requestMatchers("/api/certifications/**")
-                       .hasAnyRole("EMPLOYEE","HR_SPECIALIST","SYS_ADMIN")
+                        // ==========================
+                        // CERTIFICATIONS
+                        // ==========================
+                        .requestMatchers("/api/certifications/**")
+                        .hasAnyRole(
+                                "EMPLOYEE",
+                                "HR_SPECIALIST",
+                                "SYS_ADMIN"
+                        )
 
-                        // Everything else requires login
+                        // ==========================
+                        // EVERYTHING ELSE
+                        // ==========================
                         .anyRequest()
                         .authenticated()
                 )
 
                 .userDetailsService(customUserDetailsService)
+
                 .oauth2Login(oauth -> oauth
-                .successHandler(oAuth2LoginSuccessHandler)
-        )
+                        .successHandler(oAuth2LoginSuccessHandler)
+                )
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
