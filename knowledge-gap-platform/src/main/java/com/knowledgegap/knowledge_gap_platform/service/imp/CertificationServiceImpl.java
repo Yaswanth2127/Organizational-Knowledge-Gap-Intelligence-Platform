@@ -9,119 +9,98 @@ import com.knowledgegap.knowledge_gap_platform.repository.CertificationRepositor
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
 import com.knowledgegap.knowledge_gap_platform.service.CertificationService;
+import com.knowledgegap.knowledge_gap_platform.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CertificationServiceImpl implements CertificationService {
+
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
     private final SkillRepository skillRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Override
-    public CertificationResponse addCertification(CertificationRequest certificationRequest) {
-        User user = userRepository.findById(certificationRequest.getUserId())
+    public CertificationResponse addCertification(
+            CertificationRequest request,
+            MultipartFile file) {
+
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        String uploadedFileUrl = null;
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                uploadedFileUrl = cloudinaryService.uploadFile(file);
+            } catch (IOException e) {
+                throw new RuntimeException("File upload failed");
+            }
+        }
+
         Certification certification = Certification.builder()
-                .name(certificationRequest.getName())
-                .issuer(certificationRequest.getIssuer())
-                .credentialUrl(certificationRequest.getCredentialUrl())
-                .fileUrl(certificationRequest.getFileUrl())
-                .issueDate(certificationRequest.getIssueDate())
-                .expiryDate(certificationRequest.getExpiryDate())
                 .user(user)
+                .name(request.getName())
+                .issuer(request.getIssuer())
+                .credentialUrl(request.getCredentialUrl())
+                .fileUrl(uploadedFileUrl)
+                .issueDate(request.getIssueDate())
+                .expiryDate(request.getExpiryDate())
                 .build();
 
-        if (certificationRequest.getSkillId() != null) {
-
-            Skill skill = skillRepository.findById(certificationRequest.getSkillId())
+        if (request.getSkillId() != null) {
+            Skill skill = skillRepository.findById(request.getSkillId())
                     .orElseThrow(() -> new RuntimeException("Skill not found"));
 
             certification.setSkill(skill);
-
-        } else {
-
-            certification.setSkill(null);
         }
 
         certification = certificationRepository.save(certification);
 
-        Long skillId = certification.getSkill() != null
-                ? certification.getSkill().getId()
-                : null;
-
-
-        return new CertificationResponse(
-                certification.getId(),
-                certification.getUser().getId(),
-                skillId,
-                certification.getName(),
-                certification.getIssuer(),
-                certification.getCredentialUrl(),
-                certification.getFileUrl(),
-                certification.getIssueDate(),
-                certification.getExpiryDate());
+        return mapToResponse(certification);
     }
 
     @Override
     public List<CertificationResponse> getAllCertifications() {
+
         return certificationRepository.findAll()
                 .stream()
-                .map(certification -> new CertificationResponse(
-                        certification.getId(),
-                        certification.getUser().getId(),
-                        certification.getSkill() != null
-                                ? certification.getSkill().getId()
-                                : null,
-                        certification.getName(),
-                        certification.getIssuer(),
-                        certification.getCredentialUrl(),
-                        certification.getFileUrl(),
-                        certification.getIssueDate(),
-                        certification.getExpiryDate()
-                ))
+                .map(this::mapToResponse)
                 .toList();
     }
 
     @Override
     public CertificationResponse getCertificationById(Long id) {
+
         Certification certification = certificationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Certification not found"));
 
-        Long skillId = certification.getSkill() != null
-                ? certification.getSkill().getId()
-                : null;
-
-        return new CertificationResponse(
-                certification.getId(),
-                certification.getUser().getId(),
-                skillId,
-                certification.getName(),
-                certification.getIssuer(),
-                certification.getCredentialUrl(),
-                certification.getFileUrl(),
-                certification.getIssueDate(),
-                certification.getExpiryDate()
-        );
+        return mapToResponse(certification);
     }
 
     @Override
-    public CertificationResponse updateCertification(Long id, CertificationRequest certificationRequest) {
+    public CertificationResponse updateCertification(
+            Long id,
+            CertificationRequest request,
+            MultipartFile file) {
+
         Certification certification = certificationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Certification not found"));
 
-        User user = userRepository.findById(certificationRequest.getUserId())
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         certification.setUser(user);
 
-        if (certificationRequest.getSkillId() != null) {
+        if (request.getSkillId() != null) {
 
-            Skill skill = skillRepository.findById(certificationRequest.getSkillId())
+            Skill skill = skillRepository.findById(request.getSkillId())
                     .orElseThrow(() -> new RuntimeException("Skill not found"));
 
             certification.setSkill(skill);
@@ -131,41 +110,53 @@ public class CertificationServiceImpl implements CertificationService {
             certification.setSkill(null);
         }
 
-        certification.setName(certificationRequest.getName());
-        certification.setIssuer(certificationRequest.getIssuer());
-        certification.setCredentialUrl(certificationRequest.getCredentialUrl());
-        certification.setFileUrl(certificationRequest.getFileUrl());
-        certification.setIssueDate(certificationRequest.getIssueDate());
-        certification.setExpiryDate(certificationRequest.getExpiryDate());
+        certification.setName(request.getName());
+        certification.setIssuer(request.getIssuer());
+        certification.setCredentialUrl(request.getCredentialUrl());
+        certification.setIssueDate(request.getIssueDate());
+        certification.setExpiryDate(request.getExpiryDate());
+
+        if (file != null && !file.isEmpty()) {
+
+            try {
+                String uploadedFileUrl = cloudinaryService.uploadFile(file);
+                certification.setFileUrl(uploadedFileUrl);
+
+            } catch (IOException e) {
+
+                throw new RuntimeException("File upload failed");
+            }
+        }
 
         certification = certificationRepository.save(certification);
 
-        Long skillId = certification.getSkill() != null
-                ? certification.getSkill().getId()
-                : null;
-
-        return new CertificationResponse(
-                certification.getId(),
-                certification.getUser().getId(),
-                skillId,
-                certification.getName(),
-                certification.getIssuer(),
-                certification.getCredentialUrl(),
-                certification.getFileUrl(),
-                certification.getIssueDate(),
-                certification.getExpiryDate()
-        );
+        return mapToResponse(certification);
     }
 
     @Override
     public void deleteCertificationById(Long id) {
+
         if (!certificationRepository.existsById(id)) {
             throw new RuntimeException("Certification not found");
         }
 
         certificationRepository.deleteById(id);
+    }
 
+    private CertificationResponse mapToResponse(Certification certification) {
+
+        return CertificationResponse.builder()
+                .id(certification.getId())
+                .userId(certification.getUser().getId())
+                .skillId(certification.getSkill() != null
+                        ? certification.getSkill().getId()
+                        : null)
+                .name(certification.getName())
+                .issuer(certification.getIssuer())
+                .credentialUrl(certification.getCredentialUrl())
+                .fileUrl(certification.getFileUrl())
+                .issueDate(certification.getIssueDate())
+                .expiryDate(certification.getExpiryDate())
+                .build();
     }
 }
-
-
