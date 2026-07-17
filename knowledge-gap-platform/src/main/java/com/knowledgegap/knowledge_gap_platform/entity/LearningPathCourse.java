@@ -35,6 +35,6 @@ public class LearningPathCourse {
     @Column(name = "sequence_order",nullable = false)
     private Integer sequenceOrder;
 
-    @Column(name = "estimates_days")
+    @Column(name = "estimated_days")
     private Integer estimatedDays;
 }

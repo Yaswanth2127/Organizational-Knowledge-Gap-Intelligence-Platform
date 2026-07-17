@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.controller;
 import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillResponse;
 import com.knowledgegap.knowledge_gap_platform.service.EmployeeSkillService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -94,5 +95,7 @@ public class EmployeeSkillController {
         return ResponseEntity.noContent().build();
 
     }
+
+
 
 }
