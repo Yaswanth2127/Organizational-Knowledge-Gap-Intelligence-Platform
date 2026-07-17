@@ -1,5 +1,8 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum ProficiencyLevel {
     UNAWARE (0),
     BEGINNER  (1) ,
@@ -13,7 +16,4 @@ public enum ProficiencyLevel {
         this.value=value;
     }
 
-    public int getValue(){
-        return value;
-    }
 }
