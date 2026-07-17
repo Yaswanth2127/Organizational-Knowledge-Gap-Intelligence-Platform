@@ -90,24 +90,12 @@ public class SkillGapServiceImpl implements SkillGapService {
     }
 
     @Override
-    public SkillGapResponse getSkillGapById(Long id) {
-        return null;
-    }
+    public List<SkillGapResponse> FindAllByUserDepartmentId(Long deptId) {
 
-    @Override
-    public List<SkillGapResponse> getAllSkillGaps() {
         return List.of();
     }
 
-    @Override
-    public SkillGapResponse updateSkillGap(SkillGapRequest skillGapRequest, Long id) {
-        return null;
-    }
 
-    @Override
-    public void deleteSkillGapById(Long id) {
-
-    }
     private List<SkillGapResponse>mapToSkillGapResponse(List<SkillGap> skillGaps){
         List<SkillGapResponse> responses=new ArrayList<>();
 
