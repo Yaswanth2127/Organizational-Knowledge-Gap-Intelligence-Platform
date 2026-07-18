@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.*;
+import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.*;
 import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +94,20 @@ public class SkillGapServiceImpl implements SkillGapService {
     public List<SkillGapResponse> FindAllByUserDepartmentId(Long deptId) {
 
         return List.of();
+    }
+
+    @Override
+    public void updateAllByUserDepartmentId(Long deptId) {
+
+        List<User> users=userRepository.findAllByDepartmentId(deptId);
+
+        if(users.isEmpty()){
+            throw new ResourceNotFoundException("No users are there in department");
+        }
+
+        for(User user:users) {
+            analyzeSkillGap(new SkillGapRequest(user.getId()));
+        }
     }
 
 

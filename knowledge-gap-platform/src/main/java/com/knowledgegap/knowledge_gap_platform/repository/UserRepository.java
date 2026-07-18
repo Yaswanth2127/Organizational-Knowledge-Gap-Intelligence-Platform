@@ -26,4 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {"department","jobRole","manager"})
     List<User> findTop7ByOrderByCreatedAtDesc();
 
+
+    @EntityGraph(attributePaths = {"department","jobRole","manager"})
+    List<User> findAllByDepartmentId(Long departmentId);
+
 }
