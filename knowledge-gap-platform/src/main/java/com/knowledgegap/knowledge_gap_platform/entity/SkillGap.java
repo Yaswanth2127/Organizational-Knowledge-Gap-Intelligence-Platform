@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,10 +36,13 @@ public class SkillGap {
     @JoinColumn(name = "framework_id")
     private CompetencyFramework framework;
 
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     @Column(name = "required_level",nullable = false)
     private ProficiencyLevel requiredLevel;
 
+
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     @Column(name = "current_level",nullable = false)
     private ProficiencyLevel currentLevel;
@@ -45,10 +50,12 @@ public class SkillGap {
     @Column(name = "gap_score", nullable = false, precision = 5, scale = 2)
     private BigDecimal gapScore;
 
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GapSeverity severity;
 
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false )
