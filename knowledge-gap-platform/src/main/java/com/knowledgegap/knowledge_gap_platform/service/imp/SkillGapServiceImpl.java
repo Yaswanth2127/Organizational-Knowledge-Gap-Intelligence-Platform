@@ -8,6 +8,7 @@ import com.knowledgegap.knowledge_gap_platform.repository.*;
 import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class SkillGapServiceImpl implements SkillGapService {
@@ -59,7 +61,7 @@ public class SkillGapServiceImpl implements SkillGapService {
         }
         List<SkillGap> gaps=new ArrayList<>();
         for(FrameworkRequiredSkill requiredSkill:requiredSkills){
-            EmployeeSkill employeeSkill=employeeSkillMap.get(requiredSkill.getId());
+            EmployeeSkill employeeSkill=employeeSkillMap.get(requiredSkill.getSkill().getId());
 
             ProficiencyLevel currentLevel = employeeSkill == null
                             ? ProficiencyLevel.UNAWARE
