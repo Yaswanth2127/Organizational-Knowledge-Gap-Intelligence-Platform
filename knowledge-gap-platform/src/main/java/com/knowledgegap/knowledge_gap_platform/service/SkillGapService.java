@@ -8,5 +8,6 @@ import java.util.List;
 public interface SkillGapService {
     List<SkillGapResponse> analyzeSkillGap(SkillGapRequest skillGapRequest);
     List<SkillGapResponse> FindAllByUserDepartmentId(Long deptId);
+    void updateAllByUserDepartmentId(Long deptId);
 
 }
