@@ -15,6 +15,7 @@ import DepartmentManagement from "./pages/DepartmentManagement";
 import OAuthSuccess from "./pages/OAuthSuccess";
 import SkillCategoryManagement from "./pages/SkillCategoryManagement";
 import JobRoleManagement from "./pages/JobRoleManagement";
+import SkillManagement from "./pages/SkillManagement";
 
 // Protected Route wrapper — token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -83,6 +84,16 @@ function App() {
               <ProtectedRoute>
                   <AdminLayout>
                       <JobRoleManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
+      <Route
+          path="/skills"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <SkillManagement />
                   </AdminLayout>
               </ProtectedRoute>
           }
