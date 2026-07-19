@@ -1,7 +1,21 @@
 package com.knowledgegap.knowledge_gap_platform.repository;
 
 import com.knowledgegap.knowledge_gap_platform.entity.Course;
+import com.knowledgegap.knowledge_gap_platform.entity.Skill;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CourseRepository extends JpaRepository<Course,Long> {
+import java.util.List;
+import java.util.Optional;
+
+public interface CourseRepository extends JpaRepository<Course, Long> {
+
+    Optional<Course> findByTitle(String title);
+
+    boolean existsByTitle(String title);
+
+    List<Course> findBySkill(Skill skill);
+
+    List<Course> findByIsActiveTrue();
+
+    List<Course> findBySkillAndIsActiveTrue(Skill skill);
 }

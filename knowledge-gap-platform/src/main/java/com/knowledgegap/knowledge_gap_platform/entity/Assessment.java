@@ -36,7 +36,7 @@ public class Assessment {
     @Column(length = 200)
     private String  title;
 
-    @Column(name = "score", precision = 5,scale = 2)
+    @Column(precision = 5, scale = 2)
     private BigDecimal score;
 
     @Builder.Default
@@ -50,10 +50,9 @@ public class Assessment {
     private LocalDateTime assessedAt;
 
     @PrePersist
-    public void onAssessedAt(){
-        if(assessedAt==null){
-            assessedAt=LocalDateTime.now();
+    public void prePersist() {
+        if (assessedAt == null) {
+            assessedAt = LocalDateTime.now();
         }
     }
-
 }

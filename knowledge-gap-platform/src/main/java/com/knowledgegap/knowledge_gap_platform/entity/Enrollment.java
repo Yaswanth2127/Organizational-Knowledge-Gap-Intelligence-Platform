@@ -1,4 +1,5 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
+import com.knowledgegap.knowledge_gap_platform.enums.TrainingStatus;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -54,9 +55,15 @@ public class Enrollment {
     private LocalDateTime completedAt;
 
     @PrePersist
-    public void onEnrolledAt(){
-        if(enrolledAt==null){
-            enrolledAt=LocalDateTime.now();
+    public void onCreate() {
+        if (enrolledAt == null) {
+            enrolledAt = LocalDateTime.now();
+        }
+        if (progressPercent == null) {
+            progressPercent = BigDecimal.ZERO;
+        }
+        if (status == null) {
+            status = TrainingStatus.NOT_STARTED;
         }
     }
 }
