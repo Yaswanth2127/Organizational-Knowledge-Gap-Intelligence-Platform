@@ -13,6 +13,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DepartmentManagement from "./pages/DepartmentManagement";
 import OAuthSuccess from "./pages/OAuthSuccess";
+import SkillCategoryManagement from "./pages/SkillCategoryManagement";
 
 // Protected Route wrapper — token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -22,7 +23,6 @@ function ProtectedRoute({ children }) {
   }
   return children;
 }
-
 function App() {
   return (
     <BrowserRouter>
@@ -66,9 +66,18 @@ function App() {
               </ProtectedRoute>
           }
       />
+      <Route
+          path="/skill-categories"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <SkillCategoryManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
       </Routes>
     </BrowserRouter>
   );
 }
-
 export default App;
