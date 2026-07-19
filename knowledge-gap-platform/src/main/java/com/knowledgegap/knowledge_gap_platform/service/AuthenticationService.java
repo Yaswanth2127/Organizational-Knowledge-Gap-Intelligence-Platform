@@ -202,9 +202,18 @@ public class AuthenticationService {
                         .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getName()))
                         .toList();
 
-        String role = authorities.get(0)
-                .getAuthority()
-                .replace("ROLE_", "");
+        List<String> rolePriority = List.of(
+                "SYS_ADMIN", "LND_ADMIN", "DEPARTMENT_HEAD", "HR_SPECIALIST",
+                "ADMIN", "HR", "MANAGER", "EMPLOYEE"
+        );
+
+        String role = authorities.stream()
+                .map(a -> a.getAuthority().replace("ROLE_", ""))
+                .min((r1, r2) -> Integer.compare(
+                        rolePriority.indexOf(r1),
+                        rolePriority.indexOf(r2)
+                ))
+                .orElseThrow(() -> new RuntimeException("No role assigned to user"));
 
         String token=jwtService.generateToken(new CustomUserDetails(user,authorities));
 
