@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/courses")
 @RequiredArgsConstructor
 public class CourseController {
@@ -74,3 +75,4 @@ public class CourseController {
         return ResponseEntity.ok("Course deleted successfully.");
     }
 }
+
