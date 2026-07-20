@@ -1,38 +1,22 @@
-// import Sidebar from "../components/Sidebar";
-// import Navbar from "../components/Navbar";
-// import Footer from "../components/Footer";
-
-// function AdminLayout({ children }) {
-//   return (
-//     <div className="flex">
-//       <Sidebar />
-
-//       <div className="flex-1">
-//         <Navbar />
-
-//         <main className="p-6 min-h-screen bg-gray-100">
-//           {children}
-//         </main>
-
-//         <Footer />
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default AdminLayout;
-
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {Menu,X,
+import {
+  Menu,
+  X,
   LayoutDashboard,
   User,
   LogOut,
   Bell,
   BookOpen,
-  Brain
-} from 'lucide-react';
+  Brain,
+  Building2,
+  FolderTree,
+  Users,
+  BrainCircuit,
+  Network,
+  BadgeCheck
+} from "lucide-react";
 
 const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -40,13 +24,11 @@ const AdminLayout = ({ children }) => {
 const role = localStorage.getItem("role");
 
 const navigation = [
-
   {
     name: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard
   },
-
   {
     name: "Profile",
     href: "/profile",
@@ -59,12 +41,45 @@ const navigation = [
           name: "Employee Skills",
           href: "/employee-skills",
           icon: Brain
+        },
+        {
+          name: "Departments",
+          href: "/departments",
+          icon: Building2
+        },
+        {
+          name: "Skill Categories",
+          href: "/skill-categories",
+          icon: FolderTree
+        },
+        {
+          name: "Job Roles",
+          href: "/job-roles",
+          icon: Users
+        },
+        {
+          name: "Skills",
+          href: "/skills",
+          icon: BrainCircuit
+        },
+        {
+          name: "Competency Frameworks",
+          href: "/competency-frameworks",
+          icon: Network
+        },
+        {
+          name: "Certifications",
+          href: "/certifications",
+          icon: BadgeCheck
+        },
+        {
+          name: "Courses",
+          href: "/courses",
+          icon: BookOpen
         }
       ]
     : [])
-
 ];
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
       {/* Top Navbar */}

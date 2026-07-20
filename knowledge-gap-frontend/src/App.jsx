@@ -64,13 +64,15 @@ function App() {
           }
       />
       <Route
-          path="/departments"
-          element={
-              <ProtectedRoute allowedRoles={["SYS_ADMIN", "HR_SPECIALIST"]}>
-                  <DepartmentManagement />
-              </ProtectedRoute>
-          }
-      />
+            path="/departments"
+            element={
+                <ProtectedRoute allowedRoles={["SYS_ADMIN", "HR_SPECIALIST"]}>
+                    <AdminLayout>
+                        <DepartmentManagement />
+                    </AdminLayout>
+                </ProtectedRoute>
+            }
+        />
       <Route
           path="/skill-categories"
           element={
