@@ -1,6 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.dto;
 
-import com.knowledgegap.knowledge_gap_platform.enums.TrainingStatus;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.TrainingStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

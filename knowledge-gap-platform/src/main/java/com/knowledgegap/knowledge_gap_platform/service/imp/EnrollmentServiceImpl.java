@@ -1,11 +1,11 @@
-package com.knowledgegap.knowledge_gap_platform.service.impl;
+package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.EnrollmentRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.EnrollmentResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.Course;
 import com.knowledgegap.knowledge_gap_platform.entity.Enrollment;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
-import com.knowledgegap.knowledge_gap_platform.enums.TrainingStatus;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.TrainingStatus;
 import com.knowledgegap.knowledge_gap_platform.repository.CourseRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.EnrollmentRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;

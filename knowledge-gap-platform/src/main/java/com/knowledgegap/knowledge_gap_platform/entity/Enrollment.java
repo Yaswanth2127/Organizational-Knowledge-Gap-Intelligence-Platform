@@ -1,5 +1,5 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
-import com.knowledgegap.knowledge_gap_platform.enums.TrainingStatus;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.TrainingStatus;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
