@@ -1,9 +1,11 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
-import com.knowledgegap.knowledge_gap_platform.enums.CourseDifficulty;
-import com.knowledgegap.knowledge_gap_platform.enums.CourseSource;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.CourseDifficulty;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.CourseSource;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,6 +46,7 @@ public class Course {
     @Column(name = "duration_hours", precision = 5, scale = 2)
     private BigDecimal durationHours;
 
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private CourseDifficulty difficulty;
