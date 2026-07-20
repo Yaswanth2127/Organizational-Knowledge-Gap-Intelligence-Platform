@@ -109,33 +109,38 @@ export default function AdminDashboard() {
         ? 0
         : Math.round((usersWithProfileImage / users.length) * 100);
 
-    const recentActivities = [
-        {
-            title: "New employee registered",
-            description: "Yaswanth joined the organization.",
-            color: "bg-green-500"
-        },
-        {
-            title: "Skill Added",
-            description: "Spring Boot was added to the Skill Inventory.",
-            color: "bg-indigo-500"
-        },
-        {
-            title: "Department Created",
-            description: "Research & Development department created.",
-            color: "bg-orange-500"
-        },
-        {
-            title: "Certification Added",
-            description: "AWS Certified Developer certification created.",
-            color: "bg-cyan-500"
-        },
-        {
-            title: "Competency Framework Updated",
-            description: "Backend Developer framework updated.",
-            color: "bg-pink-500"
-        }
-    ];
+    const departmentGapSummary = [
+  {
+    department: "Engineering",
+    avgGapScore: 2.8,
+    employeesWithGap: 18,
+    status: "High"
+  },
+  {
+    department: "QA",
+    avgGapScore: 2.2,
+    employeesWithGap: 12,
+    status: "Medium"
+  },
+  {
+    department: "HR",
+    avgGapScore: 1.4,
+    employeesWithGap: 5,
+    status: "Low"
+  },
+  {
+    department: "Sales",
+    avgGapScore: 0.9,
+    employeesWithGap: 3,
+    status: "Healthy"
+  }
+];
+const statusStyles = {
+  High: "bg-red-100 text-red-700",
+  Medium: "bg-orange-100 text-orange-700",
+  Low: "bg-yellow-100 text-yellow-700",
+  Healthy: "bg-green-100 text-green-700",
+};
 
     const loadDashboard = async () => {
 
@@ -470,60 +475,60 @@ return (
         </div>
 
     </div>
-    {/* Recent Activity */}
+    {/* Department Gap Summary */}
 
     <div className="bg-white rounded-2xl shadow-lg p-6 mt-8">
+  <div className="mb-6">
+    <h2 className="text-2xl font-bold text-gray-800">
+      Department Gap Summary
+    </h2>
+    <p className="text-sm text-gray-500 mt-1">
+      Current skill gap overview across departments.
+    </p>
+  </div>
 
-        <div className="mb-6">
+  <div className="overflow-x-auto">
+    <table className="min-w-full text-sm">
+      <thead>
+        <tr className="border-b text-gray-600">
+          <th className="text-left py-3">Department</th>
+          <th className="text-center py-3">Avg. Gap Score</th>
+          <th className="text-center py-3">Employees with Gap</th>
+          <th className="text-center py-3">Status</th>
+        </tr>
+      </thead>
 
-            <h2 className="text-2xl font-bold text-gray-800">
+      <tbody>
+        {departmentGapSummary.map((item, index) => (
+          <tr
+            key={index}
+            className="border-b last:border-none hover:bg-gray-50"
+          >
+            <td className="py-4 font-medium text-gray-800">
+              {item.department}
+            </td>
 
-                Recent Activity
+            <td className="text-center text-gray-700">
+              {item.avgGapScore}
+            </td>
 
-            </h2>
+            <td className="text-center text-gray-700">
+              {item.employeesWithGap}
+            </td>
 
-            <p className="text-sm text-gray-500 mt-1">
-
-                Latest activities performed in the platform.
-
-            </p>
-
-        </div>
-
-        <div className="space-y-5">
-
-            {recentActivities.map((activity, index) => (
-
-                <div
-                    key={index}
-                    className="flex items-start gap-4"
-                >
-
-                    <div className={`w-3 h-3 rounded-full mt-2 ${activity.color}`}></div>
-
-                    <div className="flex-1">
-
-                        <h3 className="font-semibold text-gray-800">
-
-                            {activity.title}
-
-                        </h3>
-
-                        <p className="text-sm text-gray-500 mt-1">
-
-                            {activity.description}
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            ))}
-
-        </div>
-
-    </div>
+            <td className="text-center">
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold ${statusStyles[item.status]}`}
+              >
+                {item.status}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
     {/* Recent Users */}
 
