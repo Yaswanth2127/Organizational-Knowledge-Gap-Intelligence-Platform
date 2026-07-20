@@ -94,6 +94,39 @@ public class SecurityConfig {
                                 "SYS_ADMIN"
                         )
 
+                        .requestMatchers("/api/courses/**")
+                        .hasAnyRole(
+                                "EMPLOYEE", 
+                                "MANAGER",
+                                "HR_SPECIALIST", 
+                                "LND_ADMIN", 
+                                "SYS_ADMIN"
+                        )
+
+                        .requestMatchers("/api/learning-paths/**")
+                        .hasAnyRole(
+                                "EMPLOYEE",
+                                "HR_SPECIALIST",
+                                "LND_ADMIN",
+                                "SYS_ADMIN"
+                        )
+
+                        .requestMatchers("/api/enrollments/**")
+                        .hasAnyRole(
+                                "EMPLOYEE",
+                                "HR_SPECIALIST",
+                                "LND_ADMIN",
+                                "SYS_ADMIN"
+                        )
+
+                        .requestMatchers("/api/learning-path-courses/**")
+                        .hasAnyRole(
+                               "EMPLOYEE",
+                               "HR_SPECIALIST",
+                               "LND_ADMIN",
+                               "SYS_ADMIN"
+                        )
+
                         // ==========================
                         // EVERYTHING ELSE
                         // ==========================

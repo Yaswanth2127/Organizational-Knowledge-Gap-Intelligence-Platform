@@ -1,4 +1,4 @@
-package com.knowledgegap.knowledge_gap_platform.entity;
+package com.knowledgegap.knowledge_gap_platform.enums;
 
 public enum CourseSource {
     INTERNAL,

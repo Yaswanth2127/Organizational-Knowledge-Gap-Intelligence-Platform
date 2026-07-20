@@ -4,28 +4,32 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class DepartmentGapSummaryResponse {
-        private Long id;
 
-        private Long departmentId;
-        private String departmentName;
+    private Long id;
 
-        private Long skillId;
-        private String skillName;
+    private Long departmentId;
 
-        private BigDecimal avgGapScore;
+    private String departmentName;
 
-        private Integer employeesWithGap=0;
+    private Long skillId;
 
-        private LocalDate periodStart;
+    private String skillName;
 
-        private LocalDate periodEnd;
+    private BigDecimal avgGapScore;
+
+    @Builder.Default
+    private Integer employeesWithGap = 0;
+
+    private LocalDate periodStart;
+
+    private LocalDate periodEnd;
 }
