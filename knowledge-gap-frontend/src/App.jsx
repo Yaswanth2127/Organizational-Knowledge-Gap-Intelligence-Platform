@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -16,8 +16,9 @@ import OAuthSuccess from "./pages/OAuthSuccess";
 import SkillCategoryManagement from "./pages/SkillCategoryManagement";
 import JobRoleManagement from "./pages/JobRoleManagement";
 import SkillManagement from "./pages/SkillManagement";
+import CompetencyFrameworkManagement from "./pages/CompetencyFrameworkManagement";
 
-// Protected Route wrapper — token check karke hi andar jaane deta hai
+// Protected Route wrapper â€” token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -98,8 +99,22 @@ function App() {
               </ProtectedRoute>
           }
       />
+      <Route
+          path="/competency-frameworks"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <CompetencyFrameworkManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
       </Routes>
     </BrowserRouter>
   );
 }
 export default App;
+
+
+
+
