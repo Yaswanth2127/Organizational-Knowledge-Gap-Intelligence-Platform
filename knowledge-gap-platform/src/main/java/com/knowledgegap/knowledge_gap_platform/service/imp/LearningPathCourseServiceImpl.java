@@ -1,4 +1,4 @@
-package com.knowledgegap.knowledge_gap_platform.service.impl;
+package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.LearningPathCourseRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.LearningPathCourseResponse;

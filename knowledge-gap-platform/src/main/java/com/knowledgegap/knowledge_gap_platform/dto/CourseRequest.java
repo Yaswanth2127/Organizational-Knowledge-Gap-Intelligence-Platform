@@ -1,7 +1,7 @@
 package com.knowledgegap.knowledge_gap_platform.dto;
 
-import com.knowledgegap.knowledge_gap_platform.enums.CourseDifficulty;
-import com.knowledgegap.knowledge_gap_platform.enums.CourseSource;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.CourseDifficulty;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.CourseSource;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

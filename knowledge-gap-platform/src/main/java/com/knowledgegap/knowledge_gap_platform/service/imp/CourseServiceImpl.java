@@ -1,6 +1,5 @@
-package com.knowledgegap.knowledge_gap_platform.service.impl;
+package com.knowledgegap.knowledge_gap_platform.service.imp;
 
-import com.knowledgegap.knowledge_gap_platform.enums.CourseDifficulty;
 import com.knowledgegap.knowledge_gap_platform.dto.CourseRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.CourseResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.Course;

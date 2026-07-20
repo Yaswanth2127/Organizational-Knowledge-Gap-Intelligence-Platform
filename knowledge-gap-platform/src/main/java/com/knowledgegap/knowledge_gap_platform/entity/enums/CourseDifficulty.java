@@ -1,4 +1,4 @@
-package com.knowledgegap.knowledge_gap_platform.enums;
+package com.knowledgegap.knowledge_gap_platform.entity.enums;
 
 public enum CourseDifficulty {
     BEGINNER,

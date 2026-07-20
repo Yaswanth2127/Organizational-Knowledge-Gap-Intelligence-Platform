@@ -1,11 +1,11 @@
-package com.knowledgegap.knowledge_gap_platform.service.impl;
+package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.LearningPathRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.LearningPathResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.LearningPath;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
-import com.knowledgegap.knowledge_gap_platform.enums.LearningPathStatus;
-import com.knowledgegap.knowledge_gap_platform.enums.RecommendationSource;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.RecommendationSource;
 import com.knowledgegap.knowledge_gap_platform.repository.LearningPathRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
 import com.knowledgegap.knowledge_gap_platform.service.LearningPathService;
