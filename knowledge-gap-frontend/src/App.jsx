@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,8 +13,14 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DepartmentManagement from "./pages/DepartmentManagement";
 import OAuthSuccess from "./pages/OAuthSuccess";
+import SkillCategoryManagement from "./pages/SkillCategoryManagement";
+import JobRoleManagement from "./pages/JobRoleManagement";
+import SkillManagement from "./pages/SkillManagement";
+import CompetencyFrameworkManagement from "./pages/CompetencyFrameworkManagement";
+import CertificationManagement from "./pages/CertificationManagement";
+import CourseManagement from "./pages/CourseManagement";
 
-// Protected Route wrapper — token check karke hi andar jaane deta hai
+// Protected Route wrapper â€” token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -22,7 +28,6 @@ function ProtectedRoute({ children }) {
   }
   return children;
 }
-
 function App() {
   return (
     <BrowserRouter>
@@ -66,9 +71,76 @@ function App() {
               </ProtectedRoute>
           }
       />
+      <Route
+          path="/skill-categories"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <SkillCategoryManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
+      <Route
+          path="/job-roles"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <JobRoleManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
+      <Route
+          path="/skills"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <SkillManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
+      <Route
+          path="/competency-frameworks"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <CompetencyFrameworkManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
+      <Route
+          path="/certifications"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <CertificationManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
+      <Route
+          path="/courses"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <CourseManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
       </Routes>
     </BrowserRouter>
   );
 }
-
 export default App;
+
+
+
+
+
+
+
+

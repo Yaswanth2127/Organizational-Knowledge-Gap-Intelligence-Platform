@@ -10,3 +10,7 @@ export const getRecentUsers = async () => {
     const response = await api.get("/users/recent");
     return response.data;
 };
+export const getAllUsers = async () => {
+    const response = await api.get('/api/users');
+    return response.data;
+};
