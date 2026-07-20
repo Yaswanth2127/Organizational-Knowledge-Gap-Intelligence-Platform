@@ -1,5 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
 
+import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

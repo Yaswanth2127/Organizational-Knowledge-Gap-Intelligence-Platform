@@ -1,6 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.dto;
 
-import com.knowledgegap.knowledge_gap_platform.entity.ProficiencyLevel;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
