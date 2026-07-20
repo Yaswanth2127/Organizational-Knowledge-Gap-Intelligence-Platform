@@ -41,10 +41,13 @@ public class CourseServiceImpl implements CourseService {
                 .durationHours(request.getDurationHours())
                 .difficulty(request.getDifficulty())
                 .thumbnailUrl(request.getThumbnailUrl())
-                .isActive(request.getIsActive() == null ? true : request.getIsActive())
+                .isActive(request.getIsActive() == null || request.getIsActive())
                 .build();
 
         Course savedCourse = courseRepository.save(course);
+
+        savedCourse = courseRepository.findById(savedCourse.getId())
+                .orElseThrow(() -> new RuntimeException("Course not found"));
 
         return mapToResponse(savedCourse);
     }
