@@ -10,31 +10,41 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "recommendations",uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id","course_id","skill_gap_id"})
-})
+@Table(
+        name = "recommendations",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {
+                                "user_id",
+                                "course_id",
+                                "skill_gap_id"
+                        }
+                )
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Recommendation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id",nullable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skill_gap_id")
     private SkillGap skillGap;
 
-    @Column(name = "relevance_score",precision = 5,scale = 2)
+    @Column(name = "relevance_score", precision = 5, scale = 2)
     private BigDecimal relevanceScore;
 
     @Column(columnDefinition = "TEXT")
@@ -42,15 +52,20 @@ public class Recommendation {
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean accepted=Boolean.FALSE;
+    private Boolean accepted = Boolean.FALSE;
 
-    @Column(name = "generated_at",nullable = false)
+    @Column(name = "generated_at", nullable = false)
     private LocalDateTime generatedAt;
 
     @PrePersist
-    public void onGeneratedAt(){
-        if(generatedAt==null){
-            generatedAt=LocalDateTime.now();
+    public void prePersist() {
+
+        if (generatedAt == null) {
+            generatedAt = LocalDateTime.now();
+        }
+
+        if (accepted == null) {
+            accepted = Boolean.FALSE;
         }
     }
 }

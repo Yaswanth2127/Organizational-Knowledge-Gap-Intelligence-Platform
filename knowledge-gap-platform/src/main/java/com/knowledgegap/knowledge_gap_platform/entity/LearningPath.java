@@ -1,5 +1,8 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
 
+import com.knowledgegap.knowledge_gap_platform.entity.enums.RecommendationSource;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,22 +27,30 @@ public class LearningPath {
     private User user;
 
     @Builder.Default
-    @Column(name = "generated_by",nullable = false)
     @Enumerated(EnumType.STRING)
-    private RecommendationSource generatedBy=RecommendationSource.AI;
+    @Column(name = "generated_by", nullable = false, length = 20)
+    private RecommendationSource generatedBy = RecommendationSource.AI;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private LearningPathStatus status=LearningPathStatus.ACTIVE;
+    @Column(nullable = false, length = 20)
+    private LearningPathStatus status = LearningPathStatus.ACTIVE;
 
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void onCreatedAt(){
-        if(createdAt==null){
-            createdAt=LocalDateTime.now();
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+
+        if (generatedBy == null) {
+            generatedBy = RecommendationSource.AI;
+        }
+
+        if (status == null) {
+            status = LearningPathStatus.ACTIVE;
         }
     }
 }

@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.*;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.*;
 import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
