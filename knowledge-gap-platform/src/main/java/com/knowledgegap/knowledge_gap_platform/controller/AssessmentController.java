@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/assessments")
 @RequiredArgsConstructor
 public class AssessmentController {
@@ -73,3 +74,4 @@ public class AssessmentController {
         assessmentService.deleteAssessment(id);
     }
 }
+
