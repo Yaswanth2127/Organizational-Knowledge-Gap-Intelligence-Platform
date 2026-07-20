@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -54,14 +53,7 @@ public class User {
     @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-
-
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_provider", nullable = false)
     private AuthProvider authProvider = AuthProvider.LOCAL;
@@ -69,16 +61,37 @@ public class User {
     @Column(name = "provider_id", unique = true, length = 100)
     private String providerId;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
+
+        if (createdAt == null) {
+            createdAt = now;
+        }
+
         updatedAt = now;
+
+        if (isActive == null) {
+            isActive = true;
+        }
+
+        if (emailVerified == null) {
+            emailVerified = false;
+        }
+
+        if (authProvider == null) {
+            authProvider = AuthProvider.LOCAL;
+        }
     }
 
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }
