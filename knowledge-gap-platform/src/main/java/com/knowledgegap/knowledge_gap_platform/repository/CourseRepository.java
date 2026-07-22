@@ -15,7 +15,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     boolean existsByTitle(String title);
 
     @EntityGraph(attributePaths = {"skill"})
-    List<Course> findBySkill(Skill skill);
+    List<Course> findBySkillId(Long skillId);
 
     @EntityGraph(attributePaths = {"skill"})
     List<Course> findByIsActiveTrue();
@@ -30,4 +30,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Override
     @EntityGraph(attributePaths = {"skill"})
     List<Course> findAll();
+
+    @EntityGraph(attributePaths = {"skill"})
+    Optional<Course> findByTitleAndProvider(
+            String title,String provider);
 }

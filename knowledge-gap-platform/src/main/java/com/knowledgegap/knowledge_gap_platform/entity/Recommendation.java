@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
         uniqueConstraints = {
                 @UniqueConstraint(
                         columnNames = {
-                                "user_id",
+                                "learning_path_id",
                                 "course_id",
                                 "skill_gap_id"
                         }
@@ -43,6 +43,10 @@ public class Recommendation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skill_gap_id")
     private SkillGap skillGap;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "learning_path_id", nullable = false)
+    private LearningPath learningPath;
 
     @Column(name = "relevance_score", precision = 5, scale = 2)
     private BigDecimal relevanceScore;
