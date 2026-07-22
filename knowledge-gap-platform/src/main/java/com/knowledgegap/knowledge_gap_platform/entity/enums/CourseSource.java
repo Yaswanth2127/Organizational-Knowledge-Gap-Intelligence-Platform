@@ -5,5 +5,7 @@ public enum CourseSource {
     COURSERA,
     UDEMY,
     LINKEDIN_LEARNING,
+    EDX,
+    YOUTUBE,
     OTHER
 }
