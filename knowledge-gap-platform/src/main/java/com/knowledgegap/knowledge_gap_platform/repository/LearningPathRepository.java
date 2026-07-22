@@ -4,6 +4,9 @@ import com.knowledgegap.knowledge_gap_platform.entity.LearningPath;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -12,5 +15,14 @@ public interface LearningPathRepository extends JpaRepository<LearningPath, Long
     List<LearningPath> findByUser(User user);
 
     List<LearningPath> findByStatus(LearningPathStatus status);
+
+    @Modifying
+    @Query("""
+    UPDATE LearningPath lp
+    SET lp.status = com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus.ARCHIVED
+    WHERE lp.user.id = :userId
+      AND lp.status = com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus.ACTIVE
+""")
+    void archiveActiveLearningPathsByUserId(@Param("userId") Long userId);
 
 }

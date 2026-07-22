@@ -26,6 +26,7 @@ public class LearningPath {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
+
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "generated_by", nullable = false, length = 20)
@@ -35,6 +36,9 @@ public class LearningPath {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private LearningPathStatus status = LearningPathStatus.ACTIVE;
+
+    @Column(columnDefinition = "TEXT")
+    private String summary;
 
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
