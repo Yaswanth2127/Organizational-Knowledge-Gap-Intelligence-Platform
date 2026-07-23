@@ -18,25 +18,7 @@ public class LearningPathController {
 
     private final LearningPathService learningPathService;
 
-    @PostMapping
-    public ResponseEntity<LearningPathResponse> create(
-            @Valid @RequestBody LearningPathRequest request) {
 
-        return new ResponseEntity<>(
-                learningPathService.create(request),
-                HttpStatus.CREATED
-        );
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<LearningPathResponse> update(
-            @PathVariable Long id,
-            @Valid @RequestBody LearningPathRequest request) {
-
-        return ResponseEntity.ok(
-                learningPathService.update(id, request)
-        );
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<LearningPathResponse> getById(
@@ -55,12 +37,15 @@ public class LearningPathController {
         );
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(
-            @PathVariable Long id) {
-
-        learningPathService.delete(id);
-
-        return ResponseEntity.ok("Learning Path deleted successfully.");
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<LearningPathResponse> getCurrentLearningPathByUserId(@PathVariable Long userId){
+        return ResponseEntity.ok(learningPathService.getCurrentLearningPathByUserId(userId));
     }
+
+    @GetMapping("/user/{userId}/history")
+    public ResponseEntity<List<LearningPathResponse>> getLearningPathHistoryByUserId(@PathVariable Long userId){
+        return ResponseEntity.ok(learningPathService.getLearningPathByUserId(userId));
+    }
+
+
 }

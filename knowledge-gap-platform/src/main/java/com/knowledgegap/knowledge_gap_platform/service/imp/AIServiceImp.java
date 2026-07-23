@@ -10,6 +10,8 @@ import com.knowledgegap.knowledge_gap_platform.dto.SkillRecommendationResponse;
 import com.knowledgegap.knowledge_gap_platform.dto.ai.AIRecommendationRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.ai.AIRecommendationResponse;
 
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentPromptData;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.GeneratedAssessment;
 import com.knowledgegap.knowledge_gap_platform.dto.gemini.GeminiRecommendationResponse;
 import com.knowledgegap.knowledge_gap_platform.dto.gemini.GeminiRecommendedCourse;
 import com.knowledgegap.knowledge_gap_platform.dto.gemini.GeminiSkillRecommendation;
@@ -169,6 +171,29 @@ public class AIServiceImp implements AIService {
 
         return response;
     }
+
+    @Override
+    public GeneratedAssessment generateAssessment(AssessmentPromptData data) {
+        try {
+
+            String prompt = promptBuilder.buildAssessmentPrompt(data);
+
+            String response = geminiClient.generateContent(prompt);
+            System.out.println("Gemini Response:");
+            System.out.println(response);
+
+            return objectMapper.readValue(response, GeneratedAssessment.class);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            System.out.println(e);
+            throw new RuntimeException("Failed to parse Gemini assessment response.", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate assessment.", e);
+        }
+
+    }
+
     private CourseRequest mapToCourseRequest(GeminiRecommendedCourse course,SkillGap skillGap){
 
          return  CourseRequest.builder()
