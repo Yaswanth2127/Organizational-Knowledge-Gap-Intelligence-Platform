@@ -1,7 +1,9 @@
 package com.knowledgegap.knowledge_gap_platform.controller;
 
-import com.knowledgegap.knowledge_gap_platform.dto.AssessmentRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.AssessmentResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentApprovalRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentCreateRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentSubmitRequest;
 import com.knowledgegap.knowledge_gap_platform.service.AssessmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class AssessmentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AssessmentResponse createAssessment(
-            @Valid @RequestBody AssessmentRequest request) {
+            @Valid @RequestBody AssessmentCreateRequest request) {
 
         return assessmentService.createAssessment(request);
     }
@@ -42,15 +44,9 @@ public class AssessmentController {
     public List<AssessmentResponse> getAssessmentsByUser(
             @PathVariable Long userId) {
 
-        return assessmentService.getAssessmentsByUser(userId);
+        return assessmentService.getAssessmentsByUserId(userId);
     }
 
-    @GetMapping("/course/{courseId}")
-    public List<AssessmentResponse> getAssessmentsByCourse(
-            @PathVariable Long courseId) {
-
-        return assessmentService.getAssessmentsByCourse(courseId);
-    }
 
     @GetMapping("/skill/{skillId}")
     public List<AssessmentResponse> getAssessmentsBySkill(
@@ -58,20 +54,39 @@ public class AssessmentController {
 
         return assessmentService.getAssessmentsBySkill(skillId);
     }
+    @PostMapping("/submit")
+    public AssessmentResponse submitAssessment(
+            @Valid @RequestBody AssessmentSubmitRequest request) {
 
-    @PutMapping("/{id}")
-    public AssessmentResponse updateAssessment(
-            @PathVariable Long id,
-            @Valid @RequestBody AssessmentRequest request) {
-
-        return assessmentService.updateAssessment(id, request);
+        return assessmentService.submitAssessment(request);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAssessment(@PathVariable Long id) {
+    @PatchMapping("/approve")
+    public AssessmentResponse approveAssessment(
+            @Valid @RequestBody AssessmentApprovalRequest request) {
 
-        assessmentService.deleteAssessment(id);
+        return assessmentService.approveAssessment(request);
     }
+
+    @GetMapping("/pending")
+    public List<AssessmentResponse> getPendingAssessments() {
+
+        return assessmentService.getPendingAssessments();
+    }
+
+    @GetMapping("/pending-approvals")
+    public List<AssessmentResponse> getPendingApprovals() {
+
+        return assessmentService.getPendingApprovals();
+    }
+
+    @GetMapping("/history/{userId}")
+    public List<AssessmentResponse> getAssessmentHistory(
+            @PathVariable Long userId) {
+
+        return assessmentService.getAssessmentHistoryByUserId(userId);
+    }
+
+
 }
 

@@ -1,4 +1,4 @@
-package com.knowledgegap.knowledge_gap_platform.dto;
+package com.knowledgegap.knowledge_gap_platform.dto.assessment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.knowledgegap.knowledge_gap_platform.service.imp;
 
-import com.knowledgegap.knowledge_gap_platform.dto.AssessmentScheduleRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.AssessmentScheduleResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentScheduleRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentScheduleResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.AssessmentSchedule;
 import com.knowledgegap.knowledge_gap_platform.entity.Course;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
