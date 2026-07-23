@@ -1,4 +1,4 @@
-package com.knowledgegap.knowledge_gap_platform.dto;
+package com.knowledgegap.knowledge_gap_platform.dto.assessment;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
