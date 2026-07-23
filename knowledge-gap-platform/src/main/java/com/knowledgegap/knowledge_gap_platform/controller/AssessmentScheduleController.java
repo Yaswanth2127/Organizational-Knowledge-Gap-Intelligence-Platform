@@ -1,7 +1,7 @@
 package com.knowledgegap.knowledge_gap_platform.controller;
 
-import com.knowledgegap.knowledge_gap_platform.dto.AssessmentScheduleRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.AssessmentScheduleResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentScheduleRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentScheduleResponse;
 import com.knowledgegap.knowledge_gap_platform.service.AssessmentScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

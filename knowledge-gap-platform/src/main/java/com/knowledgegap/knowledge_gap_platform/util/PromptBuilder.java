@@ -1,5 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.util;
 
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentPromptData;
 import com.knowledgegap.knowledge_gap_platform.entity.Course;
 import com.knowledgegap.knowledge_gap_platform.entity.SkillGap;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
@@ -160,5 +161,46 @@ public class PromptBuilder {
         """);
 
         return prompt.toString();
+    }
+
+    public String buildAssessmentPrompt(AssessmentPromptData gap) {
+
+        return """
+        Generate a technical assessment.
+
+        Skill: %s
+        Employee Current Level: %s
+        Required Level: %s
+        Gap Score: %.2f
+        Severity: %s
+
+        Generate 10 multiple-choice questions.
+
+        The questions should help evaluate whether the employee has achieved the required competency.
+
+        Return ONLY valid JSON.
+
+        {
+          "title": "...",
+          "questions": [
+            {
+              "question": "...",
+              "optionA": "...",
+              "optionB": "...",
+              "optionC": "...",
+              "optionD": "...",
+              "correctAnswer": "A",
+              "difficulty": "MEDIUM",
+              "explanation": "..."
+            }
+          ]
+        }
+        """.formatted(
+                gap.skillName(),
+                gap.currentLevel(),
+                gap.requiredLevel(),
+                gap.gapScore(),
+                gap.severity()
+        );
     }
 }

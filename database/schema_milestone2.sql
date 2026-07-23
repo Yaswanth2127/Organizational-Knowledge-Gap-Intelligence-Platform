@@ -1,4 +1,7 @@
 
+
+
+
 -- ============================================================
 -- Organizational Knowledge Gap Intelligence Platform
 -- WEEK 3 & 4 SCHEMA — Milestone 2
@@ -117,3 +120,33 @@ CREATE TABLE recommendations (
     generated_at        TIMESTAMP DEFAULT now(),
     UNIQUE(user_id, course_id, skill_gap_id)
 );
+
+
+
+SELECT column_name, data_type, udt_name
+FROM information_schema.columns
+WHERE table_name = 'employee_skills';
+
+
+select * from competency_frameworks;
+SELECT id, full_name, department_id, job_role_id
+FROM users
+WHERE department_id = 3;
+
+INSERT INTO framework_required_skills (framework_id, skill_id, required_proficiency, weight)
+VALUES
+(8,11,'ADVANCED',1.00),
+(8,12,'ADVANCED',1.00),
+(8,13,'ADVANCED',1.00),
+(8,8,'ADVANCED',1.00),
+(8,9,'ADVANCED',1.00);
+
+select * from recommendations;
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = 'recommendations';
+
+select * from skill_gaps;
+select * from learning_paths;
+select * from recommendations;
+select * from learning_paths;
