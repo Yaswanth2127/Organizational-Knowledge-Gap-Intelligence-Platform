@@ -19,6 +19,7 @@ import SkillManagement from "./pages/SkillManagement";
 import CompetencyFrameworkManagement from "./pages/CompetencyFrameworkManagement";
 import CertificationManagement from "./pages/CertificationManagement";
 import CourseManagement from "./pages/CourseManagement";
+import FrameworkRequiredSkillManagement from "./pages/FrameworkRequiredSkillManagement";
 
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -133,11 +134,23 @@ function App() {
               </ProtectedRoute>
           }
       />
+      <Route
+          path="/framework-required-skills"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <FrameworkRequiredSkillManagement />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
       </Routes>
     </BrowserRouter>
   );
 }
 export default App;
+
+
 
 
 
