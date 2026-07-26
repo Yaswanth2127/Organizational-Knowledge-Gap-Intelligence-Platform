@@ -9,125 +9,126 @@ import {
     TrendingUp,
     ArrowRight
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
-export default function SkillGapAnalysis({ skills }) {
+
+export default function SkillGapAnalysis() {
+    const [skills, setSkills] = useState([]);
+        const [loading, setLoading] = useState(true);
+
+        useEffect(() => {
+            const loadSkillGaps = async () => {
+                try {
+                    const token = localStorage.getItem("token");
+
+                    const res = await api.post(
+                        "/api/skill-gaps/employee/analyze"
+                    );
+
+                    setSkills(res.data);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            loadSkillGaps();
+        }, []);
 
     /* ==========================================
             Show only skills with gaps
     ========================================== */
 
-    const gapSkills = [...skills]
-        .filter(skill => skill.gap !== "Completed")
-        .sort((a, b) => {
-
-            const priority = {
-
-                Missing: 1,
-                "1 Level": 2,
-                "2 Levels": 3
-
-            };
-
-            return priority[a.gap] - priority[b.gap];
-
-        });
+        const gapSkills = skills
+    .filter(skill => skill.status !== "RESOLVED")
+    .sort((a, b) => Number(b.gapScore) - Number(a.gapScore));
 
     /* ==========================================
             Status
     ========================================== */
 
-    const getStatus = (gap) => {
-
-        if (gap === "Missing") {
+    const getStatus = (status) => {
+            if (status === "OPEN") {
+                return {
+                    text: "Open",
+                    badge: "bg-red-100 text-red-700",
+                    icon: XCircle,
+                };
+            }
 
             return {
-
-                text: "Missing",
-
-                badge: "bg-red-100 text-red-700",
-
-                icon: XCircle
-
+                text: "Resolved",
+                badge: "bg-green-100 text-green-700",
+                icon: Target,
             };
-
-        }
-
-        return {
-
-            text: "Needs Improvement",
-
-            badge: "bg-yellow-100 text-yellow-700",
-
-            icon: AlertTriangle
-
         };
-
-    };
 
     /* ==========================================
             Priority
     ========================================== */
 
-    const getPriority = (gap) => {
+    const getPriority = (severity) => {
 
-        if (gap === "Missing") {
+            switch (severity) {
 
-            return {
+                case "HIGH":
+                    return {
+                        text: "High",
+                        badge: "bg-red-600 text-white",
+                    };
 
-                text: "High",
+                case "MEDIUM":
+                    return {
+                        text: "Medium",
+                        badge: "bg-orange-500 text-white",
+                    };
 
-                badge: "bg-red-600 text-white"
-
-            };
-
-        }
-
-        return {
-
-            text: "Medium",
-
-            badge: "bg-orange-500 text-white"
-
+                default:
+                    return {
+                        text: "Low",
+                        badge: "bg-green-600 text-white",
+                    };
+            }
         };
-
-    };
 
     /* ==========================================
             Recommendation
     ========================================== */
 
-    const getRecommendation = (skill) => {
-
-        return {
-
-            course: `${skill.skill} Fundamentals`,
-
+    const getRecommendation = (skill) => ({
+            course: `${skill.skillName} Fundamentals`,
             duration:
-
-                skill.gap === "Missing"
-
+                skill.severity === "HIGH"
                     ? "8 Hours"
-
                     : "4 Hours",
-
             gain:
-
-                skill.gap === "Missing"
-
+                skill.severity === "HIGH"
                     ? "+8%"
-
-                    : "+4%"
-
-        };
-
-    };
+                    : "+4%",
+        });
 
     const highPriority =
-        gapSkills.filter(s => s.gap === "Missing").length;
+    gapSkills.filter(s => s.severity === "HIGH").length;
 
     const mediumPriority =
-        gapSkills.length - highPriority;
+    gapSkills.filter(
+        s => s.severity === "MEDIUM"
+    ).length;
 
+    const lowPriority =
+    gapSkills.filter(
+        s => s.severity === "LOW"
+    ).length;
+
+    if (loading) {
+    return (
+        <div className="p-10 text-center">
+            Loading Skill Gap Analysis...
+        </div>
+    );
+}
     return (
 
         <div className="bg-white rounded-3xl shadow-md border border-gray-100 mt-8">
@@ -250,14 +251,21 @@ export default function SkillGapAnalysis({ skills }) {
 
                     gapSkills.map((skill, index) => {
 
-                        const status = getStatus(skill.gap);
+                        const status = getStatus(skill.status);
 
-                        const priority = getPriority(skill.gap);
+                        const priority = getPriority(skill.severity);
 
                         const recommendation =
                             getRecommendation(skill);
 
                         const StatusIcon = status.icon;
+                        const progress = Math.max(
+                            0,
+                            Math.min(
+                                100,
+                                100 - Number(skill.gapScore) * 20
+                            )
+                        );
 
                         return (
 
@@ -282,7 +290,7 @@ export default function SkillGapAnalysis({ skills }) {
 
                                             <h3 className="text-2xl font-bold text-gray-800">
 
-                                                {skill.skill}
+                                                {skill.skillName}
 
                                             </h3>
 
@@ -308,7 +316,7 @@ export default function SkillGapAnalysis({ skills }) {
 
                                                 <h4 className="font-semibold text-lg mt-2">
 
-                                                    {skill.current}
+                                                    {skill.currentLevel}
 
                                                 </h4>
 
@@ -324,7 +332,7 @@ export default function SkillGapAnalysis({ skills }) {
 
                                                 <h4 className="font-semibold text-lg mt-2">
 
-                                                    {skill.required}
+                                                    {skill.requiredLevel}
 
                                                 </h4>
 
@@ -366,7 +374,7 @@ export default function SkillGapAnalysis({ skills }) {
 
                                                 <span className="font-semibold">
 
-                                                    {skill.progress}%
+                                                    {progress}%
 
                                                 </span>
 
@@ -378,15 +386,15 @@ export default function SkillGapAnalysis({ skills }) {
 
                                                     className={`h-full rounded-full
                                                     ${
-                                                        skill.progress >= 80
+                                                        progress >= 80
                                                             ? "bg-green-500"
-                                                            : skill.progress >= 50
+                                                            : progress >= 50
                                                             ? "bg-yellow-500"
                                                             : "bg-red-500"
                                                     }`}
 
                                                     style={{
-                                                        width: `${skill.progress}%`
+                                                        width: `${progress}%`
                                                     }}
 
                                                 />

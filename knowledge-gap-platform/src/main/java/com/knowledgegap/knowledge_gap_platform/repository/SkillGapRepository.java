@@ -16,11 +16,14 @@ public interface SkillGapRepository extends JpaRepository<SkillGap,Long> {
 
                                                                 LocalDateTime periodEnd);
 
-    @EntityGraph(attributePaths = {"user.department","skill"})
+    @EntityGraph(attributePaths = {"user.department","skill","user"})
     List<SkillGap> findByUserId(Long userId);
 
     @EntityGraph(attributePaths = {"skill"})
     Optional<SkillGap> findByUserAndSkill(User user, Skill skill);
+
+    @EntityGraph(attributePaths = {"user","skill","framework"})
+    List<SkillGap> findByUserIdAndStatus(Long userId,GapStatus status);
 
     List<SkillGap> findAllByUserJobRoleId(Long jobRoleId);
 

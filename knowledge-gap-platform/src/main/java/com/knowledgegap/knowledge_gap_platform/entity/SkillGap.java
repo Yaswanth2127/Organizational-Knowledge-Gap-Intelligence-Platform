@@ -1,6 +1,7 @@
 package com.knowledgegap.knowledge_gap_platform.entity;
 
 
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "skill_gaps")
+@Table(name = "skill_gaps",
+        uniqueConstraints = @UniqueConstraint(
+        columnNames = {"user_id", "skill_id", "framework_id"}
+))
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -65,6 +69,15 @@ public class SkillGap {
 
     @Column(name = "detected_at",nullable = false)
     private LocalDateTime detectedAt;
+
+
+    @Column(name = "last_analyzed_at")
+    private LocalDateTime lastAnalyzedAt;
+
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "generated_by")
+    private AnalysisTrigger analysisTrigger;
 
     @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;

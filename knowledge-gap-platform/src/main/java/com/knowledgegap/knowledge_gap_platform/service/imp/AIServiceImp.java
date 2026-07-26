@@ -3,10 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knowledgegap.knowledge_gap_platform.client.GeminiClient;
-import com.knowledgegap.knowledge_gap_platform.dto.CourseRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.CourseResponse;
-import com.knowledgegap.knowledge_gap_platform.dto.RecommendedCourseResponse;
-import com.knowledgegap.knowledge_gap_platform.dto.SkillRecommendationResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.*;
 import com.knowledgegap.knowledge_gap_platform.dto.ai.AIRecommendationRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.ai.AIRecommendationResponse;
 
@@ -22,6 +19,7 @@ import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundExcepti
 import com.knowledgegap.knowledge_gap_platform.repository.*;
 import com.knowledgegap.knowledge_gap_platform.service.AIService;
 import com.knowledgegap.knowledge_gap_platform.service.CourseService;
+import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import com.knowledgegap.knowledge_gap_platform.util.PromptBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,17 +42,19 @@ public class AIServiceImp implements AIService {
     private final CourseService courseService;
     private final LearningPathRepository learningPathRepository;
     private final RecommendationRepository recommendationRepository;
+    private final SkillGapService skillGapService;
 
     @Override
     public AIRecommendationResponse generateRecommendation(AIRecommendationRequest aiRecommendationRequest) {
         User user=userRepository.findById(aiRecommendationRequest.getUserId()).orElseThrow(()->
                 new ResourceNotFoundException("User Details not found "));
 
-        List<SkillGap> skillGaps=skillGapRepository.findByUserId(user.getId());
+        List<SkillGap> skillGaps =
+                skillGapRepository.findByUserIdAndStatus(user.getId(),GapStatus.OPEN);
 
         Map<String, SkillGap> skillGapMap = skillGaps.stream()
                 .collect(Collectors.toMap(
-                        gap -> gap.getSkill().getName().toLowerCase(),
+                        gap -> gap.getSkill().getName().trim().toLowerCase(),
                         Function.identity()
                 ));
 

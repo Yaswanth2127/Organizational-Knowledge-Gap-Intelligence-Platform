@@ -2,14 +2,17 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.CompetencyFrameworkRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.CompetencyFrameworkResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.entity.CompetencyFramework;
 import com.knowledgegap.knowledge_gap_platform.entity.Department;
 import com.knowledgegap.knowledge_gap_platform.entity.JobRole;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
 import com.knowledgegap.knowledge_gap_platform.repository.CompetencyFrameworkRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.DepartmentRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.JobRoleRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class CompetencyFrameworkService implements com.knowledgegap.knowledge_ga
     private final JobRoleRepository jobRoleRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
+    private final SkillGapService skillGapService;
 
     @Override
     public CompetencyFrameworkResponse addCompetencyFramework(
@@ -150,6 +154,15 @@ public class CompetencyFrameworkService implements com.knowledgegap.knowledge_ga
                 ? framework.getDepartment().getId()
                 : null;
 
+        List<User> users = userRepository.findByJobRole(framework.getJobRole());
+
+        for (User user : users) {
+            skillGapService.analyzeSkillGap(
+                    new SkillGapRequest(user.getId()),
+                    AnalysisTrigger.FRAMEWORK_UPDATE
+            );
+        }
+
         return new CompetencyFrameworkResponse(
                 framework.getId(),
                 framework.getJobRole().getId(),
@@ -159,6 +172,7 @@ public class CompetencyFrameworkService implements com.knowledgegap.knowledge_ga
                 framework.getCreatedBy().getId()
         );
     }
+
 
     @Override
     public void deleteCompetencyFrameworkById(Long id) {
