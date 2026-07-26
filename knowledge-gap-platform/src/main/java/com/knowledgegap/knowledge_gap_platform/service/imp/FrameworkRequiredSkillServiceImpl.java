@@ -2,25 +2,35 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.FrameworkRequiredSkillRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.FrameworkRequiredSkillResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.entity.CompetencyFramework;
 import com.knowledgegap.knowledge_gap_platform.entity.FrameworkRequiredSkill;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
+import com.knowledgegap.knowledge_gap_platform.entity.User;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
+import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.CompetencyFrameworkRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.FrameworkRequiredSkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
+import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
 import com.knowledgegap.knowledge_gap_platform.service.FrameworkRequiredSkillService;
+import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FrameworkRequiredSkillServiceImpl implements FrameworkRequiredSkillService {
 
     private final FrameworkRequiredSkillRepository frameworkRequiredSkillRepository;
     private final CompetencyFrameworkRepository competencyFrameworkRepository;
     private final SkillRepository skillRepository;
+    private final SkillGapService skillGapService;
+    private final UserRepository userRepository;
 
     @Override
     public FrameworkRequiredSkillResponse addFrameworkRequiredSkill(FrameworkRequiredSkillRequest request) {
@@ -46,6 +56,15 @@ public class FrameworkRequiredSkillServiceImpl implements FrameworkRequiredSkill
                 .build();
 
         entity = frameworkRequiredSkillRepository.save(entity);
+
+        List<User> users = userRepository.findByJobRole(framework.getJobRole());
+
+        for (User user : users) {
+            skillGapService.analyzeSkillGap(
+                    new SkillGapRequest(user.getId()),
+                    AnalysisTrigger.FRAMEWORK_UPDATE
+            );
+        }
 
         return new FrameworkRequiredSkillResponse(
                 entity.getId(),
@@ -114,6 +133,16 @@ public class FrameworkRequiredSkillServiceImpl implements FrameworkRequiredSkill
 
         entity = frameworkRequiredSkillRepository.save(entity);
 
+
+
+        List<User> users = userRepository.findByJobRole(framework.getJobRole());
+
+        for (User user : users) {
+            skillGapService.analyzeSkillGap(
+                    new SkillGapRequest(user.getId()),
+                    AnalysisTrigger.FRAMEWORK_UPDATE
+            );
+        }
         return new FrameworkRequiredSkillResponse(
                 entity.getId(),
                 entity.getFramework().getId(),
@@ -126,10 +155,21 @@ public class FrameworkRequiredSkillServiceImpl implements FrameworkRequiredSkill
     @Override
     public void delete(Long id) {
 
-        if (!frameworkRequiredSkillRepository.existsById(id)) {
-            throw new RuntimeException("Framework Required Skill not found");
+        FrameworkRequiredSkill requiredSkill = frameworkRequiredSkillRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Framework Required Skill not found"));
+
+        CompetencyFramework framework = requiredSkill.getFramework();
+
+        frameworkRequiredSkillRepository.delete(requiredSkill);
+
+        List<User> users = userRepository.findByJobRole(framework.getJobRole());
+
+        for (User user : users) {
+            skillGapService.analyzeSkillGap(
+                    new SkillGapRequest(user.getId()),
+                    AnalysisTrigger.FRAMEWORK_UPDATE
+            );
         }
 
-        frameworkRequiredSkillRepository.deleteById(id);
     }
 }

@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.assessment.*;
 import com.knowledgegap.knowledge_gap_platform.entity.*;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.AssessmentStatus;
 
 import com.knowledgegap.knowledge_gap_platform.exception.AIException;
@@ -129,6 +130,7 @@ public class AssessmentServiceImpl implements AssessmentService {
         return mapToResponse(assessmentRepository.save(assessment));
     }
 
+    @Transactional
     @Override
     public AssessmentResponse approveAssessment(AssessmentApprovalRequest request) {
         Assessment assessment = assessmentRepository.findById(request.getAssessmentId())
@@ -153,7 +155,8 @@ public class AssessmentServiceImpl implements AssessmentService {
         User manager = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
 
-        if (!assessment.getUser().getManager().getId().equals(manager.getId())) {
+        if (assessment.getUser().getManager() == null ||
+                !assessment.getUser().getManager().getId().equals(manager.getId())) {
             throw new AccessDeniedException("You are not authorized to approve this assessment.");
         }
 
@@ -181,7 +184,7 @@ public class AssessmentServiceImpl implements AssessmentService {
         }
         assessment=assessmentRepository.save(assessment);
         if(request.getApproved()){
-            skillGapService.analyzeSkillGap(new SkillGapRequest(assessment.getUser().getId()));
+            skillGapService.analyzeSkillGap(new SkillGapRequest(assessment.getUser().getId()), AnalysisTrigger.ASSESSMENT);
         }
 
         return mapToResponse(assessment);

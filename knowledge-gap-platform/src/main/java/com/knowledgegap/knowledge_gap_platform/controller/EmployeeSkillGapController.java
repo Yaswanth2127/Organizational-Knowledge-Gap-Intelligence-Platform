@@ -1,6 +1,5 @@
 package com.knowledgegap.knowledge_gap_platform.controller;
 
-import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
@@ -21,7 +20,9 @@ import java.util.List;
 public class EmployeeSkillGapController {
     private final SkillGapService skillGapService;
     private  final UserRepository userRepository;
-    @PostMapping("/analyze")
+
+
+    @GetMapping("/me")
     public ResponseEntity<List<SkillGapResponse>> analyzeSkillGaps(){
         String email = SecurityContextHolder
                 .getContext()
@@ -31,9 +32,6 @@ public class EmployeeSkillGapController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        SkillGapRequest gapRequest = SkillGapRequest.builder()
-                .userId(user.getId())
-                .build();
-        return ResponseEntity.ok(skillGapService.analyzeSkillGap(gapRequest));
+        return ResponseEntity.ok(skillGapService.getSkillGapsByUserId(user.getId()));
     }
 }

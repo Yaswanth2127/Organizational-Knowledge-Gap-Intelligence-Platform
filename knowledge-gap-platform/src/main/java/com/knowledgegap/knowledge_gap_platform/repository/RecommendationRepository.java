@@ -32,4 +32,6 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
     @Transactional
     @Query("DELETE FROM Recommendation r WHERE r.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
+
+    void deleteAllBySkillGapIn(List<SkillGap> gaps);
 }

@@ -21,6 +21,7 @@ import CertificationManagement from "./pages/CertificationManagement";
 import CourseManagement from "./pages/CourseManagement";
 import FrameworkRequiredSkillManagement from "./pages/FrameworkRequiredSkillManagement";
 import SkillGapManagement from "./pages/SkillGapManagement";
+import EmployeeSkillGapAnalysis from "./pages/EmployeeSkillGapAnalysis";
 import AIRecommendation from "./pages/AIRecommendation";
 
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
@@ -156,6 +157,14 @@ function App() {
               </ProtectedRoute>
           }
       />
+       <Route
+        path="/employee/skill-gap"
+        element={
+            <ProtectedRoute roles={["EMPLOYEE"]}>
+                <EmployeeSkillGapAnalysis />
+            </ProtectedRoute>
+        }
+    />
       <Route
           path="/ai-recommendations"
           element={
@@ -167,6 +176,7 @@ function App() {
           }
       />
       </Routes>
+     
     </BrowserRouter>
   );
 }
