@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.dto;
 import com.knowledgegap.knowledge_gap_platform.entity.GapSeverity;
 import com.knowledgegap.knowledge_gap_platform.entity.GapStatus;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,4 +36,7 @@ public class SkillGapResponse {
     private GapStatus status;
 
     private LocalDateTime detectedAt;
+
+    private LocalDateTime lastAnalyzedAt;
+    private AnalysisTrigger analysisTrigger;
 }

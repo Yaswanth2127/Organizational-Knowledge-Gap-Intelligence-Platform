@@ -15,7 +15,9 @@ import {
   Users,
   BrainCircuit,
   Network,
-  BadgeCheck
+  BadgeCheck,
+  ClipboardList,
+  AlertTriangle
 } from "lucide-react";
 
 const AdminLayout = ({ children }) => {
@@ -68,6 +70,16 @@ const navigation = [
           icon: Network
         },
         {
+          name: "Framework Required Skills",
+          href: "/framework-required-skills",
+          icon: ClipboardList,
+        },
+        {
+          name: "Skill Gaps",
+          href: "/skill-gaps",
+          icon: AlertTriangle,
+        },
+                {
           name: "Certifications",
           href: "/certifications",
           icon: BadgeCheck
@@ -76,7 +88,12 @@ const navigation = [
           name: "Courses",
           href: "/courses",
           icon: BookOpen
-        }
+        },
+        {
+        name: "Employee Skill Gap Analysis",
+        href: "/employee-skill-gap-analysis",
+        icon: AlertTriangle,
+    }
       ]
     : [])
 ];
@@ -117,11 +134,16 @@ const navigation = [
 
       <div className="flex flex-1 relative">
         {/* Sidebar Container */}
-        <aside className={`
-          fixed md:sticky top-[52px] h-[calc(100vh-52px)] z-40
-          w-64 bg-white border-r border-gray-200 p-4 transition-transform duration-300 ease-in-out
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}>
+        <aside
+          className={`
+            fixed md:sticky top-[52px]
+            h-[calc(100vh-52px)]
+            overflow-y-auto
+            w-64 bg-white border-r border-gray-200 p-4
+            transition-transform duration-300 ease-in-out
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          `}
+        >
           <nav className="space-y-1">
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;

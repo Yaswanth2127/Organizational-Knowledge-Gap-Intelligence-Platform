@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.SkillGapResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.*;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.*;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,26 +29,40 @@ public class SkillGapServiceImpl implements SkillGapService {
     private final FrameworkRequiredSkillRepository requiredSkillRepository;
     private final EmployeeSkillRepository employeeSkillRepository;
     private final SkillGapRepository skillGapRepository;
+    private final RecommendationRepository recommendationRepository;
 
 
     @Override
-    public List<SkillGapResponse> analyzeSkillGap(SkillGapRequest skillGapRequest) {
+    public List<SkillGapResponse> getSkillGapsByUserId(Long userId) {
+         return mapToSkillGapResponse(skillGapRepository.findByUserIdAndStatus(userId,GapStatus.OPEN));
+    }
+
+    @Override
+    public List<SkillGapResponse> analyzeSkillGap(SkillGapRequest skillGapRequest, AnalysisTrigger analysisTrigger) {
         User user=userRepository.findById(skillGapRequest.getUserId()).orElseThrow(()->
-                new RuntimeException("User not found "));
+                new ResourceNotFoundException("User not found "));
 
         if(user.getJobRole()==null){
-            throw new RuntimeException("user has no job role ");
+            throw new ResourceNotFoundException("user has no job role ");
         }
-
-        // to deleting previous records and updating the new records
-        skillGapRepository.deleteByUserId(user.getId());
-
         JobRole jobRole=user.getJobRole();
-
         CompetencyFramework framework=competencyFrameworkRepository.findByJobRole(jobRole).orElseThrow(()->
-                new RuntimeException("Framework not found "));
+                new ResourceNotFoundException("Framework not found "));
+
+        // we have to find skill gaps based on user id
+       List<SkillGap> skillGaps=skillGapRepository.findByUserId(user.getId());
+        Map<Long, SkillGap> skillGapMap =
+                skillGaps.stream()
+                        .collect(Collectors.toMap(
+                                sg -> sg.getSkill().getId(),
+                                Function.identity()
+                        ));
+
 
         List<FrameworkRequiredSkill> requiredSkills=requiredSkillRepository.findByFramework(framework);
+        if(requiredSkills.isEmpty()){
+            throw new ResourceNotFoundException("No skills needed for this framework ");
+        }
 
         List<EmployeeSkill> employeeSkills=employeeSkillRepository.findByUserId(user.getId());
 
@@ -57,38 +73,44 @@ public class SkillGapServiceImpl implements SkillGapService {
                                 Function.identity()
                         ));
 
-        if(requiredSkills.isEmpty()){
-            throw new RuntimeException("No skills needed for this framework ");
-        }
+
+        LocalDateTime analyzedAt = LocalDateTime.now();
         List<SkillGap> gaps=new ArrayList<>();
         for(FrameworkRequiredSkill requiredSkill:requiredSkills){
             EmployeeSkill employeeSkill=employeeSkillMap.get(requiredSkill.getSkill().getId());
+            SkillGap skillGap= skillGapMap.get(requiredSkill.getSkill().getId());
 
+            if(skillGap==null){
+                skillGap = SkillGap.builder()
+                        .user(user)
+                        .skill(requiredSkill.getSkill())
+                        .build();
+            }
             ProficiencyLevel currentLevel = employeeSkill == null
-                            ? ProficiencyLevel.UNAWARE
-                            : employeeSkill.getSelfRating();
+                    ? ProficiencyLevel.UNAWARE
+                    : employeeSkill.getSelfRating();
 
             ProficiencyLevel requiredLevel=requiredSkill.getRequiredProficiency();
 
             int gap=Math.max(0,requiredLevel.getValue()-currentLevel.getValue());
 
             BigDecimal gapScore=BigDecimal.valueOf(gap);
+            skillGap.setCurrentLevel(currentLevel);
+            skillGap.setRequiredLevel(requiredLevel);
+            skillGap.setGapScore(gapScore);
+            skillGap.setSeverity(getGapSeverity(gap));
+            skillGap.setLastAnalyzedAt(analyzedAt);
+            skillGap.setAnalysisTrigger(analysisTrigger);
+            skillGap.setFramework(framework);
 
-            if(gap!=0){
-                GapSeverity gapSeverity=getGapSeverity(gap);
-                SkillGap skillGap= SkillGap.builder()
-                                .skill(requiredSkill.getSkill())
-                        .currentLevel(currentLevel)
-                        .requiredLevel(requiredLevel)
-                        .framework(framework)
-                        .user(user)
-                        .gapScore(gapScore)
-                        .status(GapStatus.OPEN)
-                        .severity(gapSeverity)
-                        .build();
-
-                gaps.add(skillGap);
+            if (gap > 0) {
+                skillGap.setStatus(GapStatus.OPEN);
+                skillGap.setResolvedAt(null);
+            } else {
+                skillGap.setStatus(GapStatus.RESOLVED);
+                skillGap.setResolvedAt(analyzedAt);
             }
+            gaps.add(skillGap);
         }
         return  mapToSkillGapResponse(skillGapRepository.saveAll(gaps));
     }
@@ -109,7 +131,7 @@ public class SkillGapServiceImpl implements SkillGapService {
         }
 
         for(User user:users) {
-            analyzeSkillGap(new SkillGapRequest(user.getId()));
+            analyzeSkillGap(new SkillGapRequest(user.getId()),AnalysisTrigger.MANUAL);
         }
     }
 
@@ -129,6 +151,8 @@ public class SkillGapServiceImpl implements SkillGapService {
                     .currentLevel(skillGap.getCurrentLevel())
                     .requiredLevel(skillGap.getRequiredLevel())
                     .gapScore(skillGap.getGapScore())
+                    .lastAnalyzedAt(skillGap.getLastAnalyzedAt())
+                    .analysisTrigger(skillGap.getAnalysisTrigger())
                     .build();
             responses.add(skillGapResponse);
         }
@@ -136,6 +160,7 @@ public class SkillGapServiceImpl implements SkillGapService {
     }
     private GapSeverity getGapSeverity(int gap) {
         return switch (gap) {
+            case 0->GapSeverity.NONE;
             case 1 -> GapSeverity.LOW;
             case 2 -> GapSeverity.MEDIUM;
             case 3 -> GapSeverity.HIGH;

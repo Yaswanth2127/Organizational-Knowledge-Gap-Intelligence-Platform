@@ -9,7 +9,7 @@ import WelcomeBanner from "../components/employee/WelcomeBanner";
 import DashboardStats from "../components/employee/DashboardStats";
 import MySkills from "../components/employee/MySkills";
 import CompetencyProgress from "../components/employee/CompetencyProgress";
-import SkillGapAnalysis from "../components/employee/SkillGapAnalysis";
+import SkillGapAnalysis from "./EmployeeSkillGapAnalysis";
 import LearningRecommendations from "../components/employee/LearningRecommendations";
 import UpcomingAssessments from "../components/employee/UpcomingAssessments";
 import RecentActivity from "../components/employee/RecentActivity";
@@ -38,44 +38,7 @@ export default function EmployeeDashboard() {
         competencyScore: competencyScore
     };
 
-    const mySkills = [
-        {
-            skill: "Java",
-            current: "Advanced",
-            required: "Expert",
-            progress: 85,
-            gap: "1 Level"
-        },
-        {
-            skill: "Spring Boot",
-            current: "Intermediate",
-            required: "Advanced",
-            progress: 70,
-            gap: "1 Level"
-        },
-        {
-            skill: "React",
-            current: "Beginner",
-            required: "Intermediate",
-            progress: 45,
-            gap: "1 Level"
-        },
-        {
-            skill: "Docker",
-            current: "Not Learned",
-            required: "Beginner",
-            progress: 10,
-            gap: "Missing"
-        },
-        {
-            skill: "SQL",
-            current: "Expert",
-            required: "Expert",
-            progress: 100,
-            gap: "Completed"
-        }
-    ];
-
+    
     const competency = {
         score: 72,
         technical: 80,
@@ -200,65 +163,45 @@ export default function EmployeeDashboard() {
         );
     }
 
-    return (
+   return (
+    <div className="min-h-screen bg-gray-100">
+        <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
 
-        <div className="min-h-screen bg-gray-100">
+            {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700">
+                    {error}
+                </div>
+            )}
 
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <WelcomeBanner
+                user={user}
+                displayValue={displayValue}
+                profileCompletion={profileCompletion}
+                competencyScore={competencyScore}
+            />
 
-                {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-red-700">
-                        {error}
-                    </div>
-                )}
+            <DashboardStats
+                stats={dashboardStats}
+            />
 
-                <WelcomeBanner
-                    user={user}
-                    displayValue={displayValue}
-                    profileCompletion={profileCompletion}
-                    competencyScore={competencyScore}
-                />
+            <CompetencyProgress
+                competency={competency}
+            />
 
-                <DashboardStats
-                    stats={dashboardStats}
-                />
+            <SkillGapAnalysis 
+            />
 
-                <MySkills
-                    skills={mySkills}
-                />
+            <LearningRecommendations
+                recommendations={learningRecommendations}
+            />
 
-                <CompetencyProgress
-                    competency={competency}
-                />
+            <UpcomingAssessments
+                assessments={upcomingAssessments}
+            />
 
-                <SkillGapAnalysis
-                    skills={mySkills}
-                />
-
-                <LearningRecommendations
-                    recommendations={learningRecommendations}
-                />
-
-                <UpcomingAssessments
-                    assessments={upcomingAssessments}
-                />
-
-                <RecentActivity
-                    activities={recentActivities}
-                />
-
-                <Notifications
-                    notifications={notifications}
-                />
-
-                <QuickActions />
-
-                <CareerGoal />
-
-            </div>
+            <QuickActions />
 
         </div>
-
-    );
-
+    </div>
+);
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, AlertTriangle } from 'lucide-react';
-import { analyzeSkillGapForUser } from '../services/skillGapService';
+import { getSkillGapForUser } from "../services/skillGapService";
 import { getAllUsers } from '../services/userService';
 
 const SEVERITY_STYLES = {
@@ -33,9 +33,9 @@ export default function SkillGapManagement() {
         setAnalyzing(true);
         setError('');
         try {
-            const data = await analyzeSkillGapForUser(selectedUserId);
-            setResults(data);
-            setHasAnalyzed(true);
+            const data = await getSkillGapForUser(selectedUserId);
+                setResults(data);
+                setHasAnalyzed(data.length > 0);
         } catch (err) {
             setError(err.response?.data?.message || 'Analysis failed.');
         } finally {

@@ -2,26 +2,32 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.SkillGapRequest;
 import com.knowledgegap.knowledge_gap_platform.entity.EmployeeSkill;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.AnalysisTrigger;
 import com.knowledgegap.knowledge_gap_platform.repository.EmployeeSkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
 import com.knowledgegap.knowledge_gap_platform.service.EmployeeSkillService;
+import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
     private final EmployeeSkillRepository employeeSkillRepository;
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
+    private final SkillGapService skillGapService;
 
     private EmployeeSkillResponse mapToResponse(EmployeeSkill employeeSkill){
         return new EmployeeSkillResponse(
@@ -72,6 +78,8 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
         employeeSkill = employeeSkillRepository.save(employeeSkill);
 
+        skillGapService.analyzeSkillGap(new SkillGapRequest(user.getId()), AnalysisTrigger.PROFILE_UPDATE);
+
         return mapToResponse(employeeSkill);
     }
 
@@ -115,6 +123,8 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
         employeeSkill.setLastAssessedAt(LocalDateTime.now());
 
         employeeSkill = employeeSkillRepository.save(employeeSkill);
+
+        skillGapService.analyzeSkillGap(new SkillGapRequest(user.getId()),AnalysisTrigger.PROFILE_UPDATE);
 
 
         return mapToResponse(employeeSkill);
