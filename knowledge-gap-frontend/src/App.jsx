@@ -21,6 +21,7 @@ import CertificationManagement from "./pages/CertificationManagement";
 import CourseManagement from "./pages/CourseManagement";
 import FrameworkRequiredSkillManagement from "./pages/FrameworkRequiredSkillManagement";
 import SkillGapManagement from "./pages/SkillGapManagement";
+import AIRecommendation from "./pages/AIRecommendation";
 
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
@@ -155,11 +156,23 @@ function App() {
               </ProtectedRoute>
           }
       />
+      <Route
+          path="/ai-recommendations"
+          element={
+              <ProtectedRoute>
+                  <AdminLayout>
+                      <AIRecommendation />
+                  </AdminLayout>
+              </ProtectedRoute>
+          }
+      />
       </Routes>
     </BrowserRouter>
   );
 }
 export default App;
+
+
 
 
 
