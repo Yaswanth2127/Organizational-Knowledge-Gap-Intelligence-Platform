@@ -1,184 +1,276 @@
-﻿import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
-import AdminLayout from './layouts/AdminLayout';
-import SkillAssessment from "./pages/SkillAssessment";
-import NotFound from "./pages/NotFound";
-import EditProfile from "./pages/EditProfile";
-import EmployeeSkills from "./pages/EmployeeSkills";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import DepartmentManagement from "./pages/DepartmentManagement";
-import OAuthSuccess from "./pages/OAuthSuccess";
-import SkillCategoryManagement from "./pages/SkillCategoryManagement";
-import JobRoleManagement from "./pages/JobRoleManagement";
-import SkillManagement from "./pages/SkillManagement";
-import CompetencyFrameworkManagement from "./pages/CompetencyFrameworkManagement";
-import CertificationManagement from "./pages/CertificationManagement";
-import CourseManagement from "./pages/CourseManagement";
-import FrameworkRequiredSkillManagement from "./pages/FrameworkRequiredSkillManagement";
-import SkillGapManagement from "./pages/SkillGapManagement";
-import EmployeeSkillGapAnalysis from "./pages/EmployeeSkillGapAnalysis";
-import AIRecommendation from "./pages/AIRecommendation";
+﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import OAuthSuccess from "./pages/auth/OAuthSuccess";
 
+import Profile from "./pages/shared/Profile";
+import EditProfile from "./pages/shared/EditProfile";
+import NotFound from "./pages/shared/NotFound";
+
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import HRDashboard from "./pages/admin/HRDashboard";
+import DepartmentManagement from "./pages/admin/DepartmentManagement";
+import EmployeeSkills from "./pages/admin/EmployeeSkills";
+import SkillCategoryManagement from "./pages/admin/SkillCategoryManagement";
+import JobRoleManagement from "./pages/admin/JobRoleManagement";
+import SkillManagement from "./pages/admin/SkillManagement";
+import CompetencyFrameworkManagement from "./pages/admin/CompetencyFrameworkManagement";
+import CertificationManagement from "./pages/admin/CertificationManagement";
+import CourseManagement from "./pages/admin/CourseManagement";
+import FrameworkRequiredSkillManagement from "./pages/admin/FrameworkRequiredSkillManagement";
+import SkillGapManagement from "./pages/admin/SkillGapManagement";
+
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
+import SkillAssessment from "./pages/employee/SkillAssessment";
+import EmployeeSkillGapAnalysis from "./pages/employee/EmployeeSkillGapAnalysis";
+import AIRecommendation from "./pages/employee/AIRecommendation";
+import LearningPath from "./pages/employee/LearningPath";
+
+import AdminLayout from "./layouts/AdminLayout";
+import EmployeeLayout from "./layouts/EmployeeLayout";
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
+    const token = localStorage.getItem('token');
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+    return children;
 }
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-            path="/oauth-success"
-            element={<OAuthSuccess />}
-        />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/dashboard" element={
-          <ProtectedRoute><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute><AdminLayout><Profile /></AdminLayout></ProtectedRoute>
-        } />
-        <Route path="/assessment" element={
-          <ProtectedRoute><AdminLayout><SkillAssessment /></AdminLayout></ProtectedRoute>
-        } />
-        <Route path="/404" element={<NotFound />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route
-          path="/employee-skills"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <EmployeeSkills />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-            path="/departments"
-            element={
-                <ProtectedRoute allowedRoles={["SYS_ADMIN", "HR_SPECIALIST"]}>
-                    <AdminLayout>
-                        <DepartmentManagement />
-                    </AdminLayout>
-                </ProtectedRoute>
-            }
-        />
-      <Route
-          path="/skill-categories"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <SkillCategoryManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/job-roles"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <JobRoleManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/skills"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <SkillManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/competency-frameworks"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <CompetencyFrameworkManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/certifications"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <CertificationManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/courses"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <CourseManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/framework-required-skills"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <FrameworkRequiredSkillManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      <Route
-          path="/skill-gaps"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <SkillGapManagement />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-       <Route
-        path="/employee/skill-gap"
-        element={
-            <ProtectedRoute roles={["EMPLOYEE"]}>
-                <EmployeeSkillGapAnalysis />
-            </ProtectedRoute>
-        }
-    />
-      <Route
-          path="/ai-recommendations"
-          element={
-              <ProtectedRoute>
-                  <AdminLayout>
-                      <AIRecommendation />
-                  </AdminLayout>
-              </ProtectedRoute>
-          }
-      />
-      </Routes>
-     
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/oauth-success"
+                    element={<OAuthSuccess />}
+                />
+                <Route
+                    path="/employee/learning-path"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <LearningPath />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route path="/edit-profile" element={<EditProfile />} />
+                <Route
+                    path="/admin/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <AdminDashboard />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/hr/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <HRDashboard />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/employee/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <EmployeeDashboard />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <RoleBasedLayout>
+                                <Profile />
+                            </RoleBasedLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/assessment"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <SkillAssessment />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route
+                    path="/employee-skills"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <EmployeeSkills />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/departments"
+                    element={
+                        <ProtectedRoute allowedRoles={["SYS_ADMIN", "HR_SPECIALIST"]}>
+                            <AdminLayout>
+                                <DepartmentManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/skill-categories"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <SkillCategoryManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/job-roles"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <JobRoleManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/skills"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <SkillManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/competency-frameworks"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <CompetencyFrameworkManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/certifications"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <CertificationManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/courses"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <CourseManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/framework-required-skills"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <FrameworkRequiredSkillManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/skill-gaps"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <SkillGapManagement />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/employee-skill-gap-analysis"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <EmployeeSkillGapAnalysis />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/ai-recommendations"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <AIRecommendation />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/my-courses"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <NotFound />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/my-certifications"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <NotFound />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+            </Routes>
+
+        </BrowserRouter>
+    );
+}
+function RoleBasedLayout({ children }) {
+    const role = localStorage.getItem("role");
+
+    if (role === "EMPLOYEE") {
+        return <EmployeeLayout>{children}</EmployeeLayout>;
+    }
+
+    return <AdminLayout>{children}</AdminLayout>;
 }
 export default App;
 

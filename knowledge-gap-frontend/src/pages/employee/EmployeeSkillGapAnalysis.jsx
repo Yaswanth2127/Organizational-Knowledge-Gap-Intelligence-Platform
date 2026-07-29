@@ -10,60 +10,87 @@ import {
     ArrowRight
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 
 
 export default function SkillGapAnalysis() {
     const [skills, setSkills] = useState([]);
-        const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
+    const [recommendations, setRecommendations] = useState([]);
 
-        useEffect(() => {
-            const loadSkillGaps = async () => {
-                try {
-                    const token = localStorage.getItem("token");
+    useEffect(() => {
+        const loadDashboard = async () => {
+            try {
 
-                    const res = await api.post(
-                        "/api/skill-gaps/employee/analyze"
-                    );
+                const userId = localStorage.getItem("userId");
 
-                    setSkills(res.data);
-                } catch (err) {
-                    console.error(err);
-                } finally {
-                    setLoading(false);
-                }
-            };
+                const [skillGapRes, recommendationRes] =
+                    await Promise.all([
+                        api.get("/api/skill-gaps/employee/me"),
+                        api.get(`/api/ai/recommendation`)
+                    ]);
 
-            loadSkillGaps();
-        }, []);
+                setSkills(skillGapRes.data);
+
+
+                setRecommendations(
+                    recommendationRes.data.recommendations || []
+                );
+
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadDashboard();
+    }, []);
+
+    const getRecommendation = (skillName) => {
+
+        if (!Array.isArray(recommendations)) {
+            return null;
+        }
+
+        const skillRecommendation = recommendations.find(
+            recommendation => recommendation.skillName === skillName
+        );
+
+        if (!skillRecommendation) {
+            return null;
+        }
+
+        return skillRecommendation.courses?.[0] || null;
+    };
 
     /* ==========================================
             Show only skills with gaps
     ========================================== */
 
-        const gapSkills = skills
-    .filter(skill => skill.status !== "RESOLVED")
-    .sort((a, b) => Number(b.gapScore) - Number(a.gapScore));
+    const gapSkills = skills
+        .filter(skill => skill.status !== "RESOLVED")
+        .sort((a, b) => Number(b.gapScore) - Number(a.gapScore));
 
     /* ==========================================
             Status
     ========================================== */
 
     const getStatus = (status) => {
-            if (status === "OPEN") {
-                return {
-                    text: "Open",
-                    badge: "bg-red-100 text-red-700",
-                    icon: XCircle,
-                };
-            }
-
+        if (status === "OPEN") {
             return {
-                text: "Resolved",
-                badge: "bg-green-100 text-green-700",
-                icon: Target,
+                text: "Open",
+                badge: "bg-red-100 text-red-700",
+                icon: XCircle,
             };
+        }
+
+        return {
+            text: "Resolved",
+            badge: "bg-green-100 text-green-700",
+            icon: Target,
         };
+    };
 
     /* ==========================================
             Priority
@@ -71,64 +98,53 @@ export default function SkillGapAnalysis() {
 
     const getPriority = (severity) => {
 
-            switch (severity) {
+        switch (severity) {
 
-                case "HIGH":
-                    return {
-                        text: "High",
-                        badge: "bg-red-600 text-white",
-                    };
+            case "HIGH":
+                return {
+                    text: "High",
+                    badge: "bg-red-600 text-white",
+                };
 
-                case "MEDIUM":
-                    return {
-                        text: "Medium",
-                        badge: "bg-orange-500 text-white",
-                    };
+            case "MEDIUM":
+                return {
+                    text: "Medium",
+                    badge: "bg-orange-500 text-white",
+                };
 
-                default:
-                    return {
-                        text: "Low",
-                        badge: "bg-green-600 text-white",
-                    };
-            }
-        };
+            default:
+                return {
+                    text: "Low",
+                    badge: "bg-green-600 text-white",
+                };
+        }
+    };
 
     /* ==========================================
             Recommendation
     ========================================== */
 
-    const getRecommendation = (skill) => ({
-            course: `${skill.skillName} Fundamentals`,
-            duration:
-                skill.severity === "HIGH"
-                    ? "8 Hours"
-                    : "4 Hours",
-            gain:
-                skill.severity === "HIGH"
-                    ? "+8%"
-                    : "+4%",
-        });
 
     const highPriority =
-    gapSkills.filter(s => s.severity === "HIGH").length;
+        gapSkills.filter(s => s.severity === "HIGH").length;
 
     const mediumPriority =
-    gapSkills.filter(
-        s => s.severity === "MEDIUM"
-    ).length;
+        gapSkills.filter(
+            s => s.severity === "MEDIUM"
+        ).length;
 
     const lowPriority =
-    gapSkills.filter(
-        s => s.severity === "LOW"
-    ).length;
+        gapSkills.filter(
+            s => s.severity === "LOW"
+        ).length;
 
     if (loading) {
-    return (
-        <div className="p-10 text-center">
-            Loading Skill Gap Analysis...
-        </div>
-    );
-}
+        return (
+            <div className="p-10 text-center">
+                Loading Skill Gap Analysis...
+            </div>
+        );
+    }
     return (
 
         <div className="bg-white rounded-3xl shadow-md border border-gray-100 mt-8">
@@ -256,7 +272,7 @@ export default function SkillGapAnalysis() {
                         const priority = getPriority(skill.severity);
 
                         const recommendation =
-                            getRecommendation(skill);
+                            getRecommendation(skill.skillName);
 
                         const StatusIcon = status.icon;
                         const progress = Math.max(
@@ -278,7 +294,7 @@ export default function SkillGapAnalysis() {
                             >
 
                                 {/* Part 2 continues here */}
-                                                                <div className="flex flex-col xl:flex-row justify-between gap-8">
+                                <div className="flex flex-col xl:flex-row justify-between gap-8">
 
                                     {/* ============================
                                             Left Side
@@ -385,13 +401,12 @@ export default function SkillGapAnalysis() {
                                                 <div
 
                                                     className={`h-full rounded-full
-                                                    ${
-                                                        progress >= 80
+                                                    ${progress >= 80
                                                             ? "bg-green-500"
                                                             : progress >= 50
-                                                            ? "bg-yellow-500"
-                                                            : "bg-red-500"
-                                                    }`}
+                                                                ? "bg-yellow-500"
+                                                                : "bg-red-500"
+                                                        }`}
 
                                                     style={{
                                                         width: `${progress}%`
@@ -445,7 +460,7 @@ export default function SkillGapAnalysis() {
 
                                                     <p className="font-semibold mt-1">
 
-                                                        {recommendation.course}
+                                                        {recommendation?.course?.title || "No Course Available"}
 
                                                     </p>
 
@@ -470,7 +485,9 @@ export default function SkillGapAnalysis() {
 
                                                     <p className="font-semibold mt-1">
 
-                                                        {recommendation.duration}
+                                                        {recommendation?.course?.durationHours
+                                                            ? `${recommendation.course.durationHours} Hours`
+                                                            : "Not Available"}
 
                                                     </p>
 
@@ -480,22 +497,18 @@ export default function SkillGapAnalysis() {
 
                                             <div className="flex gap-3">
 
-                                                <TrendingUp
-                                                    size={20}
-                                                    className="text-green-600 mt-1"
-                                                />
 
                                                 <div>
 
                                                     <p className="text-sm text-gray-500">
 
-                                                        Expected Competency Gain
+                                                        Recommendation Reason
 
                                                     </p>
 
                                                     <p className="font-semibold text-green-600 mt-1">
 
-                                                        {recommendation.gain}
+                                                        {recommendation?.reason || "No recommendation available."}
 
                                                     </p>
 
@@ -506,13 +519,15 @@ export default function SkillGapAnalysis() {
                                         </div>
 
                                         <button
+                                            onClick={() => {
+                                                if (recommendation?.course?.externalUrl) {
+                                                    window.open(recommendation.course.externalUrl, "_blank");
+                                                }
+                                            }}
                                             className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition"
                                         >
-
                                             Start Learning
-
                                             <ArrowRight size={18} />
-
                                         </button>
 
                                     </div>

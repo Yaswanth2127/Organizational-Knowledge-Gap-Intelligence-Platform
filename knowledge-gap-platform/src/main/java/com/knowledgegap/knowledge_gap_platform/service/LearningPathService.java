@@ -11,7 +11,7 @@ public interface LearningPathService {
 
     List<LearningPathResponse> getLearningPathByUserId(Long userId);
 
-    LearningPathResponse getCurrentLearningPathByUserId(Long userId);
+    LearningPathResponse getCurrentLearningPathByUserEmail(String email);
 
     LearningPathResponse getById(Long id);
 

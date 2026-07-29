@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
-import { loginUser } from '../services/authService';
+import { loginUser } from '../../services/authService';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -32,7 +32,15 @@ const Login = () => {
             localStorage.setItem("userId", res.data.userId);
             localStorage.setItem("fullName", res.data.fullName);
 
-            navigate("/dashboard");
+            const role = res.data.role;
+
+            if (role === "SYS_ADMIN") {
+                navigate("/admin/dashboard");
+            } else if (role === "HR_SPECIALIST") {
+                navigate("/hr/dashboard");
+            } else if (role === "EMPLOYEE") {
+                navigate("/employee/dashboard");
+            }
         } catch (err) {
             setError(
                 err.response?.data?.message || 'Invalid email or password.'

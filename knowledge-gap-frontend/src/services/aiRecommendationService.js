@@ -7,7 +7,7 @@ import api from "./api";
  * Handles AI-generated course recommendation requests.
  */
 
-export const getAIRecommendation = async (userId) => {
-    const response = await api.get(`/api/ai/recommendation/${userId}`);
+export const getAIRecommendation = async () => {
+    const response = await api.get("/api/ai/recommendation");
     return response.data;
 };

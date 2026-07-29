@@ -37,9 +37,9 @@ public class LearningPathController {
         );
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<LearningPathResponse> getCurrentLearningPathByUserId(@PathVariable Long userId){
-        return ResponseEntity.ok(learningPathService.getCurrentLearningPathByUserId(userId));
+    @GetMapping("/user/email/{email}")
+    public ResponseEntity<LearningPathResponse> getCurrentLearningPathByUserId(@PathVariable String email){
+        return ResponseEntity.ok(learningPathService.getCurrentLearningPathByUserEmail(email));
     }
 
     @GetMapping("/user/{userId}/history")

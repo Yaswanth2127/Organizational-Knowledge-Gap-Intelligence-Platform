@@ -5,6 +5,7 @@ import com.knowledgegap.knowledge_gap_platform.dto.LearningPathCourseResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.Course;
 import com.knowledgegap.knowledge_gap_platform.entity.LearningPath;
 import com.knowledgegap.knowledge_gap_platform.entity.LearningPathCourse;
+import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.CourseRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.LearningPathCourseRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.LearningPathRepository;
@@ -128,6 +129,13 @@ public class LearningPathCourseServiceImpl implements LearningPathCourseService 
                                 new EntityNotFoundException("Learning Path Course not found"));
 
         learningPathCourseRepository.delete(learningPathCourse);
+    }
+
+    @Override
+    public List<LearningPathCourseResponse> getByLearningPathId(Long learningPathId) {
+        LearningPath learningPath=learningPathRepository.findById(learningPathId).orElseThrow(()->
+                new ResourceNotFoundException("Learning path not found "));
+        return learningPathCourseRepository.findByLearningPath(learningPath).stream().map(this::mapToResponse).toList();
     }
 
     private LearningPathCourseResponse mapToResponse(LearningPathCourse entity) {

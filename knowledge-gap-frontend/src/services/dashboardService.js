@@ -17,7 +17,7 @@ export const getSkills = () => {
 };
 
 export const getCertifications = () => {
-    return api.get("/api/certifications/all");
+    return api.get("/api/certifications");
 }
 export const getCompetencyFrameworks = () => {
     return api.get("/api/competency-frameworks/all");

@@ -9,7 +9,7 @@
  */
 
 export const getAllCertifications = async () => {
-    const response = await api.get("/api/certifications/all");
+    const response = await api.get("/api/certifications");
     return response.data;
 };
 
