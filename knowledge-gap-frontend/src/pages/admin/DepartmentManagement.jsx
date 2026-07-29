@@ -4,13 +4,13 @@ import {
     createDepartment,
     updateDepartment,
     deleteDepartment
-} from "../services/departmentService";
+} from "../../services/departmentService";
 
-import DepartmentHeader from "../components/department/DepartmentHeader";
-import DepartmentStats from "../components/department/DepartmentStats";
-import DepartmentTable from "../components/department/DepartmentTable";
-import DepartmentModal from "../components/department/DepartmentModal";
-import DeleteDepartmentModal from "../components/department/DeleteDepartmentModal";
+import DepartmentHeader from "../../components/department/DepartmentHeader";
+import DepartmentStats from "../../components/department/DepartmentStats";
+import DepartmentTable from "../../components/department/DepartmentTable";
+import DepartmentModal from "../../components/department/DepartmentModal";
+import DeleteDepartmentModal from "../../components/department/DeleteDepartmentModal";
 
 import { Loader2 } from "lucide-react";
 

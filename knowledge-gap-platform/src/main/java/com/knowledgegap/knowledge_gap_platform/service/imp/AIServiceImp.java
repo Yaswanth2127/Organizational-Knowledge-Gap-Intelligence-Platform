@@ -44,6 +44,27 @@ public class AIServiceImp implements AIService {
     private final RecommendationRepository recommendationRepository;
     private final SkillGapService skillGapService;
 
+
+    @Override
+    public AIRecommendationResponse getRecommendation(Long userId) {
+        User user=userRepository.findById(userId).orElseThrow(()->
+                new ResourceNotFoundException("User not found"));
+
+        List<Recommendation> recommendations =
+                recommendationRepository.findByUser(user);
+
+        if (!recommendations.isEmpty()) {
+            return buildResponseFromDatabase(recommendations);
+        }
+
+        AIRecommendationRequest request = new AIRecommendationRequest();
+        request.setUserId(userId);
+
+        return generateRecommendation(request);
+    }
+
+
+
     @Override
     public AIRecommendationResponse generateRecommendation(AIRecommendationRequest aiRecommendationRequest) {
         User user=userRepository.findById(aiRecommendationRequest.getUserId()).orElseThrow(()->
@@ -231,5 +252,56 @@ public class AIServiceImp implements AIService {
                 .reason(course.getReason())
                 .relevanceScore(course.getRelevanceScore())
                 .build();
+    }
+    private AIRecommendationResponse buildResponseFromDatabase(List<Recommendation> recommendations) {
+
+        AIRecommendationResponse response = new AIRecommendationResponse();
+
+        if (recommendations.isEmpty()) {
+            response.setSummary("No recommendations available.");
+            response.setRecommendations(Collections.emptyList());
+            return response;
+        }
+
+        // Summary is same for all recommendations (stored in LearningPath)
+        response.setSummary(
+                recommendations.get(0)
+                        .getLearningPath()
+                        .getSummary()
+        );
+
+        Map<String, SkillRecommendationResponse> skillMap = new LinkedHashMap<>();
+
+        for (Recommendation recommendation : recommendations) {
+
+            String skillName = recommendation.getSkillGap()
+                    .getSkill()
+                    .getName();
+
+            SkillRecommendationResponse skillResponse =
+                    skillMap.computeIfAbsent(skillName, key -> {
+                        SkillRecommendationResponse sr = new SkillRecommendationResponse();
+                        sr.setSkillName(key);
+                        sr.setCourses(new ArrayList<>());
+                        return sr;
+                    });
+
+            Course course = recommendation.getCourse();
+
+            CourseResponse courseResponse = mapToCourseResponse(course);
+
+            RecommendedCourseResponse recommendedCourse = RecommendedCourseResponse.builder()
+                    .course(courseResponse)
+                    .reason(recommendation.getReason())
+                    .relevanceScore(recommendation.getRelevanceScore())
+                    .build();
+
+            skillResponse.getCourses().add(recommendedCourse);
+
+        }
+
+        response.setRecommendations(new ArrayList<>(skillMap.values()));
+
+        return response;
     }
 }

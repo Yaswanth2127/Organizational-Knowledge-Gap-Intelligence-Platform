@@ -19,7 +19,7 @@ import {
     getSkills,
     getCertifications,
     getCompetencyFrameworks
-} from "../services/dashboardService";
+} from "../../services/dashboardService";
 
 export default function HRDashboard() {
 

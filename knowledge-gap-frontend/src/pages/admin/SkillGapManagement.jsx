@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, AlertTriangle } from 'lucide-react';
-import { getSkillGapForUser } from "../services/skillGapService";
-import { getAllUsers } from '../services/userService';
+import { getSkillGapForUser } from "../../services/skillGapService";
+import { getAllUsers } from '../../services/userService';
 
 const SEVERITY_STYLES = {
     CRITICAL: 'bg-red-50 text-red-700',
@@ -19,14 +19,17 @@ export default function SkillGapManagement() {
     const [error, setError] = useState('');
     const [hasAnalyzed, setHasAnalyzed] = useState(false);
 
-    useEffect(() => {
-        getAllUsers()
-            .then(setUsers)
-            .catch((err) =>
-                setError(err.response?.data?.message || 'Failed to load users.')
-            )
-            .finally(() => setLoadingUsers(false));
-    }, []);
+  useEffect(() => {
+    getAllUsers()
+        .then((users) => {
+            console.log(users);
+            setUsers(users);
+        })
+        .catch((err) =>
+            setError(err.response?.data?.message || "Failed to load users.")
+        )
+        .finally(() => setLoadingUsers(false));
+}, []);
 
     const handleAnalyze = async () => {
         if (!selectedUserId) return;

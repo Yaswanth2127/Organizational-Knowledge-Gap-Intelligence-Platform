@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, ArrowRight, ArrowLeft } from 'lucide-react';
-import { sendPasswordResetOTP } from '../services/authService';
+
+import { sendPasswordResetOTP } from '../../services/authService';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();

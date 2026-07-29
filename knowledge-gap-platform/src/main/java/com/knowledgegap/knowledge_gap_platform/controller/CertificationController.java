@@ -40,7 +40,7 @@ public class CertificationController {
     }
 
     // Get All Certifications
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<CertificationResponse>> getAllCertifications() {
 
         return ResponseEntity.ok(

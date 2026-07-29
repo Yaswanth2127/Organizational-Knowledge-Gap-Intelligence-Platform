@@ -12,7 +12,7 @@ import {
     ArrowLeft
 } from "lucide-react";
 
-import api from "../services/api";
+import api from "../../services/api";
 
 export default function EditProfile() {
 

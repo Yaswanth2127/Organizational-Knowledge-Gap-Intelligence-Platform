@@ -2,6 +2,7 @@ package com.knowledgegap.knowledge_gap_platform.service.imp;
 
 import com.knowledgegap.knowledge_gap_platform.dto.LearningPathResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.LearningPath;
+import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.LearningPathRepository;
@@ -36,16 +37,17 @@ public class LearningPathServiceImpl implements LearningPathService {
     }
 
     @Override
-    public LearningPathResponse getCurrentLearningPathByUserId(Long userId) {
-        if(!userRepository.existsById(userId)){
-            throw  new ResourceNotFoundException("User Details not found ");
-        }
-        LearningPath learningPath=learningPathRepository.findByUserIdAndStatus(userId,LearningPathStatus.ACTIVE)
+    public LearningPathResponse getCurrentLearningPathByUserEmail(String email) {
+        User user=userRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User details not found"));
+
+        LearningPath learningPath=learningPathRepository.findByUserIdAndStatus(user.getId(),LearningPathStatus.ACTIVE)
                 .orElseThrow(()->new ResourceNotFoundException("Learning path is not found for that user id "));
 
         return mapToResponse(learningPath);
 
     }
+
+
 
     @Override
     public LearningPathResponse getById(Long id) {

@@ -63,4 +63,13 @@ public class LearningPathCourseController {
 
         return ResponseEntity.ok("Learning Path Course deleted successfully.");
     }
+
+    @GetMapping("/learning-path/{learningPathId}")
+    public ResponseEntity<List<LearningPathCourseResponse>> getByLearningPathId(
+            @PathVariable Long learningPathId) {
+
+        return ResponseEntity.ok(
+                learningPathCourseService.getByLearningPathId(learningPathId)
+        );
+    }
 }

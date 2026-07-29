@@ -19,7 +19,7 @@ import {
     getDepartments,
     getJobRoles,
     getSkills
-} from "../services/dashboardService";
+} from "../../services/dashboardService";
 
 export default function AdminDashboard() {
 

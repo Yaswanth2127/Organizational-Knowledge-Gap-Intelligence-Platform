@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Lock, KeyRound, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react';
-import { resetPassword, resendPasswordResetOTP } from '../services/authService';
+import { resetPassword, resendPasswordResetOTP } from '../../services/authService';
 
 const ResetPassword = () => {
     const navigate = useNavigate();
