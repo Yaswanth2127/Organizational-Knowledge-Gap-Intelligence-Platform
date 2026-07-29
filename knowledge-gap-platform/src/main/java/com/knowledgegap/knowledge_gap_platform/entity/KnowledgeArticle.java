@@ -26,8 +26,8 @@ public class KnowledgeArticle {
     @Column(name = "title",nullable = false,length = 200)
     private String title;
 
-    @Lob
-    @Column(name = "content")
+
+    @Column(name = "content",columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
