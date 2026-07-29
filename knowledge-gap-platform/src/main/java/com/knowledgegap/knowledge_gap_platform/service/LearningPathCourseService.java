@@ -16,4 +16,6 @@ public interface LearningPathCourseService {
     List<LearningPathCourseResponse> getAll();
 
     void delete(Long id);
+
+    List<LearningPathCourseResponse> getByLearningPathId(Long learningPathId);
 }

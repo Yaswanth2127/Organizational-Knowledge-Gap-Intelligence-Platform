@@ -5,11 +5,11 @@ import {
     createFrameworkRequiredSkill,
     updateFrameworkRequiredSkill,
     deleteFrameworkRequiredSkill,
-} from '../services/frameworkRequiredSkillService';
-import { getAllCompetencyFrameworks } from '../services/competencyFrameworkService';
-import { getAllSkills } from '../services/skillService';
-import { getAllJobRoles } from '../services/jobRoleService';
-import { getDepartments } from '../services/departmentService';
+} from '../../services/frameworkRequiredSkillService';
+import { getAllCompetencyFrameworks } from '../../services/competencyFrameworkService';
+import { getAllSkills } from '../../services/skillService';
+import { getAllJobRoles } from '../../services/jobRoleService';
+import { getDepartments } from '../../services/departmentService';
 
 const PROFICIENCY_LEVELS = ['UNAWARE', 'BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT'];
 

@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Sparkles, ExternalLink, RefreshCw } from 'lucide-react';
-import { getAIRecommendation } from '../services/aiRecommendationService';
+import { getAIRecommendation } from '../../services/aiRecommendationService';
 
 export default function AIRecommendation() {
     const [data, setData] = useState(null);
@@ -12,7 +12,7 @@ export default function AIRecommendation() {
     const fetchRecommendation = () => {
         setLoading(true);
         setError('');
-        getAIRecommendation(userId)
+        getAIRecommendation()
             .then(setData)
             .catch((err) =>
                 setError(err.response?.data?.message || 'Failed to generate recommendations.')

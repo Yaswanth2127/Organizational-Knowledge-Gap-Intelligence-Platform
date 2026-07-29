@@ -28,13 +28,17 @@ const role = localStorage.getItem("role");
 const navigation = [
   {
     name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard
+    href:
+      role === "SYS_ADMIN"
+        ? "/admin/dashboard"
+        : "/hr/dashboard",
+    icon: LayoutDashboard,
   },
+
   {
     name: "Profile",
     href: "/profile",
-    icon: User
+    icon: User,
   },
 
   ...(role === "SYS_ADMIN" || role === "HR_SPECIALIST"
@@ -88,12 +92,7 @@ const navigation = [
           name: "Courses",
           href: "/courses",
           icon: BookOpen
-        },
-        {
-        name: "Employee Skill Gap Analysis",
-        href: "/employee-skill-gap-analysis",
-        icon: AlertTriangle,
-    }
+        }
       ]
     : [])
 ];
@@ -123,6 +122,10 @@ const navigation = [
           <button
             onClick={() => {
               localStorage.removeItem('token');
+              localStorage.removeItem("token");
+localStorage.removeItem("role");
+localStorage.removeItem("userId");
+localStorage.removeItem("fullName");
               window.location.href = '/login';
             }}
             className="flex items-center gap-1 text-sm bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-gray-200 transition"

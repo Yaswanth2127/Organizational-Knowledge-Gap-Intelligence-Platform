@@ -5,9 +5,9 @@ import {
     createCompetencyFramework,
     updateCompetencyFramework,
     deleteCompetencyFramework,
-} from "../services/competencyFrameworkService";
-import { getAllJobRoles } from "../services/jobRoleService";
-import { getDepartments } from "../services/departmentService";
+} from "../../services/competencyFrameworkService";
+import { getAllJobRoles } from "../../services/jobRoleService";
+import { getDepartments } from "../../services/departmentService";
 
 export default function CompetencyFrameworkManagement() {
     const [frameworks, setFrameworks] = useState([]);
