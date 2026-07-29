@@ -2,20 +2,19 @@
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-import api from "../services/api";
+import api from "../../services/api";
 
 // Components
-import WelcomeBanner from "../components/employee/WelcomeBanner";
-import DashboardStats from "../components/employee/DashboardStats";
-import MySkills from "../components/employee/MySkills";
-import CompetencyProgress from "../components/employee/CompetencyProgress";
+import WelcomeBanner from "../../components/employee/WelcomeBanner";
+import DashboardStats from "../../components/employee/DashboardStats";
+import MySkills from "../../components/employee/MySkills";
+import CompetencyProgress from "../../components/employee/CompetencyProgress";
 import SkillGapAnalysis from "./EmployeeSkillGapAnalysis";
-import LearningRecommendations from "../components/employee/LearningRecommendations";
-import UpcomingAssessments from "../components/employee/UpcomingAssessments";
-import RecentActivity from "../components/employee/RecentActivity";
-import Notifications from "../components/employee/Notifications";
-import QuickActions from "../components/employee/QuickActions";
-import CareerGoal from "../components/employee/CareerGoal";
+import UpcomingAssessments from "../../components/employee/UpcomingAssessments";
+import RecentActivity from "../../components/employee/RecentActivity";
+import Notifications from "../../components/employee/Notifications";
+import QuickActions from "../../components/employee/QuickActions";
+import CareerGoal from "../../components/employee/CareerGoal";
 
 export default function EmployeeDashboard() {
 
@@ -47,26 +46,7 @@ export default function EmployeeDashboard() {
         learning: 78
     };
 
-    const learningRecommendations = [
-        {
-            title: "Docker Fundamentals",
-            priority: "High",
-            duration: "8 Hours",
-            reason: "Required for Backend Developer competency."
-        },
-        {
-            title: "AWS Cloud Practitioner",
-            priority: "High",
-            duration: "16 Hours",
-            reason: "Cloud knowledge is missing."
-        },
-        {
-            title: "Microservices with Spring Boot",
-            priority: "Medium",
-            duration: "12 Hours",
-            reason: "Improve backend architecture."
-        }
-    ];
+    
 
     const upcomingAssessments = [
         {
@@ -86,20 +66,7 @@ export default function EmployeeDashboard() {
         }
     ];
 
-    const recentActivities = [
-        {
-            title: "Completed Java Basics Assessment",
-            time: "Yesterday"
-        },
-        {
-            title: "Manager approved SQL Skill",
-            time: "2 Days Ago"
-        },
-        {
-            title: "Started Docker Learning Path",
-            time: "Last Week"
-        }
-    ];
+
 
     const notifications = [
         {
@@ -191,9 +158,6 @@ export default function EmployeeDashboard() {
             <SkillGapAnalysis 
             />
 
-            <LearningRecommendations
-                recommendations={learningRecommendations}
-            />
 
             <UpcomingAssessments
                 assessments={upcomingAssessments}

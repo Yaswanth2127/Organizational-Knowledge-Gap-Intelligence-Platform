@@ -23,14 +23,14 @@ import {
 
     addEmployeeSkill
 
-} from "../services/employeeSkillService";
+} from "../../services/employeeSkillService";
 
 import {
     getUsers,
 
     getSkills
 
-} from "../services/dashboardService";
+} from "../../services/dashboardService";
 
 export default function EmployeeSkills() {
 

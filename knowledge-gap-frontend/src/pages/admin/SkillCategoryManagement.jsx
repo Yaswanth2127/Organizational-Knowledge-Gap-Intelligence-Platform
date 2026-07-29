@@ -5,7 +5,7 @@ import {
     createSkillCategory,
     updateSkillCategory,
     deleteSkillCategory,
-} from '../services/skillCategoryService';
+} from '../../services/skillCategoryService';
 
 export default function SkillCategoryManagement() {
     const [categories, setCategories] = useState([]);
@@ -17,14 +17,17 @@ export default function SkillCategoryManagement() {
     const [saving, setSaving] = useState(false);
 
     const fetchCategories = () => {
-        setLoading(true);
-        getAllSkillCategories()
-            .then((res) => setCategories(res.data))
-            .catch((err) =>
-                setError(err.response?.data?.message || 'Failed to load skill categories.')
+    setLoading(true);
+
+    getAllSkillCategories()
+        .then((categories) => setCategories(categories))
+        .catch((err) =>
+            setError(
+                err.response?.data?.message || "Failed to load skill categories."
             )
-            .finally(() => setLoading(false));
-    };
+        )
+        .finally(() => setLoading(false));
+};
 
     useEffect(() => {
         fetchCategories();

@@ -2,6 +2,7 @@
 
 
 
+
 -- ============================================================
 -- Organizational Knowledge Gap Intelligence Platform
 -- WEEK 3 & 4 SCHEMA — Milestone 2
@@ -149,4 +150,45 @@ WHERE table_name = 'recommendations';
 select * from skill_gaps;
 select * from learning_paths;
 select * from recommendations;
+select * from learning_paths;
+select * from skills;
+select * from skill_gaps;
+SELECT column_name, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'assessments';
+
+ALTER TABLE assessments
+DROP CONSTRAINT assessments_course_id_fkey;
+
+ALTER TABLE assessments
+DROP COLUMN course_id;
+
+ALTER TABLE skill_gaps
+ADD COLUMN last_analyzed_at TIMESTAMP;
+
+ALTER TABLE skill_gaps
+ADD COLUMN generated_by VARCHAR(30);
+
+ALTER TABLE skill_gaps
+ADD CONSTRAINT uk_skill_gap
+UNIQUE (user_id, skill_id, framework_id);
+
+SELECT *
+FROM skill_gaps
+WHERE user_id = 6
+ORDER BY skill_id;
+
+DELETE FROM skill_gaps WHERE user_id = 6;
+
+ALTER TYPE gap_severity ADD VALUE 'NONE';
+
+
+select * from certifications;
+
+select * from users;
+
+select * from roles;
+select * from user_roles;
+
+select * from users where id in(select user_id from  user_roles where role_id=1);
 select * from learning_paths;
