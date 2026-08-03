@@ -11,23 +11,22 @@ import java.util.Optional;
 public interface KnowledgeSessionRepository extends JpaRepository<KnowledgeSession,Long> {
 
     @Override
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"host","topicSkill"})
     Optional<KnowledgeSession> findById(Long aLong);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"host","topicSkill"})
     List<KnowledgeSession> findByHostId(Long hostId);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"host","topicSkill"})
     List<KnowledgeSession> findByTopicSkillId(Long skillId);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"host","topicSkill"})
     List<KnowledgeSession> findByStatus(SessionStatus status);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"host","topicSkill"})
     List<KnowledgeSession> findByHostIdAndStatus(
             Long hostId,
             SessionStatus status
     );
 
-    boolean existsByHostIdAndTopicSkillIdAndTitle(Long hostId,Long topicSkillId,String title);
 }
