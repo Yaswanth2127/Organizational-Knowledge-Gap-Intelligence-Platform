@@ -11,25 +11,25 @@ import java.util.Optional;
 
 public interface MentorshipMatchRepository extends JpaRepository<MentorshipMatch,Long> {
     @Override
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     Optional<MentorshipMatch> findById(Long aLong);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     Optional<MentorshipMatch> findByMentorIdAndMenteeIdAndSkillId(
             Long mentorId,
             Long menteeId,
             Long skillId
     );
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     List<MentorshipMatch> findByMentorId(Long mentorId);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     List<MentorshipMatch> findByMenteeId(Long menteeId);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     List<MentorshipMatch> findByStatus(MentorshipStatus status);
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     List<MentorshipMatch> findBySkillId(Long skillId);
 }
