@@ -158,7 +158,6 @@ export default function EmployeeDashboard() {
             <SkillGapAnalysis 
             />
 
-
             <UpcomingAssessments
                 assessments={upcomingAssessments}
             />
