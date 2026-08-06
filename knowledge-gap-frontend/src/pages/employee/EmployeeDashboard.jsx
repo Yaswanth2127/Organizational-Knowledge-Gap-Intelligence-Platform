@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import api from "../../services/api";
+import assessmentService from "../../services/assessmentService";
+import { getEmployeeDashboard } from "../../services/dashboardService";
 
 // Components
 import WelcomeBanner from "../../components/employee/WelcomeBanner";
@@ -10,7 +12,7 @@ import DashboardStats from "../../components/employee/DashboardStats";
 import MySkills from "../../components/employee/MySkills";
 import CompetencyProgress from "../../components/employee/CompetencyProgress";
 import SkillGapAnalysis from "./EmployeeSkillGapAnalysis";
-import UpcomingAssessments from "../../components/employee/UpcomingAssessments";
+import PendingAssessments from "../../components/employee/PendingAssessments";
 import RecentActivity from "../../components/employee/RecentActivity";
 import Notifications from "../../components/employee/Notifications";
 import QuickActions from "../../components/employee/QuickActions";
@@ -22,66 +24,19 @@ export default function EmployeeDashboard() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
 
+    const [assessments, setAssessments] = useState([]);
+    const [dashboardStats, setDashboardStats] = useState(null);
+
     /* ============================================
             Temporary Demo Data
        Replace these with API responses later
     ============================================ */
 
-    const profileCompletion = 88;
-    const competencyScore = 72;
 
-    const dashboardStats = {
-        totalSkills: 14,
-        assessments: 8,
-        certifications: 3,
-        competencyScore: competencyScore
-    };
-
-    
-    const competency = {
-        score: 72,
-        technical: 80,
-        assessments: 70,
-        certifications: 60,
-        learning: 78
-    };
 
     
 
-    const upcomingAssessments = [
-        {
-            title: "Java Advanced",
-            date: "20 Jul 2026",
-            status: "Assigned"
-        },
-        {
-            title: "Spring Boot",
-            date: "24 Jul 2026",
-            status: "Assigned"
-        },
-        {
-            title: "SQL Assessment",
-            date: "28 Jul 2026",
-            status: "Assigned"
-        }
-    ];
 
-
-
-    const notifications = [
-        {
-            message: "Spring Boot assessment assigned.",
-            type: "info"
-        },
-        {
-            message: "AWS certification expires in 30 days.",
-            type: "warning"
-        },
-        {
-            message: "Manager reviewed your latest skill update.",
-            type: "success"
-        }
-    ];
 
     const displayValue = (value, fallback = "Not Available") => {
         if (value === null || value === undefined || value === "") {
@@ -100,10 +55,26 @@ export default function EmployeeDashboard() {
         try {
 
             const userId = localStorage.getItem("userId");
+            
+            const [
+    userResponse,
+    assessmentResponse,
+    dashboardResponse,
+] = await Promise.all([
 
-            const response = await api.get(`/api/users/${userId}`);
+    api.get(`/api/users/${userId}`),
 
-            setUser(response.data);
+    assessmentService.getMyAssessments(),
+
+    getEmployeeDashboard(),
+
+]);
+
+setUser(userResponse.data);
+
+setAssessments(assessmentResponse.data || []);
+
+setDashboardStats(dashboardResponse.data);
 
         } catch (err) {
 
@@ -118,6 +89,19 @@ export default function EmployeeDashboard() {
         }
 
     };
+    const competency = {
+
+    score: dashboardStats?.competencyScore ?? 0,
+
+    technical: dashboardStats?.competencyScore ?? 0,
+
+    assessments: dashboardStats?.completedAssessments ?? 0,
+
+    certifications: dashboardStats?.certifications ?? 0,
+
+    learning: dashboardStats?.profileCompletion ?? 0,
+
+};
 
     if (loading) {
         return (
@@ -130,41 +114,46 @@ export default function EmployeeDashboard() {
         );
     }
 
-   return (
-    <div className="min-h-screen bg-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+    return (
+        <div className="min-h-screen bg-gray-100">
+            <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
 
-            {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700">
-                    {error}
-                </div>
-            )}
+                {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700">
+                        {error}
+                    </div>
+                )}
 
-            <WelcomeBanner
-                user={user}
-                displayValue={displayValue}
-                profileCompletion={profileCompletion}
-                competencyScore={competencyScore}
-            />
+                <WelcomeBanner
+    user={user}
+    displayValue={displayValue}
+    profileCompletion={
+        dashboardStats?.profileCompletion ?? 0
+    }
+    competencyScore={
+        dashboardStats?.competencyScore ?? 0
+    }
+/>
 
-            <DashboardStats
-                stats={dashboardStats}
-            />
+                <DashboardStats
+                    stats={dashboardStats}
+                />
 
-            <CompetencyProgress
-                competency={competency}
-            />
+                <CompetencyProgress
+                    competency={competency}
+                />
 
-            <SkillGapAnalysis 
-            />
+                <SkillGapAnalysis
+                />
 
-            <UpcomingAssessments
-                assessments={upcomingAssessments}
-            />
 
-            <QuickActions />
+                <PendingAssessments
+                    assessments={assessments}
+                />
 
+                <QuickActions />
+
+            </div>
         </div>
-    </div>
-);
+    );
 }

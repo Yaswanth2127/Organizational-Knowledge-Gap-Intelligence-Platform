@@ -38,4 +38,6 @@ public interface AssessmentRepository extends JpaRepository<Assessment, Long> {
             Skill skill,
             AssessmentStatus status
             );
+
+    Integer countCompletedByUserId(Long userId);
 }

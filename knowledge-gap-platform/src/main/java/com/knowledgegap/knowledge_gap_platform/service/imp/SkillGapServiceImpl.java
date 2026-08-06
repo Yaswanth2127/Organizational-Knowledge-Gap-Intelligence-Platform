@@ -144,6 +144,7 @@ public class SkillGapServiceImpl implements SkillGapService {
                     .userId(skillGap.getUser().getId())
                     .employeeName(skillGap.getUser().getFullName())
                     .skillGapId(skillGap.getId())
+                    .skillId(skillGap.getSkill().getId())
                     .skillName(skillGap.getSkill().getName())
                     .severity(skillGap.getSeverity())
                     .status(skillGap.getStatus())

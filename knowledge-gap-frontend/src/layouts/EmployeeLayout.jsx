@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   Menu,
   X,
+  Award,
   LayoutDashboard,
   User,
   AlertTriangle,
@@ -14,6 +15,8 @@ import {
   ClipboardCheck,
   BadgeCheck,
   MapPinned,
+  ClipboardList,
+  Users,
 } from "lucide-react";
 
 const EmployeeLayout = ({ children }) => {
@@ -32,6 +35,11 @@ const EmployeeLayout = ({ children }) => {
       icon: User,
     },
     {
+        name: "My Skills",
+        icon: Award,
+        href: "/employee/skills",
+    },
+    {
       name: "Learning Path",
       icon: MapPinned,
       href: "/employee/learning-path",
@@ -46,7 +54,23 @@ const EmployeeLayout = ({ children }) => {
       name: "Assessments",
       href: "/assessment",
       icon: ClipboardCheck,
-    }
+    },
+    ,
+{
+    name: "Assessment History",
+    href: "/assessment/history",
+    icon: ClipboardList,
+},
+    {
+    name: "My Certifications",
+    icon: Award,
+    href: "/my-certifications",
+},
+ {
+        name: "Peer Ratings",
+        icon: Users,
+        href: "/employee/ratings",
+    },
   ];
 
   return (

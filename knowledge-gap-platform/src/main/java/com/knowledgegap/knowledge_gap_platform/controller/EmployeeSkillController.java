@@ -2,8 +2,10 @@ package com.knowledgegap.knowledge_gap_platform.controller;
 
 import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillReviewRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillStatisticsResponse;
 import com.knowledgegap.knowledge_gap_platform.service.EmployeeSkillService;
-import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,12 +21,9 @@ public class EmployeeSkillController {
 
     private final EmployeeSkillService employeeSkillService;
 
-    // ===========================
-    // Employee Self Assessment
-    // ===========================
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<EmployeeSkillResponse> addEmployeeSkill(
             @RequestBody EmployeeSkillRequest request){
 
@@ -33,11 +32,9 @@ public class EmployeeSkillController {
         );
     }
 
-    // ===========================
-    // View Own Skills
-    // ===========================
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+
+    @PreAuthorize("hasAnyRole('HR_SPECIALIST','SYS_ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<EmployeeSkillResponse>> getByUserId(
             @PathVariable Long userId){
@@ -48,9 +45,7 @@ public class EmployeeSkillController {
 
     }
 
-    // ===========================
-    // HR/Admin
-    // ===========================
+
 
     @PreAuthorize("hasAnyRole('HR_SPECIALIST','SYS_ADMIN')")
     @GetMapping("/all")
@@ -73,7 +68,7 @@ public class EmployeeSkillController {
 
     }
 
-    @PreAuthorize("hasAnyRole('HR_SPECIALIST','SYS_ADMIN')")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeSkillResponse> update(
             @PathVariable Long id,
@@ -85,7 +80,7 @@ public class EmployeeSkillController {
 
     }
 
-    @PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE','SYS_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable Long id){
@@ -93,8 +88,47 @@ public class EmployeeSkillController {
         employeeSkillService.deleteEmployeeSkillById(id);
 
         return ResponseEntity.noContent().build();
+    }
+    @PreAuthorize("hasAnyRole('EMPLOYEE')")
+    @GetMapping("/me")
+    public ResponseEntity<List<EmployeeSkillResponse>> getMySkills() {
+
+        return ResponseEntity.ok(
+                employeeSkillService.getMySkills()
+        );
+    }
+
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @PatchMapping("/{id}/peer-review")
+    public ResponseEntity<EmployeeSkillResponse> submitPeerReview(
+            @PathVariable Long id,
+            @RequestBody EmployeeSkillReviewRequest request){
+
+        return ResponseEntity.ok(
+                employeeSkillService.submitPeerReview(id, request)
+        );
+    }
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @GetMapping("/peer-review/eligible")
+    public ResponseEntity<List<EmployeeSkillResponse>>
+    getEligiblePeerReviews(){
+
+        return ResponseEntity.ok(
+                employeeSkillService.getEligiblePeerReviews()
+        );
 
     }
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @GetMapping("/statistics")
+    public ResponseEntity<EmployeeSkillStatisticsResponse>
+    getStatistics(){
+
+        return ResponseEntity.ok(
+                employeeSkillService.getStatistics()
+        );
+
+    }
+
 
 
 

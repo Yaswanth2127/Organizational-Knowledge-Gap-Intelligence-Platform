@@ -10,15 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmployeeSkillRequest {
 
-    private Long userId;
 
     private Long skillId;
 
     private ProficiencyLevel selfRating;
 
-    private ProficiencyLevel peerRating;
-
-    private ProficiencyLevel managerRating;
-
-    private ProficiencyLevel finalRating;
 }
