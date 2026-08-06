@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { BookOpen, Calendar, Loader2, MapPinned } from "lucide-react";
-import api from "../../services/api";
+import {
+    getCurrentLearningPath,
+    getLearningPathCourses
+} from "../../services/learningPathService";
 
 const LearningPath = () => {
   const [learningPath, setLearningPath] = useState(null);
@@ -8,31 +11,23 @@ const LearningPath = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const email = localStorage.getItem("email");
+
 
 useEffect(() => {
-  if (email) {
-    loadLearningPath(email);
-  } else {
-    setLoading(false);
-  }
+  loadLearningPath();
 }, []);
 
   const loadLearningPath = async () => {
     try {
       setLoading(true);
 
-      const pathRes = await api.get(
-        `/api/learning-paths/user/${user.id}`
-      );
+     const pathRes = await getCurrentLearningPath();
 
-      setLearningPath(pathRes.data);
+      setLearningPath(pathRes);
 
-      const courseRes = await api.get(
-        `/api/learning-path-courses/learning-path/${pathRes.data.id}`
-      );
+      const courseRes = await getLearningPathCourses(pathRes.id);
 
-      const sortedCourses = [...courseRes.data].sort(
+      const sortedCourses = [...courseRes].sort(
         (a, b) => a.sequenceOrder - b.sequenceOrder
       );
 

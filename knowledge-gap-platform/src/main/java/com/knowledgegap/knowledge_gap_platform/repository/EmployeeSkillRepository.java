@@ -2,6 +2,7 @@ package com.knowledgegap.knowledge_gap_platform.repository;
 
 import com.knowledgegap.knowledge_gap_platform.entity.EmployeeSkill;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
+import com.knowledgegap.knowledge_gap_platform.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -42,5 +43,22 @@ public interface EmployeeSkillRepository extends JpaRepository<EmployeeSkill, Lo
             ,"user.jobRole"
     })
     Optional<EmployeeSkill> findById(Long id);
+
+    Boolean existsByUserAndSkill(User user,Skill skill);
+
+
+    @EntityGraph(attributePaths = {
+            "user",
+            "skill"
+            ,"user.department"
+            ,"user.jobRole"
+    })
+    List<EmployeeSkill> findByUserManagerId(Long id);
+
+
+    Integer countByUserId(Long userId);
+
+
+
 
 }

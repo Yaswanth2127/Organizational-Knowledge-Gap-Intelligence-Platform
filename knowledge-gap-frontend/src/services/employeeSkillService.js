@@ -14,3 +14,40 @@ export const deleteEmployeeSkill = (id) =>
 
 export const getEmployeeSkillsByUserId = (userId) =>
     api.get(`/api/employee-skills/user/${userId}`);
+
+
+const BASE_URL = "/api/employee-skills";
+
+const employeeSkillService = {
+
+    getMySkills: () =>
+        api.get(`${BASE_URL}/me`),
+
+    addSkill: (data) =>
+        api.post(BASE_URL, data),
+
+    updateSkill: (id, data) =>
+        api.put(`${BASE_URL}/${id}`, data),
+
+    deleteSkill: (id) =>
+        api.delete(`${BASE_URL}/${id}`),
+
+    getStatistics: () =>
+        api.get(`${BASE_URL}/statistics`),getEligiblePeerReviews() {
+    return api.get("/api/employee-skills/peer-review");
+},
+
+getEligiblePeerReviews() {
+    return api.get("/api/employee-skills/peer-review/eligible");
+},
+
+submitPeerReview(id, payload) {
+    return api.patch(
+        `/api/employee-skills/${id}/peer-review`,
+        payload
+    );
+},
+
+};
+
+export default employeeSkillService;

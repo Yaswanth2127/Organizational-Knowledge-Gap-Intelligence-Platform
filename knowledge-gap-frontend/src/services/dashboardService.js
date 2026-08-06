@@ -27,3 +27,7 @@ export const getRecentUsers = async () => {
     const response = await api.get("/api/users/recent");
     return response.data;
 };
+
+export const getEmployeeDashboard = () => {
+    return api.get("/api/dashboard/employee");
+};

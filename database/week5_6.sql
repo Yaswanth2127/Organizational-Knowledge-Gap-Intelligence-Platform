@@ -1,3 +1,4 @@
+
 -- ============================================================
 -- Organizational Knowledge Gap Intelligence Platform
 -- WEEK 5 & 6 SCHEMA — Milestone 3
@@ -129,7 +130,7 @@ CREATE TABLE session_attendees
                         REFERENCES users(id),
 
     attendance_status   attendance_status
-                        NOT NULL DEFAULT 'REGISTERED',
+                        NOT NULL DEFAULT 'REGISTERED'
 
     feedback_rating     INT
                         CHECK (feedback_rating BETWEEN 1 AND 5),

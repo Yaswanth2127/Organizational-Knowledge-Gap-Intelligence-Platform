@@ -1,13 +1,11 @@
 package com.knowledgegap.knowledge_gap_platform.controller;
 
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentApprovalRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentCreateRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentResponse;
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentSubmitRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.*;
 import com.knowledgegap.knowledge_gap_platform.service.AssessmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,11 +38,11 @@ public class AssessmentController {
         return assessmentService.getAllAssessments();
     }
 
-    @GetMapping("/user/{userId}")
-    public List<AssessmentResponse> getAssessmentsByUser(
-            @PathVariable Long userId) {
+    @GetMapping("/my")
+    public List<AssessmentResponse> getMyAssessments(
+           ) {
 
-        return assessmentService.getAssessmentsByUserId(userId);
+        return assessmentService.getCurrentUserAssessments();
     }
 
 
@@ -54,6 +52,7 @@ public class AssessmentController {
 
         return assessmentService.getAssessmentsBySkill(skillId);
     }
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @PostMapping("/submit")
     public AssessmentResponse submitAssessment(
             @Valid @RequestBody AssessmentSubmitRequest request) {
@@ -61,6 +60,7 @@ public class AssessmentController {
         return assessmentService.submitAssessment(request);
     }
 
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER')")
     @PatchMapping("/approve")
     public AssessmentResponse approveAssessment(
             @Valid @RequestBody AssessmentApprovalRequest request) {
@@ -68,23 +68,31 @@ public class AssessmentController {
         return assessmentService.approveAssessment(request);
     }
 
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER')")
     @GetMapping("/pending")
     public List<AssessmentResponse> getPendingAssessments() {
 
         return assessmentService.getPendingAssessments();
     }
 
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER')")
     @GetMapping("/pending-approvals")
     public List<AssessmentResponse> getPendingApprovals() {
 
         return assessmentService.getPendingApprovals();
     }
 
-    @GetMapping("/history/{userId}")
-    public List<AssessmentResponse> getAssessmentHistory(
-            @PathVariable Long userId) {
+    @GetMapping("/history")
+    public List<AssessmentResponse> getAssessmentHistory() {
 
-        return assessmentService.getAssessmentHistoryByUserId(userId);
+        return assessmentService.getMyAssessmentHistory();
+    }
+
+    @PreAuthorize("hasAnyRole(" +
+            "'SYS_ADMIN','MANAGER')")
+    @GetMapping("/statistics")
+    public AssessmentStatisticsResponse getAssessmentStatistics(){
+        return assessmentService.getAssessmentStatistics();
     }
 
 

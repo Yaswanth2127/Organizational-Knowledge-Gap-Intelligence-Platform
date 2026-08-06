@@ -1,5 +1,5 @@
 import React from "react";
-import { User, Edit, TrendingUp } from "lucide-react";
+import { User, Edit, TrendingUp, Building2, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function WelcomeBanner({
@@ -10,12 +10,20 @@ export default function WelcomeBanner({
 }) {
 
     const navigate = useNavigate();
+    const hour = new Date().getHours();
+
+    const greeting =
+        hour < 12
+            ? "Good Morning"
+            : hour < 18
+                ? "Good Afternoon"
+                : "Good Evening";
 
     return (
 
         <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-700 rounded-3xl shadow-xl overflow-hidden">
 
-            <div className="p-8 lg:p-10 flex flex-col lg:flex-row justify-between items-center gap-10">
+            <div className="p-6 lg:p-7 flex flex-col lg:flex-row justify-between items-center gap-6">
 
                 {/* ======================================
                         LEFT SECTION
@@ -25,7 +33,7 @@ export default function WelcomeBanner({
 
                     {/* Profile Image */}
 
-                    <div className="w-28 h-28 rounded-3xl bg-white shadow-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center overflow-hidden">
 
                         {user?.profileImageUrl ? (
 
@@ -37,7 +45,7 @@ export default function WelcomeBanner({
 
                         ) : (
 
-                            <span className="text-5xl font-bold text-indigo-600">
+                            <span  className="text-3xl font-bold text-indigo-600">
 
                                 {displayValue(user?.fullName).charAt(0)}
 
@@ -51,30 +59,41 @@ export default function WelcomeBanner({
 
                     <div className="text-center md:text-left">
 
-                        <p className="text-indigo-100 font-semibold">
-
-                            Welcome Back 👋
-
+                        <p className="text-indigo-100 text-sm font-semibold uppercase tracking-wide">
+                            {greeting}, Welcome 👋
                         </p>
 
-                        <h1 className="text-4xl font-bold text-white mt-2">
+                        <h1 className="text-3xl lg:text-4xl font-bold text-white mt-1">
 
                             {displayValue(user?.fullName)}
 
                         </h1>
 
-                        <p className="text-indigo-100 text-lg mt-2">
+                        <div className="mt-3 flex flex-col gap-2 text-sm">
 
-                            {displayValue(
-                                user?.jobRoleName,
-                                "Job Role Not Assigned"
-                            )}
+                            <div className="flex items-center gap-2 text-indigo-100">
 
-                        </p>
+                                <User size={17} />
 
-                        <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-5">
+                                {displayValue(user?.jobRoleName)}
 
-                            <span className="bg-white/20 px-4 py-2 rounded-full text-sm text-white">
+                            </div>
+
+
+
+                            <div className="flex items-center gap-2 text-indigo-100">
+
+                                <Mail size={17} />
+
+                                {displayValue(user?.email)}
+
+                            </div>
+
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mt-4">
+
+                            <span className="bg-white/20 px-3 py-1.5 rounded-full text-xs text-white">
 
                                 {displayValue(
                                     user?.departmentName,
@@ -83,7 +102,7 @@ export default function WelcomeBanner({
 
                             </span>
 
-                            <span className="bg-white/20 px-4 py-2 rounded-full text-sm text-white flex items-center gap-2">
+                            <span className="bg-white/20 px-3 py-1.5 rounded-full text-xs text-white flex items-center gap-2">
 
                                 <TrendingUp size={16} />
 
@@ -93,7 +112,7 @@ export default function WelcomeBanner({
 
                         </div>
 
-                        <p className="text-indigo-100 mt-6 max-w-xl leading-relaxed">
+                        <p className="text-indigo-100 text-sm mt-4 max-w-lg leading-6">
 
                             Continue improving your technical skills,
                             complete assessments, earn certifications,
@@ -102,7 +121,7 @@ export default function WelcomeBanner({
 
                         </p>
 
-                        <div className="flex flex-wrap gap-4 mt-8 justify-center md:justify-start">
+                        <div className="flex flex-wrap gap-3 mt-6 justify-center md:justify-start">
 
                             <button
                                 onClick={() => navigate("/profile")}
@@ -136,7 +155,7 @@ export default function WelcomeBanner({
                         RIGHT SECTION
                 ======================================= */}
 
-                <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 w-full lg:w-80">
+                <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 w-full lg:w-72">
 
                     <p className="text-indigo-100 text-sm">
 
@@ -144,13 +163,13 @@ export default function WelcomeBanner({
 
                     </p>
 
-                    <h2 className="text-6xl font-bold text-white mt-4">
+                    <h2 className="text-5xl font-bold text-white mt-3">
 
                         {profileCompletion}%
 
                     </h2>
 
-                    <div className="w-full h-3 bg-white/20 rounded-full mt-6 overflow-hidden">
+                    <div className="w-full h-2 bg-white/20 rounded-full mt-4 overflow-hidden">
 
                         <div
                             className="bg-white h-full rounded-full"
@@ -161,41 +180,39 @@ export default function WelcomeBanner({
 
                     </div>
 
-                    <div className="mt-8 space-y-3">
+                    <div className="grid grid-cols-2 gap-3 mt-6">
 
-                        <div className="flex justify-between text-indigo-100">
-
-                            <span>Email Verified</span>
-
-                            <span>✔</span>
-
+                        <div className="bg-white/10 rounded-xl p-3">
+                            <p className="text-xs text-indigo-200">Employee ID</p>
+                            <h3 className="text-white font-bold mt-1">{user?.id}</h3>
                         </div>
 
-                        <div className="flex justify-between text-indigo-100">
-
-                            <span>Profile Updated</span>
-
-                            <span>✔</span>
-
+                        <div className="bg-white/10 rounded-xl p-3">
+                            <p className="text-xs text-indigo-200">Department</p>
+                            <h3 className="text-white font-bold mt-1">
+                                {displayValue(user?.departmentName)}
+                            </h3>
                         </div>
 
-                        <div className="flex justify-between text-indigo-100">
+                        <div className="bg-white/10 rounded-xl p-3">
+                            <p className="text-xs text-indigo-200">Role</p>
+                            <h3 className="text-white font-bold mt-1">
+                                {displayValue(user?.jobRoleName)}
+                            </h3>
+                        </div>
 
-                            <span>Phone Number</span>
-
-                            <span>
-
-                                {user?.phoneNumber ? "✔" : "⚠"}
-
-                            </span>
-
+                        <div className="bg-white/10 rounded-xl p-3">
+                            <p className="text-xs text-indigo-200">Competency</p>
+                            <h3 className="text-white font-bold mt-1">
+                                {competencyScore}%
+                            </h3>
                         </div>
 
                     </div>
 
                     <button
                         onClick={() => navigate("/profile")}
-                        className="mt-8 w-full bg-white text-indigo-700 hover:bg-gray-100 rounded-xl py-3 font-semibold transition"
+                       className="mt-6 w-full bg-white text-indigo-700 hover:bg-gray-100 rounded-xl py-2.5 font-semibold transition"
                     >
 
                         Complete Profile

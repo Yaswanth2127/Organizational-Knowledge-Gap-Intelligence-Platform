@@ -43,11 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/oauth2/**",
-                                "/api/ai/**",
-                                "/api/assessments/**",
-                                "/api/questions/**",
                                 "/login/**",
-
                                 // Swagger
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
@@ -106,13 +102,13 @@ public class SecurityConfig {
                                 "SYS_ADMIN"
                         )
 
-                        .requestMatchers("/api/learning-paths/**")
-                        .hasAnyRole(
-                                "EMPLOYEE",
-                                "HR_SPECIALIST",
-                                "LND_ADMIN",
-                                "SYS_ADMIN"
-                        )
+//                        .requestMatchers("/api/learning-paths/**")
+//                        .hasAnyRole(
+//                                "EMPLOYEE",
+//                                "HR_SPECIALIST",
+//                                "LND_ADMIN",
+//                                "SYS_ADMIN"
+//                        )
 
                         .requestMatchers("/api/enrollments/**")
                         .hasAnyRole(
@@ -122,13 +118,13 @@ public class SecurityConfig {
                                 "SYS_ADMIN"
                         )
 
-                        .requestMatchers("/api/learning-path-courses/**")
-                        .hasAnyRole(
-                               "EMPLOYEE",
-                               "HR_SPECIALIST",
-                               "LND_ADMIN",
-                               "SYS_ADMIN"
-                        )
+//                        .requestMatchers("/api/learning-path-courses/**")
+//                        .hasAnyRole(
+//                               "EMPLOYEE",
+//                               "HR_SPECIALIST",
+//                               "LND_ADMIN",
+//                               "SYS_ADMIN"
+//                        )
 
                         // ==========================
                         // EVERYTHING ELSE

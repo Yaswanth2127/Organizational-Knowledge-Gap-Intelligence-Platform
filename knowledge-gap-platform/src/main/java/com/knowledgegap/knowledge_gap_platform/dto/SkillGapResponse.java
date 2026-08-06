@@ -23,7 +23,10 @@ public class SkillGapResponse {
 
     private Long userId;
 
+    private Long skillId;
+
     private String skillName;
+
 
     private ProficiencyLevel requiredLevel;
 

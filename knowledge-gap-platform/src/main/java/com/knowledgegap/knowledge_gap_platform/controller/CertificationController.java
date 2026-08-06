@@ -1,6 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.controller;
 
-import com.knowledgegap.knowledge_gap_platform.dto.CertificationRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.AdminCertificationRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.CertificationResponse;
 import com.knowledgegap.knowledge_gap_platform.service.CertificationService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class CertificationController {
     public ResponseEntity<CertificationResponse> addCertification(
 
             @RequestPart("data")
-            CertificationRequest request,
+            AdminCertificationRequest request,
 
             @RequestPart(value = "file", required = false)
             MultipartFile file) {
@@ -68,7 +68,7 @@ public class CertificationController {
             @PathVariable Long id,
 
             @RequestPart("data")
-            CertificationRequest request,
+            AdminCertificationRequest request,
 
             @RequestPart(value = "file", required = false)
             MultipartFile file) {

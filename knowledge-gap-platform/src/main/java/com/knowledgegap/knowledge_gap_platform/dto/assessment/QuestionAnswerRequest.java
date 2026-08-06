@@ -13,6 +13,6 @@ public class QuestionAnswerRequest {
     @NotNull
     private Long questionId;
 
-    @NotBlank
+    @NotNull
     private AnswerOption selectedAnswer;
 }

@@ -1,9 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.service;
 
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentApprovalRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentCreateRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentResponse;
-import com.knowledgegap.knowledge_gap_platform.dto.assessment.AssessmentSubmitRequest;
+import com.knowledgegap.knowledge_gap_platform.dto.assessment.*;
 
 import java.util.List;
 
@@ -20,7 +17,7 @@ public interface AssessmentService {
 
     List<AssessmentResponse> getAllAssessments();
 
-    List<AssessmentResponse> getAssessmentsByUserId(Long userId);
+    List<AssessmentResponse> getCurrentUserAssessments();
 
 
     List<AssessmentResponse> getAssessmentsBySkill(Long skillId);
@@ -29,5 +26,7 @@ public interface AssessmentService {
 
     List<AssessmentResponse> getPendingApprovals();
 
-    List<AssessmentResponse> getAssessmentHistoryByUserId(Long userId);
+    List<AssessmentResponse> getMyAssessmentHistory();
+
+    AssessmentStatisticsResponse getAssessmentStatistics();
 }

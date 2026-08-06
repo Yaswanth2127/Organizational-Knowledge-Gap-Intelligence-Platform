@@ -1,7 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.service;
 
-import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillRequest;
-import com.knowledgegap.knowledge_gap_platform.dto.EmployeeSkillResponse;
+import com.knowledgegap.knowledge_gap_platform.dto.*;
 
 import java.util.List;
 
@@ -17,4 +16,13 @@ public interface EmployeeSkillService {
                                               EmployeeSkillRequest request);
     void deleteEmployeeSkillById(Long id);
     List<EmployeeSkillResponse> getEmployeeSkillsByUserId(Long userId);
+
+
+    List<EmployeeSkillResponse> getMySkills();
+
+    List<EmployeeSkillResponse> getEligiblePeerReviews();
+
+    EmployeeSkillResponse submitPeerReview(Long id, EmployeeSkillReviewRequest request);
+
+    EmployeeSkillStatisticsResponse getStatistics();
 }

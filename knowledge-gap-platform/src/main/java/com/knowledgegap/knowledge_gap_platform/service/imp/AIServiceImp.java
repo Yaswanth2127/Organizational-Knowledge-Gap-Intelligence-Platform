@@ -19,7 +19,6 @@ import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundExcepti
 import com.knowledgegap.knowledge_gap_platform.repository.*;
 import com.knowledgegap.knowledge_gap_platform.service.AIService;
 import com.knowledgegap.knowledge_gap_platform.service.CourseService;
-import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import com.knowledgegap.knowledge_gap_platform.util.PromptBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,11 +41,12 @@ public class AIServiceImp implements AIService {
     private final CourseService courseService;
     private final LearningPathRepository learningPathRepository;
     private final RecommendationRepository recommendationRepository;
-    private final SkillGapService skillGapService;
+    private final LearningPathCourseRepository learningPathCourseRepository;
 
 
     @Override
     public AIRecommendationResponse getRecommendation(Long userId) {
+
         User user=userRepository.findById(userId).orElseThrow(()->
                 new ResourceNotFoundException("User not found"));
 
@@ -67,6 +67,8 @@ public class AIServiceImp implements AIService {
 
     @Override
     public AIRecommendationResponse generateRecommendation(AIRecommendationRequest aiRecommendationRequest) {
+        System.out.println("POST /recommendation/analyze called for userId = " + aiRecommendationRequest.getUserId());
+
         User user=userRepository.findById(aiRecommendationRequest.getUserId()).orElseThrow(()->
                 new ResourceNotFoundException("User Details not found "));
 
@@ -123,6 +125,7 @@ public class AIServiceImp implements AIService {
 
         List<SkillRecommendationResponse> skillResponses = new ArrayList<>();
 
+        int sequence = 1;
 
         for(GeminiSkillRecommendation gemini:geminiResponse.getRecommendations()){
 
@@ -138,6 +141,7 @@ public class AIServiceImp implements AIService {
             }
             SkillRecommendationResponse skillRecommendationResponse=new SkillRecommendationResponse();
             List<RecommendedCourseResponse> courseResponses=new ArrayList<>();
+
 
             for(GeminiRecommendedCourse course:gemini.getCourses()){
                 Long courseId =course.getCourseId();
@@ -178,6 +182,21 @@ public class AIServiceImp implements AIService {
                         .build();
 
                 recommendationRepository.save(recommendation);
+                System.out.println("Course Entity: " + courseEntity.getTitle());
+                LearningPathCourse learningPathCourse = LearningPathCourse.builder()
+                        .learningPath(learningPath)
+                        .course(courseEntity)
+                        .sequenceOrder(sequence++)
+                        .estimatedDays(courseEntity.getDurationHours() != null
+                                ? Math.max(1, courseEntity.getDurationHours().intValue()/2)
+                                : 3)
+                        .build();
+
+                System.out.println("Before save LPC");
+
+                learningPathCourseRepository.save(learningPathCourse);
+
+                System.out.println("After save LPC");
 
             }
 
@@ -206,8 +225,6 @@ public class AIServiceImp implements AIService {
             return objectMapper.readValue(response, GeneratedAssessment.class);
 
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            System.out.println(e);
             throw new RuntimeException("Failed to parse Gemini assessment response.", e);
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate assessment.", e);

@@ -7,12 +7,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/learning-paths")
+@PreAuthorize("hasRole('EMPLOYEE')")
+@CrossOrigin("*")
 @RequiredArgsConstructor
 public class LearningPathController {
 
@@ -37,9 +40,9 @@ public class LearningPathController {
         );
     }
 
-    @GetMapping("/user/email/{email}")
-    public ResponseEntity<LearningPathResponse> getCurrentLearningPathByUserId(@PathVariable String email){
-        return ResponseEntity.ok(learningPathService.getCurrentLearningPathByUserEmail(email));
+    @GetMapping("/me")
+    public ResponseEntity<LearningPathResponse> getCurrentLearningPathByUserId(){
+        return ResponseEntity.ok(learningPathService.getCurrentLearningPathByUser());
     }
 
     @GetMapping("/user/{userId}/history")

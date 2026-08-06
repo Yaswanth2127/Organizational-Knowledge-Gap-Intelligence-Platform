@@ -5,7 +5,7 @@ import {
     GraduationCap,
     ClipboardCheck,
     BookOpen,
-    FileText,
+    Lightbulb,
     ArrowRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -14,56 +14,50 @@ export default function QuickActions() {
 
     const navigate = useNavigate();
 
-    const actions = [
 
+    const actions = [
         {
             title: "My Profile",
             description: "View and update your profile.",
             icon: User,
             color: "bg-indigo-100 text-indigo-600",
-            route: "/profile"
+            route: "/profile",
         },
-
         {
             title: "My Skills",
-            description: "View your current skills.",
+            description: "Manage your skills and proficiency.",
             icon: Award,
             color: "bg-green-100 text-green-600",
-            route: "/employee/skills"
+           route: "/employee/skills",
         },
-
         {
             title: "Certifications",
-            description: "View earned certifications.",
+            description: "View your earned certifications.",
             icon: GraduationCap,
             color: "bg-purple-100 text-purple-600",
-            route: "/employee/certifications"
+            route: "/my-certifications",
         },
-
         {
             title: "Assessments",
-            description: "Take pending assessments.",
+            description: "Complete your pending assessments.",
             icon: ClipboardCheck,
             color: "bg-orange-100 text-orange-600",
-            route: "/employee/assessments"
+            route: "/assessment",
         },
-
         {
             title: "Learning Path",
-            description: "Continue your learning journey.",
+            description: "Continue your personalized learning journey.",
             icon: BookOpen,
             color: "bg-blue-100 text-blue-600",
-            route: "/employee/learning"
+            route: "/employee/learning-path",
         },
-
         {
-            title: "Training Requests",
-            description: "Request new training programs.",
-            icon: FileText,
+            title: "AI Recommendations",
+            description: "View AI-powered course recommendations.",
+            icon: Lightbulb,
             color: "bg-pink-100 text-pink-600",
-            route: "/employee/training-request"
-        }
-
+            route: "/ai-recommendations",
+        },
     ];
 
     return (
@@ -102,17 +96,17 @@ export default function QuickActions() {
 
                 {
 
-                    actions.map((action,index)=>{
+                    actions.map((action, index) => {
 
                         const Icon = action.icon;
 
-                        return(
+                        return (
 
                             <button
 
                                 key={index}
 
-                                onClick={()=>navigate(action.route)}
+                                onClick={() => navigate(action.route)}
 
                                 className="text-left border rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition duration-300 group"
 
@@ -122,7 +116,7 @@ export default function QuickActions() {
 
                                     <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${action.color}`}>
 
-                                        <Icon size={30}/>
+                                        <Icon size={30} />
 
                                     </div>
 
