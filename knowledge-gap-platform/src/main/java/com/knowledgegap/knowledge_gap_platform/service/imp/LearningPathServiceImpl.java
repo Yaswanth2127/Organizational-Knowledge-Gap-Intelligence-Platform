@@ -7,6 +7,7 @@ import com.knowledgegap.knowledge_gap_platform.entity.enums.LearningPathStatus;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.LearningPathRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.LearningPathService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class LearningPathServiceImpl implements LearningPathService {
 
     private final LearningPathRepository learningPathRepository;
     private final UserRepository userRepository;
+    private final AuthenticationService authenticationService;
 
 
     @Override
@@ -37,9 +39,8 @@ public class LearningPathServiceImpl implements LearningPathService {
     }
 
     @Override
-    public LearningPathResponse getCurrentLearningPathByUserEmail(String email) {
-        User user=userRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User details not found"));
-
+    public LearningPathResponse getCurrentLearningPathByUser() {
+        User user=authenticationService.getCurrentUser();
         LearningPath learningPath=learningPathRepository.findByUserIdAndStatus(user.getId(),LearningPathStatus.ACTIVE)
                 .orElseThrow(()->new ResourceNotFoundException("Learning path is not found for that user id "));
 

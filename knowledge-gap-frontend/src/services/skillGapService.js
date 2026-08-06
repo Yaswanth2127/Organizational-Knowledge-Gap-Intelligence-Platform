@@ -27,6 +27,6 @@ export const getSkillGapForUser = async (userId) => {
 
 // EMPLOYEE
 export const getMySkillGap = async () => {
-    const response = await api.get("/api/skill-gaps/employee");
+    const response = await api.get("/api/skill-gaps/employee/me");
     return response.data;
 };

@@ -14,7 +14,10 @@ import java.time.LocalDate;
 public class CertificationResponse {
     private Long id;
     private Long userId;
+    private String userName;
+
     private Long skillId;
+    private String skillName;
     private String name;
     private String issuer;
     private String credentialUrl;

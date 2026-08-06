@@ -11,6 +11,7 @@ import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundExcepti
 import com.knowledgegap.knowledge_gap_platform.repository.*;
 import com.knowledgegap.knowledge_gap_platform.service.AIService;
 import com.knowledgegap.knowledge_gap_platform.service.AssessmentService;
+import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,12 +42,12 @@ public class AssessmentServiceImpl implements AssessmentService {
     private final SkillGapService skillGapService;
     private final SkillGapRepository skillGapRepository;
     private final AIService aiService;
+    private final AuthenticationService authenticationService;
 
     @Override
     public AssessmentResponse createAssessment(AssessmentCreateRequest request) {
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = authenticationService.getCurrentUser();
 
 
         Skill skill = skillRepository.findById(request.getSkillId())
@@ -210,10 +208,9 @@ public class AssessmentServiceImpl implements AssessmentService {
     }
 
     @Override
-    public List<AssessmentResponse> getAssessmentsByUserId(Long userId) {
+    public List<AssessmentResponse> getCurrentUserAssessments() {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = authenticationService.getCurrentUser();
 
         return assessmentRepository.findByUser(user)
                 .stream()
@@ -257,14 +254,63 @@ public class AssessmentServiceImpl implements AssessmentService {
     }
 
     @Override
-    public List<AssessmentResponse> getAssessmentHistoryByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public List<AssessmentResponse> getMyAssessmentHistory() {
+        User user = authenticationService.getCurrentUser();
 
         return assessmentRepository.findByUser(user)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+
+    }
+
+    @Override
+    public AssessmentStatisticsResponse getAssessmentStatistics() {
+        List<Assessment> assessments = assessmentRepository.findAll();
+
+        long total = assessments.size();
+
+        long pending = assessments.stream()
+                .filter(a -> a.getStatus() == AssessmentStatus.PENDING)
+                .count();
+
+        long passed = assessments.stream()
+                .filter(a -> a.getStatus() == AssessmentStatus.PASSED)
+                .count();
+
+        long failed = assessments.stream()
+                .filter(a -> a.getStatus() == AssessmentStatus.FAILED)
+                .count();
+
+        long approved = assessments.stream()
+                .filter(a -> a.getStatus() == AssessmentStatus.APPROVED)
+                .count();
+
+        long rejected = assessments.stream()
+                .filter(a -> a.getStatus() == AssessmentStatus.REJECTED)
+                .count();
+
+        double averageScore = assessments.stream()
+                .map(Assessment::getScore)
+                .filter(Objects::nonNull)
+                .mapToDouble(BigDecimal::doubleValue)
+                .average()
+                .orElse(0.0);
+
+        double passRate = total == 0
+                ? 0
+                : (passed * 100.0) / total;
+
+        return AssessmentStatisticsResponse.builder()
+                .totalAssessments(total)
+                .pendingAssessments(pending)
+                .passedAssessments(passed)
+                .failedAssessments(failed)
+                .approvedAssessments(approved)
+                .rejectedAssessments(rejected)
+                .averageScore(Math.round(averageScore * 100.0) / 100.0)
+                .passRate(Math.round(passRate * 100.0) / 100.0)
+                .build();
 
     }
 

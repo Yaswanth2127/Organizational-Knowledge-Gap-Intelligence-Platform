@@ -24,6 +24,7 @@ public class SkillController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
     public ResponseEntity<List<SkillResponse>> getAllSkills(){
         return ResponseEntity.ok(skillService.getAllSkills());
 

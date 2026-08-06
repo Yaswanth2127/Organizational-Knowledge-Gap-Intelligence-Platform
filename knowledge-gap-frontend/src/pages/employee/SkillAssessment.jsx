@@ -1,116 +1,283 @@
-import React, { useState } from 'react';
-import { Award, CheckCircle, Info, Star, Save } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    ClipboardCheck,
+    Search,
+    Plus,
+    Filter,
+    Loader2,
+} from "lucide-react";
 
-export default function SkillAssessment() {
-    // Milestone 1 capability criteria according to organization standards
-    const [assessments, setAssessments] = useState([
-        { id: 1, skill: "React.js / Frontend Architecture", category: "Technical", rating: 0, description: "Component state isolation, hooks ecosystem, and virtual DOM mapping mechanics." },
-        { id: 2, skill: "Spring Boot Microservices", category: "Technical", rating: 0, description: "REST controller patterns, data persistence mapping, and transactional safety." },
-        { id: 3, skill: "PostgreSQL Database Design", category: "Database", rating: 0, description: "Schema setups, structural aggregations, and normalization indices rules." },
-        { id: 4, skill: "Tailwind CSS & Core UI", category: "UI/UX", rating: 0, description: "Responsive breakpoints layout wrappers, layout metrics, and component themes." }
-    ]);
+import assessmentService from "../../services/assessmentService";
+import { getMySkillGap } from "../../services/skillGapService";
 
-    const [isSaved, setIsSaved] = useState(false);
+import AssessmentSummary from "../../components/assessment/AssessmentSummary";
+import AssessmentCard from "../../components/assessment/AssessmentCard";
+import SkillGapCard from "../../components/assessment/SkillGapCard";
+import AssessmentFilters from "../../components/assessment/AssessmentFilters";
+import CreateAssessmentModal from "../../components/assessment/CreateAssessmentModal";
 
-    // Proficiency level metric breakdown
-    const proficiencyLevels = [
-        { score: 1, label: "Unaware" },
-        { score: 2, label: "Beginner" },
-        { score: 3, label: "Intermediate" },
-        { score: 4, label: "Advanced" },
-        { score: 5, label: "Expert" }
-    ];
+const SkillAssessment = () => {
+    const [assessments, setAssessments] = useState([]);
+    const [skillGaps, setSkillGaps] = useState([]);
 
-    const handleRateSkill = (id, ratingScore) => {
-        setAssessments(prev => prev.map(item => item.id === id ? { ...item, rating: ratingScore } : item));
-        setIsSaved(false);
+    const [loading, setLoading] = useState(true);
+    const [creatingAssessment, setCreatingAssessment] = useState(false);
+
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState("ALL");
+    const [sortBy, setSortBy] = useState("NEWEST");
+
+    
+
+    useEffect(() => {
+        loadData();
+    }, []);
+    
+
+    const loadData = async () => {
+        try {
+            setLoading(true);
+
+           const [assessmentRes, gapRes] = await Promise.all([
+    assessmentService.getMyAssessments(),
+    getMySkillGap()
+]);
+
+setAssessments(assessmentRes.data || []);
+setSkillGaps(gapRes || []);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleSaveAssessment = (e) => {
-        e.preventDefault();
-        setIsSaved(true);
+    const filteredAssessments = useMemo(() => {
+        let filtered = assessments.filter((assessment) => {
+            const matchesSearch = assessment.skillName
+                ?.toLowerCase()
+                .includes(search.toLowerCase());
+
+            const matchesStatus =
+                statusFilter === "ALL" ||
+                assessment.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        switch (sortBy) {
+            case "NEWEST":
+                filtered.sort(
+                    (a, b) =>
+                        new Date(b.assessedAt) -
+                        new Date(a.assessedAt)
+                );
+                break;
+
+            case "OLDEST":
+                filtered.sort(
+                    (a, b) =>
+                        new Date(a.assessedAt) -
+                        new Date(b.assessedAt)
+                );
+                break;
+
+            case "SCORE_HIGH":
+                filtered.sort(
+                    (a, b) =>
+                        (b.score || 0) -
+                        (a.score || 0)
+                );
+                break;
+
+            case "SCORE_LOW":
+                filtered.sort(
+                    (a, b) =>
+                        (a.score || 0) -
+                        (b.score || 0)
+                );
+                break;
+
+            default:
+                break;
+        }
+
+        return filtered;
+    }, [assessments, search, statusFilter, sortBy]);
+
+    const availableSkillGaps = useMemo(() => {
+        return skillGaps.filter((gap) => {
+            const pendingAssessment = assessments.find(
+                (assessment) =>
+                    assessment.skillId === gap.skillId &&
+                    assessment.status === "PENDING"
+            );
+
+            return !pendingAssessment;
+        });
+    }, [skillGaps, assessments]);
+
+    const summary = useMemo(() => {
+        return {
+            total: assessments.length,
+            pending: assessments.filter((a) => a.status === "PENDING").length,
+            passed: assessments.filter((a) => a.status === "PASSED").length,
+            approved: assessments.filter((a) => a.status === "APPROVED").length,
+            failed: assessments.filter((a) => a.status === "FAILED").length,
+        };
+    }, [assessments]);
+
+    const handleCreateAssessment = async (skillId) => {
+        try {
+            setCreatingAssessment(true);
+
+            await assessmentService.createAssessment(skillId);
+
+            setShowCreateModal(false);
+
+            await loadData();
+        } catch (err) {
+            console.error(err);
+
+            alert(
+                err?.response?.data?.message ??
+                "Unable to create assessment."
+            );
+        } finally {
+            setCreatingAssessment(false);
+        }
     };
 
     return (
-        <div className="space-y-6 font-sans max-w-4xl mx-auto p-2 sm:p-4">
-            {/* Context Notice Board */}
-            <div className="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-5 shadow-xl">
-                <div className="flex gap-3 items-start">
-                    <Award className="text-indigo-400 shrink-0 mt-1" size={24} />
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-black tracking-tight">Skill Onboarding Self-Assessment</h1>
-                        <p className="text-indigo-200 text-xs sm:text-sm mt-1">
-                            Evaluate your core competence baselines. Your proficiency matrix maps directly into organization-wide gap metrics profiles.
-                        </p>
-                    </div>
+        <div className="space-y-8">
+            {/* Header */}
+
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+                <div>
+
+                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                        <ClipboardCheck className="text-indigo-600" />
+                        Skill Assessments
+                    </h1>
+
+                    <p className="text-gray-500 mt-2">
+                        Validate your knowledge and improve your competency level.
+                    </p>
+
                 </div>
+
+                <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl transition shadow"
+                >
+                    <Plus size={18} />
+                    Start Assessment
+                </button>
             </div>
 
-            {/* Success Banner Feedback Popup */}
-            {isSaved && (
-                <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-2.5 text-sm font-semibold">
-                    <CheckCircle size={18} className="text-emerald-600" />
-                    Baseline self-assessment successfully logged. Gap index aggregates recalculated!
+            {/* Summary */}
+
+            <AssessmentSummary summary={summary} />
+
+            {/* Filters */}
+
+            <AssessmentFilters
+                search={search}
+                setSearch={setSearch}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+            />
+
+            {/* Loading */}
+
+            {loading && (
+                <div className="flex justify-center py-20">
+                    <Loader2
+                        className="animate-spin text-indigo-600"
+                        size={40}
+                    />
                 </div>
             )}
 
-            {/* Main Evaluation Core Interactive Grid */}
-            <form onSubmit={handleSaveAssessment} className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
-                    {assessments.map((item) => (
-                        <div key={item.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4 hover:border-indigo-100 transition duration-300">
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100 inline-block">
-                                        {item.category}
-                                    </span>
-                                    <h3 className="font-bold text-gray-800 text-base mt-1.5">{item.skill}</h3>
-                                </div>
+            {/* Assessments */}
 
-                                {/* Dynamic Status Badging */}
-                                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${item.rating === 0 ? 'bg-amber-50/50 text-amber-600 border-amber-200' : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                                    }`}>
-                                    {item.rating === 0 ? "Pending Evaluation" : proficiencyLevels.find(l => l.score === item.rating)?.label}
-                                </span>
-                            </div>
+            {!loading && (
+                <>
+                    <section className="space-y-4">
 
-                            <p className="text-xs text-gray-500 leading-relaxed max-w-2xl bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex gap-2">
-                                <Info size={14} className="text-gray-400 shrink-0 mt-0.5" />
-                                {item.description}
-                            </p>
+                        <div className="flex items-center justify-between">
 
-                            {/* Scoring Metric Interactive Block */}
-                            <div className="pt-2 border-t border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Assign Proficiency Rating:</span>
-                                <div className="flex flex-wrap items-center gap-2">
-                                    {proficiencyLevels.map((lvl) => (
-                                        <button
-                                            key={lvl.score}
-                                            type="button"
-                                            onClick={() => handleRateSkill(item.id, lvl.score)}
-                                            className={`flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all ${item.rating === lvl.score
-                                                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm shadow-indigo-100 scale-105'
-                                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-                                                }`}
-                                        >
-                                            <Star size={12} fill={item.rating === lvl.score ? "currentColor" : "none"} />
-                                            {lvl.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                            <h2 className="font-semibold text-xl text-gray-800">
+                                My Assessments
+                            </h2>
+
+                            <span className="text-sm text-gray-500">
+                                {filteredAssessments.length} Assessments
+                            </span>
+
                         </div>
-                    ))}
-                </div>
 
-                {/* Submission Pipeline Trigger */}
-                <button
-                    type="submit"
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-md shadow-indigo-100 mt-4"
-                >
-                    <Save size={16} /> Save Competency Inventory Profile
-                </button>
-            </form>
+                        {filteredAssessments.length === 0 ? (
+                            <div className="bg-white rounded-2xl border p-10 text-center text-gray-500">
+                                No assessments found.
+                            </div>
+                        ) : (
+                            <div className="grid gap-5">
+                                {filteredAssessments.map((assessment) => (
+    <AssessmentCard
+        key={assessment.id}
+        assessment={assessment}
+    />
+))}
+                            </div>
+                        )}
+
+                    </section>
+
+                    {/* Skill Gaps */}
+
+                    <section className="space-y-4">
+
+                        <h2 className="text-xl font-semibold text-gray-800">
+                            Skills Ready for Assessment
+                        </h2>
+
+                        {availableSkillGaps.length === 0 ? (
+                            <div className="bg-white border rounded-2xl p-10 text-center text-gray-500">
+                                No skill gaps available for assessment.
+                            </div>
+                        ) : (
+                            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+                                {availableSkillGaps.map((gap) => (
+    <SkillGapCard
+        key={gap.skillId}   // or gap.id
+        gap={gap}
+        onStart={() => handleCreateAssessment(gap.skillId)}
+    />
+))}
+
+                            </div>
+                        )}
+
+                    </section>
+                </>
+            )}
+
+            <CreateAssessmentModal
+                open={showCreateModal}
+                loading={creatingAssessment}
+                skillGaps={availableSkillGaps}
+                onClose={() => setShowCreateModal(false)}
+                onCreate={handleCreateAssessment}
+            />
         </div>
     );
-}
+};
+
+export default SkillAssessment;

@@ -8,6 +8,44 @@
  * Uses multipart/form-data since the backend accepts an optional file upload.
  */
 
+// src/services/certificationService.js
+//employee
+
+export const getMyCertifications = async () => {
+  const response = await api.get("/api/certifications/me");
+  return response.data;
+};
+
+export const addMyCertification = async (formData) => {
+  const response = await api.post("/api/certifications/me", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
+export const updateMyCertification = async (id, formData) => {
+  const response = await api.put(`/api/certifications/me/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
+export const deleteMyCertification = async (id) => {
+  await api.delete(`/api/certifications/me/${id}`);
+};
+
+//hr and admin
+export const getSkills = async () => {
+  const response = await api.get("/api/skills/all");
+  return response.data;
+};
+
 export const getAllCertifications = async () => {
     const response = await api.get("/api/certifications");
     return response.data;

@@ -3,6 +3,7 @@ package com.knowledgegap.knowledge_gap_platform.service;
 import com.knowledgegap.knowledge_gap_platform.config.RedisConfig;
 import com.knowledgegap.knowledge_gap_platform.dto.*;
 import com.knowledgegap.knowledge_gap_platform.entity.*;
+import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.model.PasswordResetRequest;
 import com.knowledgegap.knowledge_gap_platform.model.PendingRegistration;
 import com.knowledgegap.knowledge_gap_platform.repository.RoleRepository;
@@ -14,7 +15,9 @@ import com.knowledgegap.knowledge_gap_platform.util.OtpGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,17 @@ public class AuthenticationService {
     private final RedisService redisService;
     private final  EmailService emailService;
     private final PasswordRedisService passwordRedisService;
+
+
+    public User getCurrentUser() {
+
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        return userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
 
     public AuthenticationResponse register(RegisterRequest request) {
 

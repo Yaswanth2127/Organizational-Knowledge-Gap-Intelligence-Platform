@@ -9,6 +9,7 @@ import com.knowledgegap.knowledge_gap_platform.service.AIService;
 import com.sun.security.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 @RequiredArgsConstructor
 @RequestMapping("/api/ai")
+@PreAuthorize("hasRole('EMPLOYEE')")
 public class AIController {
     private final GeminiClient geminiClient;
     private final AIService aiService;
@@ -27,6 +29,8 @@ public class AIController {
 
     @PostMapping("/recommendation/analyze/{userId}")
     public ResponseEntity<AIRecommendationResponse> getAIAnalysis(@PathVariable Long userId){
+        System.out.println("POST /recommendation/analyze called for userId = " + userId);
+
         return ResponseEntity.ok(aiService.generateRecommendation(new AIRecommendationRequest(userId)));
     }
 

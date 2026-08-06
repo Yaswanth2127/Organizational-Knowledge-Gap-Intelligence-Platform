@@ -1,6 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Sparkles, ExternalLink, RefreshCw } from 'lucide-react';
-import { getAIRecommendation } from '../../services/aiRecommendationService';
+import {
+    getAIRecommendation,
+    generateAIRecommendation
+} from "../../services/aiRecommendationService";
 
 export default function AIRecommendation() {
     const [data, setData] = useState(null);
@@ -19,6 +22,32 @@ export default function AIRecommendation() {
             )
             .finally(() => setLoading(false));
     };
+   const regenerateRecommendation = async () => {
+      console.log("Regenerate button clicked");
+    try {
+       
+          console.log("Calling POST API...");
+        setLoading(true);
+        setError("");
+
+        const response = await generateAIRecommendation(userId);
+
+        setData(response);
+        console.log("Regeneration successful:", response);
+
+    } catch (err) {
+         console.log("ERROR:", err);
+    console.log("Response:", err.response);
+    console.log("Status:", err.response?.status);
+    console.log("Data:", err.response?.data);
+        setError(
+            err.response?.data?.message ||
+            "Failed to generate recommendations."
+        );
+    } finally {
+        setLoading(false);
+    }
+};
 
     useEffect(() => {
         if (userId) fetchRecommendation();
@@ -38,7 +67,7 @@ export default function AIRecommendation() {
                     </p>
                 </div>
                 <button
-                    onClick={fetchRecommendation}
+                    onClick={regenerateRecommendation}
                     disabled={loading}
                     className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition shadow-sm disabled:opacity-60"
                 >
