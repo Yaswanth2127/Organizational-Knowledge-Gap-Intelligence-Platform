@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CertificationRequest {
+public class AdminCertificationRequest {
 
     private Long userId;
     private Long skillId;

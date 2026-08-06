@@ -12,7 +12,7 @@ import NotFound from "./pages/shared/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import HRDashboard from "./pages/admin/HRDashboard";
 import DepartmentManagement from "./pages/admin/DepartmentManagement";
-import EmployeeSkills from "./pages/admin/EmployeeSkills";
+import ManageEmployeeSkills from "./pages/admin/EmployeeSkills";
 import SkillCategoryManagement from "./pages/admin/SkillCategoryManagement";
 import JobRoleManagement from "./pages/admin/JobRoleManagement";
 import SkillManagement from "./pages/admin/SkillManagement";
@@ -27,9 +27,19 @@ import SkillAssessment from "./pages/employee/SkillAssessment";
 import EmployeeSkillGapAnalysis from "./pages/employee/EmployeeSkillGapAnalysis";
 import AIRecommendation from "./pages/employee/AIRecommendation";
 import LearningPath from "./pages/employee/LearningPath";
+import EmployeeCertifications from "./pages/employee/EmployeeCertifications";
+import EmployeeSkills from "./pages/employee/EmployeeSkills";
+import EmployeeRatings from "./pages/employee/EmployeeRatings";
 
 import AdminLayout from "./layouts/AdminLayout";
 import EmployeeLayout from "./layouts/EmployeeLayout";
+
+
+import TakeAssessment from "./pages/employee/TakeAssessment";
+import AssessmentHistory from "./pages/employee/AssessmentHistory";
+
+import PendingApprovals from "./pages/admin/PendingApprovals";
+import AssessmentStatistics from "./pages/admin/AssessmentStatistics";
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem('token');
@@ -122,7 +132,7 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <AdminLayout>
-                                <EmployeeSkills />
+                                <ManageEmployeeSkills />
                             </AdminLayout>
                         </ProtectedRoute>
                     }
@@ -253,11 +263,88 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <EmployeeLayout>
-                                <NotFound />
+                                <EmployeeCertifications />
                             </EmployeeLayout>
                         </ProtectedRoute>
                     }
                 />
+                <Route
+    path="/assessment"
+    element={
+        <ProtectedRoute role="EMPLOYEE">
+            <EmployeeLayout>
+                <SkillAssessment />
+            </EmployeeLayout>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/assessment/take/:assessmentId"
+    element={
+        <ProtectedRoute role="EMPLOYEE">
+            <EmployeeLayout>
+                <TakeAssessment />
+            </EmployeeLayout>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/assessment/history"
+    element={
+        <ProtectedRoute role="EMPLOYEE">
+            <EmployeeLayout>
+                <AssessmentHistory />
+            </EmployeeLayout>
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/assessment/pending-approvals"
+    element={
+        <ProtectedRoute
+            roles={["HR_SPECIALIST", "MANAGER"]}
+        >
+            <AdminLayout>
+                <PendingApprovals />
+            </AdminLayout>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/assessment/statistics"
+    element={
+        <ProtectedRoute
+            roles={["HR_SPECIALIST", "MANAGER"]}
+        >
+            <AdminLayout>
+                <AssessmentStatistics />
+            </AdminLayout>
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/skills"
+    element={
+        <ProtectedRoute>
+            <EmployeeLayout>
+                <EmployeeSkills />
+            </EmployeeLayout>
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/ratings"
+    element={
+        <ProtectedRoute>
+            <EmployeeLayout>
+                <EmployeeRatings />
+            </EmployeeLayout>
+        </ProtectedRoute>
+    }
+/>
             </Routes>
 
         </BrowserRouter>

@@ -17,7 +17,9 @@ import {
   Network,
   BadgeCheck,
   ClipboardList,
-  AlertTriangle
+  AlertTriangle,
+  ClipboardCheck,
+    BarChart3,
 } from "lucide-react";
 
 const AdminLayout = ({ children }) => {
@@ -92,7 +94,16 @@ const navigation = [
           name: "Courses",
           href: "/courses",
           icon: BookOpen
-        }
+        },{
+    name: "Pending Approvals",
+    href: "/assessment/pending-approvals",
+    icon: ClipboardCheck,
+},
+{
+    name: "Assessment Statistics",
+    href: "/assessment/statistics",
+    icon: BarChart3,
+}
       ]
     : [])
 ];
