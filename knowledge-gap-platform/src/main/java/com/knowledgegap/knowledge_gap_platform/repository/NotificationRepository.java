@@ -23,4 +23,14 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
     @Override
     @EntityGraph(attributePaths = {"user"})
     List<Notification> findAll();
+
+    @EntityGraph(attributePaths = {"user"})
+    List<Notification> findByUserIdAndStatusOrderByCreatedAtDesc(
+            Long userId,
+            NotificationStatus status);
+
+    long countByUserIdAndStatus(
+            Long userId,
+            NotificationStatus status);
 }
+

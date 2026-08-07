@@ -21,6 +21,8 @@ import {
     getSkills
 } from "../../services/dashboardService";
 
+import AdminQuickActions from "../../components/admin/AdminQuickActions";
+
 export default function AdminDashboard() {
 
     const [loading, setLoading] = useState(true);
@@ -673,127 +675,7 @@ return (
 
 
         {/* Quick Actions */}
-
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-
-            <h2 className="text-xl font-bold text-gray-800 mb-6">
-
-                Quick Actions
-
-            </h2>
-
-            <div className="space-y-4">
-
-                <button className="w-full flex items-start gap-4 border border-gray-200 rounded-xl p-4 hover:bg-indigo-50 hover:border-indigo-300 transition">
-
-                    <div className="bg-indigo-100 p-3 rounded-xl">
-
-                        <UserPlus className="text-indigo-600" size={22} />
-
-                    </div>
-
-                    <div className="text-left">
-
-                        <h3 className="font-semibold text-gray-800">
-
-                            Add User
-
-                        </h3>
-
-                        <p className="text-sm text-gray-500">
-
-                            Register a new employee into the platform.
-
-                        </p>
-
-                    </div>
-
-                </button>
-
-
-                <button className="w-full flex items-start gap-4 border border-gray-200 rounded-xl p-4 hover:bg-green-50 hover:border-green-300 transition">
-
-                    <div className="bg-green-100 p-3 rounded-xl">
-
-                        <Building className="text-green-600" size={22} />
-
-                    </div>
-
-                    <div className="text-left">
-
-                        <h3 className="font-semibold text-gray-800">
-
-                            Add Department
-
-                        </h3>
-
-                        <p className="text-sm text-gray-500">
-
-                            Create a new department for employees.
-
-                        </p>
-
-                    </div>
-
-                </button>
-
-
-                <button className="w-full flex items-start gap-4 border border-gray-200 rounded-xl p-4 hover:bg-purple-50 hover:border-purple-300 transition">
-
-                    <div className="bg-purple-100 p-3 rounded-xl">
-
-                        <PlusCircle className="text-purple-600" size={22} />
-
-                    </div>
-
-                    <div className="text-left">
-
-                        <h3 className="font-semibold text-gray-800">
-
-                            Add Skill
-
-                        </h3>
-
-                        <p className="text-sm text-gray-500">
-
-                            Add a new technical or soft skill.
-
-                        </p>
-
-                    </div>
-
-                </button>
-
-
-                <button className="w-full flex items-start gap-4 border border-gray-200 rounded-xl p-4 hover:bg-orange-50 hover:border-orange-300 transition">
-
-                    <div className="bg-orange-100 p-3 rounded-xl">
-
-                        <Briefcase className="text-orange-600" size={22} />
-
-                    </div>
-
-                    <div className="text-left">
-
-                        <h3 className="font-semibold text-gray-800">
-
-                            Add Job Role
-
-                        </h3>
-
-                        <p className="text-sm text-gray-500">
-
-                            Create a new job role in your organization.
-
-                        </p>
-
-                    </div>
-
-                </button>
-
-            </div>
-
-        </div>
+        <AdminQuickActions />
 
     </div>
 

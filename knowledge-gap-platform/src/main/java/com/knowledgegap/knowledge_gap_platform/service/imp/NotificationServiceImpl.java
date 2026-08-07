@@ -5,11 +5,14 @@ import com.knowledgegap.knowledge_gap_platform.dto.NotificationResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.Notification;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationStatus;
+import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.NotificationRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final AuthenticationService authenticationService;
 
     @Override
     public NotificationResponse createNotification(NotificationRequest request) {
@@ -50,6 +54,13 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Notification not found"));
+        User currentUser = authenticationService.getCurrentUser();
+
+        if(!notification.getUser().getId().equals(currentUser.getId())){
+            throw new AccessDeniedException(
+                    "You cannot access this notification."
+            );
+        }
 
         return mapToResponse(notification);
     }
@@ -65,10 +76,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<NotificationResponse> getNotificationsByUser(Long userId) {
+        User user=userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("not found"));
+        return notificationRepository.findByUserAndStatus(user,NotificationStatus.READ).stream().map(this::mapToResponse).toList();
+    }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("User not found"));
+    @Override
+    public List<NotificationResponse> getMyNotifications() {
+
+        User user = authenticationService.getCurrentUser();
 
         return notificationRepository.findByUserOrderByCreatedAtDesc(user)
                 .stream()
@@ -77,11 +92,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationResponse> getPendingNotifications(Long userId) {
+    public List<NotificationResponse> getMyUnreadNotifications() {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("User not found"));
+        User user = authenticationService.getCurrentUser();
 
         return notificationRepository
                 .findByUserAndStatus(user, NotificationStatus.PENDING)
@@ -97,12 +110,50 @@ public class NotificationServiceImpl implements NotificationService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Notification not found"));
 
+        User currentUser = authenticationService.getCurrentUser();
+
+        if(!notification.getUser().getId().equals(currentUser.getId())){
+            throw new AccessDeniedException(
+                    "You cannot access this notification."
+            );
+        }
+
         notification.setStatus(NotificationStatus.READ);
         notification.setReadAt(LocalDateTime.now());
 
         notification = notificationRepository.save(notification);
 
         return mapToResponse(notification);
+    }
+
+    @Override
+    public void markAllAsRead() {
+        User currentUser = authenticationService.getCurrentUser();
+
+        List<Notification> notifications =
+                notificationRepository.findByUserAndStatus(
+                        currentUser,
+                        NotificationStatus.PENDING
+                );
+
+        notifications.forEach(notification -> {
+            notification.setStatus(NotificationStatus.READ);
+            notification.setReadAt(LocalDateTime.now());
+        });
+
+        notificationRepository.saveAll(notifications);
+
+    }
+
+    @Override
+    public long getUnreadCount() {
+        User currentUser = authenticationService.getCurrentUser();
+
+        return notificationRepository.countByUserIdAndStatus(
+                currentUser.getId(),
+                NotificationStatus.PENDING
+        );
+
     }
 
     @Override

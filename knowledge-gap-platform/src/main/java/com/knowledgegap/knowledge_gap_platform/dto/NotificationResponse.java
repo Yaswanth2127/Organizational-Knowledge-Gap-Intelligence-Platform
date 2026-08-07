@@ -2,6 +2,7 @@ package com.knowledgegap.knowledge_gap_platform.dto;
 
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationChannel;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationStatus;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class NotificationResponse {
     private Long userId;
     private String userName;
 
-    private String type;
+    private NotificationType type;
 
     private NotificationChannel channel;
 
