@@ -66,7 +66,7 @@ const RatingCard = ({
 
                                 <h2 className="text-xl font-bold text-gray-800">
 
-                                    {review.employeeName}
+                                    {review.userName}
 
                                 </h2>
 

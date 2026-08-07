@@ -1,0 +1,28 @@
+package com.knowledgegap.knowledge_gap_platform.entity.enums;
+
+public enum NotificationType {
+    // Employee Notifications
+    ASSESSMENT_ACCEPTED,
+    ASSESSMENT_REJECTED,
+    PEER_REVIEW_REQUEST,
+    LEARNING_PATH_GENERATED,
+    SKILL_GAP_DETECTED,
+    CERTIFICATION_EXPIRING,
+    CERTIFICATION_EXPIRED,
+
+    // HR Notifications
+    EMPLOYEE_REGISTERED,
+    ASSESSMENT_SUBMITTED,
+    PEER_REVIEW_COMPLETED,
+    GAP_ANALYSIS_COMPLETED,
+    FRAMEWORK_CREATED,
+
+    // Admin Notifications
+    USER_CREATED,
+    ROLE_ASSIGNED,
+    DEPARTMENT_CREATED,
+    SYSTEM_ANNOUNCEMENT,
+
+    GENERAL
+
+}

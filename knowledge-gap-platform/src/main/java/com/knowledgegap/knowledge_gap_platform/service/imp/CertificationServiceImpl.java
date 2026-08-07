@@ -12,12 +12,15 @@ import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
 import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.CertificationService;
 import com.knowledgegap.knowledge_gap_platform.service.CloudinaryService;
+import com.knowledgegap.knowledge_gap_platform.service.NotificationHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -29,6 +32,7 @@ public class CertificationServiceImpl implements CertificationService {
     private final SkillRepository skillRepository;
     private final CloudinaryService cloudinaryService;
     private final AuthenticationService authenticationService;
+    private final NotificationHelper notificationHelper;
     //employee
     @Override
     public CertificationResponse addMyCertification(EmployeeCertificationRequest request, MultipartFile file) {
@@ -64,6 +68,21 @@ public class CertificationServiceImpl implements CertificationService {
         }
 
         certification = certificationRepository.save(certification);
+        long daysRemaining =
+                ChronoUnit.DAYS.between(
+                        LocalDate.now(),
+                        certification.getExpiryDate()
+                );
+        if (daysRemaining < 0) {
+
+            notificationHelper.notifyCertificationExpired(certification);
+
+        }
+        else if (daysRemaining <= 30) {
+
+            notificationHelper.notifyCertificationExpiring(certification,daysRemaining);
+
+        }
 
         return mapToResponse(certification);
     }

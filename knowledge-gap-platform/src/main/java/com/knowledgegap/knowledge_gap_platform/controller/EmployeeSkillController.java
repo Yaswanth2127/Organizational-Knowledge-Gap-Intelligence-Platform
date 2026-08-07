@@ -22,9 +22,9 @@ public class EmployeeSkillController {
     private final EmployeeSkillService employeeSkillService;
 
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE')")
     @PostMapping()
-    public ResponseEntity<EmployeeSkillResponse> addEmployeeSkill(
+    public ResponseEntity<EmployeeSkillResponse> addOwnEmployeeSkill(
             @RequestBody EmployeeSkillRequest request){
 
         return ResponseEntity.ok(
@@ -127,6 +127,15 @@ public class EmployeeSkillController {
                 employeeSkillService.getStatistics()
         );
 
+    }
+    @PostMapping("/assign/{userId}")
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
+    public ResponseEntity<EmployeeSkillResponse> assignSkill(@PathVariable Long userId,
+            @RequestBody EmployeeSkillRequest request) {
+
+        return ResponseEntity.ok(
+                employeeSkillService.assignSkill(userId,request)
+        );
     }
 
 

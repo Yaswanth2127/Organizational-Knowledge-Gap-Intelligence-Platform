@@ -25,4 +25,5 @@ public interface EmployeeSkillService {
     EmployeeSkillResponse submitPeerReview(Long id, EmployeeSkillReviewRequest request);
 
     EmployeeSkillStatisticsResponse getStatistics();
+    EmployeeSkillResponse assignSkill(Long userId,EmployeeSkillRequest request);
 }
