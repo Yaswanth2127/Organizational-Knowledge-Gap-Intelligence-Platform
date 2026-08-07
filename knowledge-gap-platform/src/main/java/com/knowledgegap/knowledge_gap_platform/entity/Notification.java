@@ -2,6 +2,7 @@ package com.knowledgegap.knowledge_gap_platform.entity;
 
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationChannel;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationStatus;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +28,9 @@ public class Notification {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
-    @Column(name = "type",nullable = false,length = 50)
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 50)
+    private NotificationType type;
 
     @JdbcTypeCode((SqlTypes.NAMED_ENUM))
     @Enumerated(EnumType.STRING)

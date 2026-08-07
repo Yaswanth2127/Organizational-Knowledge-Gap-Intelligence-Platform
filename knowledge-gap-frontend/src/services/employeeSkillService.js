@@ -3,8 +3,8 @@ import api from "./api";
 export const getEmployeeSkills = () =>
     api.get("/api/employee-skills/all");
 
-export const addEmployeeSkill = (data) =>
-    api.post("/api/employee-skills/add", data);
+export const assignEmployeeSkill = (userId, data) =>
+    api.post(`/api/employee-skills/assign/${userId}`, data);
 
 export const updateEmployeeSkill = (id, data) =>
     api.put(`/api/employee-skills/${id}`, data);

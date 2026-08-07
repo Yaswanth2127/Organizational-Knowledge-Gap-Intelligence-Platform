@@ -60,7 +60,7 @@ public class AssessmentController {
         return assessmentService.submitAssessment(request);
     }
 
-    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER','HR_SPECIALIST')")
     @PatchMapping("/approve")
     public AssessmentResponse approveAssessment(
             @Valid @RequestBody AssessmentApprovalRequest request) {
@@ -68,14 +68,14 @@ public class AssessmentController {
         return assessmentService.approveAssessment(request);
     }
 
-    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER','HR_SPECIALIST')")
     @GetMapping("/pending")
     public List<AssessmentResponse> getPendingAssessments() {
 
         return assessmentService.getPendingAssessments();
     }
 
-    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('SYS_ADMIN','MANAGER','HR_SPECIALIST')")
     @GetMapping("/pending-approvals")
     public List<AssessmentResponse> getPendingApprovals() {
 
@@ -89,7 +89,7 @@ public class AssessmentController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "'SYS_ADMIN','MANAGER')")
+            "'SYS_ADMIN','MANAGER','HR_SPECIALIST')")
     @GetMapping("/statistics")
     public AssessmentStatisticsResponse getAssessmentStatistics(){
         return assessmentService.getAssessmentStatistics();

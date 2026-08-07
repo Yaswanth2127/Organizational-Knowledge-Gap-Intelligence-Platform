@@ -66,6 +66,7 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
 
         User user = authenticationService.getCurrentUser();
 
+
         Skill skill = skillRepository.findById(request.getSkillId())
                 .orElseThrow(() -> new ResourceNotFoundException("Skill not found"));
 
@@ -260,6 +261,38 @@ public class EmployeeSkillServiceImpl implements EmployeeSkillService {
                 .advanced(advanced)
                 .expert(expert)
                 .build();
+    }
+
+    @Override
+    public EmployeeSkillResponse assignSkill(Long userId,EmployeeSkillRequest request) {
+
+        User employee = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Employee not found"));
+
+        Skill skill = skillRepository.findById(request.getSkillId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Skill not found"));
+
+        if (employeeSkillRepository.existsByUserAndSkill(employee, skill)) {
+            throw new IllegalArgumentException("Employee already has this skill.");
+        }
+
+        EmployeeSkill employeeSkill = EmployeeSkill.builder()
+                .user(employee)
+                .skill(skill)
+                .selfRating(request.getSelfRating())
+                .lastAssessedAt(LocalDateTime.now())
+                .build();
+
+        employeeSkill = employeeSkillRepository.save(employeeSkill);
+
+        skillGapService.analyzeSkillGap(
+                new SkillGapRequest(employee.getId()),
+                AnalysisTrigger.PROFILE_UPDATE
+        );
+
+        return mapToResponse(employeeSkill);
     }
 
 
