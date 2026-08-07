@@ -9,10 +9,7 @@ import com.knowledgegap.knowledge_gap_platform.entity.enums.AssessmentStatus;
 import com.knowledgegap.knowledge_gap_platform.exception.AIException;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.*;
-import com.knowledgegap.knowledge_gap_platform.service.AIService;
-import com.knowledgegap.knowledge_gap_platform.service.AssessmentService;
-import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
-import com.knowledgegap.knowledge_gap_platform.service.SkillGapService;
+import com.knowledgegap.knowledge_gap_platform.service.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,6 +40,8 @@ public class AssessmentServiceImpl implements AssessmentService {
     private final SkillGapRepository skillGapRepository;
     private final AIService aiService;
     private final AuthenticationService authenticationService;
+    private final UserRoleRepository userRoleRepository;
+    private final NotificationHelper notificationHelper;
 
     @Override
     public AssessmentResponse createAssessment(AssessmentCreateRequest request) {
@@ -147,15 +146,23 @@ public class AssessmentServiceImpl implements AssessmentService {
                 );
 
         // Get logged-in manager
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+       User reviewer=authenticationService.getCurrentUser();
+        List<UserRole> reviewerRoles = userRoleRepository.findByUser(reviewer);
+        boolean isAdminOrHR = reviewerRoles.stream()
+                .map(userRole -> userRole.getRole().getName())
+                .anyMatch(role ->
+                        role.equals("SYS_ADMIN") ||
+                                role.equals("HR_SPECIALIST"));
+        boolean isManager =
+                assessment.getUser().getManager() != null &&
+                        assessment.getUser().getManager().getId().equals(reviewer.getId());
 
-        User manager = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+        if (!isManager && !isAdminOrHR) {
 
-        if (assessment.getUser().getManager() == null ||
-                !assessment.getUser().getManager().getId().equals(manager.getId())) {
-            throw new AccessDeniedException("You are not authorized to approve this assessment.");
+            throw new AccessDeniedException(
+                    "You are not authorized to review this assessment."
+            );
+
         }
 
         if (assessment.getStatus() == AssessmentStatus.APPROVED ||
@@ -163,9 +170,10 @@ public class AssessmentServiceImpl implements AssessmentService {
 
             throw new IllegalStateException("Assessment has already been reviewed.");
         }
-        assessment.setApprovedBy(manager);
+        assessment.setApprovedBy(reviewer);
         assessment.setApprovedAt(LocalDateTime.now());
         assessment.setRemarks(request.getRemarks());
+
 
         if (request.getApproved()) {
             assessment.setStatus(AssessmentStatus.APPROVED);
@@ -173,12 +181,12 @@ public class AssessmentServiceImpl implements AssessmentService {
                     .orElseThrow(() -> new ResourceNotFoundException("Employee skill not found"));
             employeeSkill.setManagerRating(gap.getRequiredLevel());
             employeeSkillRepository.save(employeeSkill);
-            // TODO:
-            // 1. Update EmployeeSkill level
-            // 2. Re-run Gap Analysis
+            notificationHelper.notifyAssessmentApproved(assessment);
 
         } else {
             assessment.setStatus(AssessmentStatus.REJECTED);
+
+            notificationHelper.notifyAssessmentRejected(assessment);
         }
         assessment=assessmentRepository.save(assessment);
         if(request.getApproved()){
@@ -245,8 +253,7 @@ public class AssessmentServiceImpl implements AssessmentService {
     public List<AssessmentResponse> getPendingApprovals() {
         return assessmentRepository
                 .findByStatusIn(List.of(
-                        AssessmentStatus.PASSED,
-                        AssessmentStatus.FAILED))
+                        AssessmentStatus.PASSED))
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

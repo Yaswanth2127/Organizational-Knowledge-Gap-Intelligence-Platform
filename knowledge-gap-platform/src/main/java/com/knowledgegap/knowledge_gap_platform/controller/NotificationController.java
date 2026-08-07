@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class NotificationController {
 
     private final NotificationService notificationService;
 
     // Create Notification
+    @PreAuthorize("hasAnyRole('HR_SPECIALIST','SYS_ADMIN')")
     @PostMapping
     public ResponseEntity<NotificationResponse> createNotification(
             @Valid @RequestBody NotificationRequest request) {
@@ -29,7 +32,8 @@ public class NotificationController {
         );
     }
 
-    // Get Notification By Id
+    // Get Notification By ID
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<NotificationResponse> getNotificationById(
             @PathVariable Long id) {
@@ -40,6 +44,7 @@ public class NotificationController {
     }
 
     // Get All Notifications
+    @PreAuthorize("hasAnyRole('HR_SPECIALIST','SYS_ADMIN')")
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getAllNotifications() {
 
@@ -49,27 +54,30 @@ public class NotificationController {
     }
 
     // Get Notifications By User
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<NotificationResponse>> getNotificationsByUser(
-            @PathVariable Long userId) {
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+    @GetMapping("/me")
+    public ResponseEntity<List<NotificationResponse>> getMyNotifications(
+            ) {
 
         return ResponseEntity.ok(
-                notificationService.getNotificationsByUser(userId)
+                notificationService.getMyNotifications()
         );
     }
 
-    // Get Pending Notifications
-    @GetMapping("/user/{userId}/pending")
-    public ResponseEntity<List<NotificationResponse>> getPendingNotifications(
-            @PathVariable Long userId) {
+    // Get unread Notifications
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+    @GetMapping("/me/unread")
+    public ResponseEntity<List<NotificationResponse>> getMyUnreadNotifications(
+           ) {
 
         return ResponseEntity.ok(
-                notificationService.getPendingNotifications(userId)
+                notificationService.getMyUnreadNotifications()
         );
     }
 
     // Mark Notification as Read
-    @PutMapping("/{id}/read")
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+    @PatchMapping("/{id}/read")
     public ResponseEntity<NotificationResponse> markAsRead(
             @PathVariable Long id) {
 
@@ -79,12 +87,31 @@ public class NotificationController {
     }
 
     // Delete Notification
+    @PreAuthorize("hasAnyRole('HR_SPECIALIST','SYS_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteNotification(
+    public ResponseEntity<Void> deleteNotification(
             @PathVariable Long id) {
 
         notificationService.deleteNotification(id);
 
-        return ResponseEntity.ok("Notification deleted successfully");
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+    @PatchMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead() {
+
+        notificationService.markAllAsRead();
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('EMPLOYEE','HR_SPECIALIST','SYS_ADMIN')")
+    @GetMapping("/unread-count")
+    public ResponseEntity<Long> getUnreadCount() {
+
+        return ResponseEntity.ok(
+                notificationService.getUnreadCount()
+        );
     }
 }

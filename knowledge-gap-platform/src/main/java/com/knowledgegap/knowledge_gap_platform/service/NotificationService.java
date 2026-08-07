@@ -6,6 +6,7 @@ import com.knowledgegap.knowledge_gap_platform.dto.NotificationResponse;
 import java.util.List;
 
 public interface NotificationService {
+
     NotificationResponse createNotification(NotificationRequest request);
 
     NotificationResponse getNotificationById(Long id);
@@ -14,9 +15,15 @@ public interface NotificationService {
 
     List<NotificationResponse> getNotificationsByUser(Long userId);
 
-    List<NotificationResponse> getPendingNotifications(Long userId);
+    List<NotificationResponse> getMyNotifications();
+
+    List<NotificationResponse> getMyUnreadNotifications();
 
     NotificationResponse markAsRead(Long notificationId);
+
+    void markAllAsRead();
+
+    long getUnreadCount();
 
     void deleteNotification(Long id);
 }

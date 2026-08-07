@@ -1,6 +1,7 @@
 package com.knowledgegap.knowledge_gap_platform.dto;
 
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationChannel;
+import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -16,8 +17,8 @@ public class NotificationRequest {
     @NotNull
     private Long userId;
 
-    @NotBlank
-    private String type;
+    @NotNull
+    private NotificationType type;
 
     @NotNull
     private NotificationChannel channel;

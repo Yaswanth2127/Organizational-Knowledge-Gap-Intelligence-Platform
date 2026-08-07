@@ -41,6 +41,9 @@ import AssessmentHistory from "./pages/employee/AssessmentHistory";
 import PendingApprovals from "./pages/admin/PendingApprovals";
 import AssessmentStatistics from "./pages/admin/AssessmentStatistics";
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
+
+
+import Notifications from "./pages/notifications/Notifications";
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -269,82 +272,93 @@ function App() {
                     }
                 />
                 <Route
-    path="/assessment"
-    element={
-        <ProtectedRoute role="EMPLOYEE">
-            <EmployeeLayout>
-                <SkillAssessment />
-            </EmployeeLayout>
-        </ProtectedRoute>
-    }
-/>
+                    path="/assessment"
+                    element={
+                        <ProtectedRoute role="EMPLOYEE">
+                            <EmployeeLayout>
+                                <SkillAssessment />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
 
-<Route
-    path="/assessment/take/:assessmentId"
-    element={
-        <ProtectedRoute role="EMPLOYEE">
-            <EmployeeLayout>
-                <TakeAssessment />
-            </EmployeeLayout>
-        </ProtectedRoute>
-    }
-/>
+                <Route
+                    path="/assessment/take/:assessmentId"
+                    element={
+                        <ProtectedRoute role="EMPLOYEE">
+                            <EmployeeLayout>
+                                <TakeAssessment />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
 
-<Route
-    path="/assessment/history"
-    element={
-        <ProtectedRoute role="EMPLOYEE">
-            <EmployeeLayout>
-                <AssessmentHistory />
-            </EmployeeLayout>
-        </ProtectedRoute>
-    }
-/>
-<Route
-    path="/assessment/pending-approvals"
-    element={
-        <ProtectedRoute
-            roles={["HR_SPECIALIST", "MANAGER"]}
-        >
-            <AdminLayout>
-                <PendingApprovals />
-            </AdminLayout>
-        </ProtectedRoute>
-    }
-/>
+                <Route
+                    path="/assessment/history"
+                    element={
+                        <ProtectedRoute role="EMPLOYEE">
+                            <EmployeeLayout>
+                                <AssessmentHistory />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/assessment/pending-approvals"
+                    element={
+                        <ProtectedRoute
+                            roles={["HR_SPECIALIST", "MANAGER"]}
+                        >
+                            <AdminLayout>
+                                <PendingApprovals />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
 
-<Route
-    path="/assessment/statistics"
-    element={
-        <ProtectedRoute
-            roles={["HR_SPECIALIST", "MANAGER"]}
-        >
-            <AdminLayout>
-                <AssessmentStatistics />
-            </AdminLayout>
-        </ProtectedRoute>
-    }
-/>
-<Route
-    path="/employee/skills"
-    element={
-        <ProtectedRoute>
-            <EmployeeLayout>
-                <EmployeeSkills />
-            </EmployeeLayout>
-        </ProtectedRoute>
-    }
-/>
-<Route
-    path="/employee/ratings"
-    element={
-        <ProtectedRoute>
-            <EmployeeLayout>
-                <EmployeeRatings />
-            </EmployeeLayout>
-        </ProtectedRoute>
-    }
-/>
+                <Route
+                    path="/assessment/statistics"
+                    element={
+                        <ProtectedRoute
+                            roles={["HR_SPECIALIST", "MANAGER"]}
+                        >
+                            <AdminLayout>
+                                <AssessmentStatistics />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/employee/skills"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <EmployeeSkills />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/employee/ratings"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <EmployeeRatings />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/notifications"
+                    element={
+                        <ProtectedRoute>
+                            <RoleBasedLayout>
+                                <Notifications />
+                            </RoleBasedLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
             </Routes>
 
         </BrowserRouter>

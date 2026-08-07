@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Users,
 } from "lucide-react";
+import Header from "../components/layout/Header";
 
 const EmployeeLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -76,44 +77,10 @@ const EmployeeLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
       {/* Top Navbar */}
-      <header className="bg-slate-900 text-white shadow-md sticky top-0 z-50 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            className="md:hidden text-gray-300 hover:text-white"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-
-          <div className="flex items-center gap-2 font-bold text-lg tracking-wide text-indigo-400">
-            <BookOpen size={24} />
-            <span className="hidden sm:inline text-white">
-              KnowledgeGap
-            </span>{" "}
-            Intelligence
-          </div>
-        </div>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-4">
-          <button className="relative p-2 text-gray-400 hover:text-white rounded-full hover:bg-slate-800 transition">
-            <Bell size={20} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("role");
-              window.location.href = "/login";
-            }}
-            className="flex items-center gap-1 text-sm bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-gray-200 transition"
-          >
-            <LogOut size={16} />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
-        </div>
-      </header>
+      <Header
+    isSidebarOpen={isSidebarOpen}
+    setIsSidebarOpen={setIsSidebarOpen}
+/>
 
       <div className="flex flex-1 relative">
         {/* Sidebar */}
