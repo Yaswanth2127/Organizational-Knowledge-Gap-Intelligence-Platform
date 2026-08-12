@@ -8,17 +8,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface CertificationRepository extends JpaRepository<Certification,Long> {
+public interface CertificationRepository extends JpaRepository<Certification, Long> {
 
     @Override
-    @EntityGraph(attributePaths = {"user","skill"})
-    Optional<Certification> findById(Long aLong);
+    @EntityGraph(attributePaths = {"user", "skill", "course", "assessment"})
+    Optional<Certification> findById(Long id);
 
     @Override
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"user", "skill", "course", "assessment"})
     List<Certification> findAll();
 
-    @EntityGraph(attributePaths = {"user","skill"})
+    @EntityGraph(attributePaths = {"user", "skill", "course", "assessment"})
     List<Certification> findByUser(User user);
 
     Integer countByUserId(Long userId);
