@@ -1,5 +1,6 @@
 package com.knowledgegap.knowledge_gap_platform.service;
 
+import com.knowledgegap.knowledge_gap_platform.dto.ArticleDeletionRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.KnowledgeArticleRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.KnowledgeArticleResponse;
 
@@ -10,7 +11,7 @@ public interface KnowledgeArticleService {
 
     KnowledgeArticleResponse updateArticle(Long id, KnowledgeArticleRequest request);
 
-    void deleteArticle(Long id);
+    void deleteOwnArticle(Long id);
 
     KnowledgeArticleResponse getArticleById(Long id);
 
@@ -21,4 +22,6 @@ public interface KnowledgeArticleService {
     List<KnowledgeArticleResponse> getArticlesBySkill(Long skillId);
 
     List<KnowledgeArticleResponse> searchByTitle(String title);
+
+    void deleteArticleByAdmin(Long id, ArticleDeletionRequest request);
 }

@@ -23,4 +23,8 @@ public interface ExpertDirectoryService {
 
     List<ExpertDirectoryResponse> getExpertsBySkillAndLevel(Long skillId,
             ProficiencyLevel level);
+
+    List<ExpertDirectoryResponse> getAllExperts();
+
+    List<ExpertDirectoryResponse> getMyExpertise();
 }

@@ -9,6 +9,7 @@ public enum NotificationType {
     SKILL_GAP_DETECTED,
     CERTIFICATION_EXPIRING,
     CERTIFICATION_EXPIRED,
+    ARTICLE_DELETED_BY_ADMIN,
 
     // HR Notifications
     EMPLOYEE_REGISTERED,
