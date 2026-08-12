@@ -211,29 +211,26 @@ public class AuthenticationService {
 
     private AuthenticationResponse buildAuthenticationResponse(User user){
         List<SimpleGrantedAuthority> authorities =
-                userRoleRepository.findByUser(user)
+                userRoleRepository.findByUserId(user.getId())
                         .stream()
-                        .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getName()))
+                        .map(ur -> new SimpleGrantedAuthority(
+                                "ROLE_" + ur.getRole().getName()
+                        ))
                         .toList();
 
-        List<String> rolePriority = List.of(
-                "SYS_ADMIN", "LND_ADMIN", "DEPARTMENT_HEAD", "HR_SPECIALIST",
-                "ADMIN", "HR", "MANAGER", "EMPLOYEE"
+        List<String> roles = authorities.stream()
+                .map(authority ->
+                        authority.getAuthority().replace("ROLE_", "")
+                )
+                .toList();
+
+        String token = jwtService.generateToken(
+                new CustomUserDetails(user, authorities)
         );
-
-        String role = authorities.stream()
-                .map(a -> a.getAuthority().replace("ROLE_", ""))
-                .min((r1, r2) -> Integer.compare(
-                        rolePriority.indexOf(r1),
-                        rolePriority.indexOf(r2)
-                ))
-                .orElseThrow(() -> new RuntimeException("No role assigned to user"));
-
-        String token=jwtService.generateToken(new CustomUserDetails(user,authorities));
 
         return AuthenticationResponse.builder()
                 .token(token)
-                .role(role)
+                .roles(roles)
                 .userId(user.getId())
                 .fullName(user.getFullName())
                 .build();

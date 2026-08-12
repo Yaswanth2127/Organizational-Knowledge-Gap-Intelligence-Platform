@@ -4,6 +4,7 @@ import com.knowledgegap.knowledge_gap_platform.dto.UpdateProfileRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.UserResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.repository.UserRoleRepository;
 import com.knowledgegap.knowledge_gap_platform.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
 
 
     @Override
@@ -74,6 +76,11 @@ public class UserServiceImplementation implements UserService {
     }
 
     private UserResponse mapToUserResponse(User user) {
+        List<String> roles = userRoleRepository
+                .findByUserId(user.getId())
+                .stream()
+                .map(userRole -> userRole.getRole().getName())
+                .toList();
         return UserResponse.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())
@@ -93,6 +100,10 @@ public class UserServiceImplementation implements UserService {
 
                 .isActive(user.getIsActive())
                 .emailVerified(user.getEmailVerified())
+
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .roles(roles)
 
                 .build();
     }

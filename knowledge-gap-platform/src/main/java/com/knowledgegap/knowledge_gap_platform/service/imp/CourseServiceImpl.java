@@ -10,6 +10,7 @@ import com.knowledgegap.knowledge_gap_platform.service.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -93,6 +94,7 @@ public class CourseServiceImpl implements CourseService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public CourseResponse updateCourse(Long id, CourseRequest request) {
 

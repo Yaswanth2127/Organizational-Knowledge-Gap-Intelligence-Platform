@@ -15,6 +15,8 @@ import {
   AlertTriangle,
   ClipboardCheck,
   BarChart3,
+  FileText ,
+  ShieldCheck,
 } from "lucide-react";
 
 import Header from "../components/layout/Header";
@@ -24,14 +26,18 @@ const AdminLayout = ({ children }) => {
 
   const location = useLocation();
 
-  const role = localStorage.getItem("role");
+  const roles = JSON.parse(
+    localStorage.getItem("roles") || "[]"
+);
   const navigation = [
   {
-    name: "Dashboard",
-    href: role === "SYS_ADMIN" ? "/admin/dashboard" : "/hr/dashboard",
-    icon: LayoutDashboard,
-    roles: ["SYS_ADMIN", "HR_SPECIALIST"],
-  },
+            name: "Dashboard",
+            href: roles.includes("SYS_ADMIN")
+                ? "/admin/dashboard"
+                : "/hr/dashboard",
+            icon: LayoutDashboard,
+            roles: ["SYS_ADMIN", "HR_SPECIALIST"],
+        },
   {
     name: "Profile",
     href: "/profile",
@@ -44,6 +50,12 @@ const AdminLayout = ({ children }) => {
     icon: Brain,
     roles: ["SYS_ADMIN", "HR_SPECIALIST"],
   },
+  {
+    name: "Role Assignment",
+    href: "/role-assignment",
+    icon: ShieldCheck,
+    roles: ["SYS_ADMIN"],
+},
   {
     name: "Departments",
     href: "/departments",
@@ -110,10 +122,18 @@ const AdminLayout = ({ children }) => {
     icon: BarChart3,
     roles: ["SYS_ADMIN", "HR_SPECIALIST"],
   },
+  {
+    name: "Knowledge Articles",
+    href: "/admin/knowledge-articles",
+    icon: FileText,
+    roles: ["SYS_ADMIN", "HR_SPECIALIST"],
+},
 ];
 
 const filteredNavigation = navigation.filter((item) =>
-    item.roles.includes(role)
+    item.roles.some((requiredRole) =>
+        roles.includes(requiredRole)
+    )
 );
  
   return (
