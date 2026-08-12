@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ExpertDirectoryRequest {
-     private Long userId;
 
      private Long skillId;
 

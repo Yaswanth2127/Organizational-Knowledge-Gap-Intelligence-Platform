@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         new UsernameNotFoundException("User not found"));
 
         List<GrantedAuthority> authorities = userRoleRepository
-                .findByUser(user)
+                .findByUserId(user.getId())
                 .stream()
                 .map(UserRole::getRole)
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))

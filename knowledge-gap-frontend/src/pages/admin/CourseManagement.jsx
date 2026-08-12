@@ -1,15 +1,36 @@
-﻿import React, { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, BookOpen, X } from "lucide-react";
+﻿
+
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+
+import {
+    Plus,
+    Search,
+    BookOpen,
+    Layers3,
+    CheckCircle2,
+    XCircle,
+    X,
+    AlertCircle,
+} from "lucide-react";
+
 import {
     getAllCourses,
     createCourse,
     updateCourse,
     deleteCourse,
 } from "../../services/courseService";
+
 import { getAllSkills } from "../../services/skillService";
 
-const SOURCES = ["INTERNAL", "COURSERA", "UDEMY", "LINKEDIN_LEARNING", "OTHER"];
-const DIFFICULTIES = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
+import CourseCard from "../../components/course/CourseCard";
+import CourseFormModal from "../../components/course/CourseFormModal";
+import CourseDetailsModal from "../../components/course/CourseDetailsModal";
+
+import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal";
 
 const emptyForm = {
     title: "",
@@ -25,338 +46,887 @@ const emptyForm = {
 };
 
 export default function CourseManagement() {
+
+    // =====================================================
+    // DATA
+    // =====================================================
+
     const [courses, setCourses] = useState([]);
     const [skills, setSkills] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [showModal, setShowModal] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState(emptyForm);
-    const [saving, setSaving] = useState(false);
 
-    const fetchAll = () => {
-        setLoading(true);
-        setError("");
-        Promise.all([getAllCourses(), getAllSkills()])
-            .then(([courseList, skillList]) => {
-                setCourses(courseList);
-                setSkills(skillList);
-            })
-            .catch((err) =>
-                setError(err.response?.data?.message || "Failed to load courses.")
-            )
-            .finally(() => setLoading(false));
+    // =====================================================
+    // UI STATE
+    // =====================================================
+
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+
+    const [search, setSearch] = useState("");
+    const [sourceFilter, setSourceFilter] = useState("ALL");
+    const [difficultyFilter, setDifficultyFilter] = useState("ALL");
+
+    const [formOpen, setFormOpen] = useState(false);
+    const [detailsOpen, setDetailsOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+
+    // =====================================================
+    // SELECTED DATA
+    // =====================================================
+
+    const [editingId, setEditingId] = useState(null);
+
+    const [selectedCourse, setSelectedCourse] =
+        useState(null);
+
+    const [courseToDelete, setCourseToDelete] =
+        useState(null);
+
+    // =====================================================
+    // FORM
+    // =====================================================
+
+    const [form, setForm] = useState({
+        ...emptyForm,
+    });
+
+    // =====================================================
+    // LOAD DATA
+    // =====================================================
+
+    const fetchAll = async () => {
+
+        try {
+
+            setLoading(true);
+            setError("");
+
+            const [
+                courseList,
+                skillList,
+            ] = await Promise.all([
+                getAllCourses(),
+                getAllSkills(),
+            ]);
+
+            setCourses(courseList || []);
+            setSkills(skillList || []);
+
+        } catch (err) {
+
+            console.error(
+                "Failed to load courses:",
+                err
+            );
+
+            setError(
+                err.response?.data?.message ||
+                "Failed to load courses."
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
     };
 
     useEffect(() => {
         fetchAll();
     }, []);
 
-    const skillName = (id) =>
-        skills.find((s) => s.id === id)?.name || "-";
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    const skillName = (id) => {
+
+        const skill = skills.find(
+            (item) =>
+                String(item.id) === String(id)
+        );
+
+        return skill?.name || "-";
+    };
+
+    // =====================================================
+    // SEARCH
+    // =====================================================
+
+    const filteredCourses = useMemo(() => {
+        const keyword = search.trim().toLowerCase();
+
+        return courses.filter((course) => {
+
+            const title =
+                course.title?.toLowerCase() || "";
+
+            const description =
+                course.description?.toLowerCase() || "";
+
+            const provider =
+                course.provider?.toLowerCase() || "";
+
+            const skill =
+                skillName(course.skillId).toLowerCase();
+
+            const matchesSearch =
+                !keyword ||
+                title.includes(keyword) ||
+                description.includes(keyword) ||
+                provider.includes(keyword) ||
+                skill.includes(keyword);
+
+            const matchesSource =
+                sourceFilter === "ALL" ||
+                course.source === sourceFilter;
+
+            const matchesDifficulty =
+                difficultyFilter === "ALL" ||
+                course.difficulty === difficultyFilter;
+
+            return (
+                matchesSearch &&
+                matchesSource &&
+                matchesDifficulty
+            );
+        });
+    }, [
+        courses,
+        skills,
+        search,
+        sourceFilter,
+        difficultyFilter,
+    ]);
+    // =====================================================
+    // SUMMARY
+    // =====================================================
+
+    const totalCourses = courses.length;
+
+    const activeCourses =
+        courses.filter(
+            (course) => course.isActive
+        ).length;
+
+    const inactiveCourses =
+        totalCourses -
+        activeCourses;
+
+    const skillsCovered =
+        new Set(
+            courses
+                .map(
+                    (course) =>
+                        course.skillId
+                )
+                .filter(Boolean)
+        ).size;
+
+    // =====================================================
+    // ADD
+    // =====================================================
 
     const openAddModal = () => {
+
         setEditingId(null);
-        setForm(emptyForm);
-        setShowModal(true);
+
+        setForm({
+            ...emptyForm,
+        });
+
+        setError("");
+
+        setFormOpen(true);
     };
+
+    // =====================================================
+    // EDIT
+    // =====================================================
 
     const openEditModal = (course) => {
+
         setEditingId(course.id);
+
         setForm({
-            title: course.title || "",
-            description: course.description || "",
-            skillId: course.skillId || "",
-            source: course.source || "INTERNAL",
-            provider: course.provider || "",
-            externalUrl: course.externalUrl || "",
-            durationHours: course.durationHours || "",
-            difficulty: course.difficulty || "BEGINNER",
-            thumbnailUrl: course.thumbnailUrl || "",
-            isActive: course.isActive ?? true,
+            title:
+                course.title || "",
+
+            description:
+                course.description || "",
+
+            skillId:
+                course.skillId || "",
+
+            source:
+                course.source || "INTERNAL",
+
+            provider:
+                course.provider || "",
+
+            externalUrl:
+                course.externalUrl || "",
+
+            durationHours:
+                course.durationHours || "",
+
+            difficulty:
+                course.difficulty ||
+                "BEGINNER",
+
+            thumbnailUrl:
+                course.thumbnailUrl || "",
+
+            isActive:
+                course.isActive ?? true,
         });
-        setShowModal(true);
+
+        setError("");
+
+        setFormOpen(true);
     };
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    // =====================================================
+    // CLOSE FORM
+    // =====================================================
+
+    const closeForm = () => {
+
+        setFormOpen(false);
+        setEditingId(null);
+
+        setForm({
+            ...emptyForm,
+        });
     };
 
-    const handleSave = async (e) => {
-        e.preventDefault();
-        if (!form.title.trim() || !form.skillId) return;
-        setSaving(true);
+    // =====================================================
+    // FORM CHANGE
+    // =====================================================
+
+    const handleChange = (event) => {
+
+        const {
+            name,
+            value,
+            type,
+            checked,
+        } = event.target;
+
+        setForm(
+            (previous) => ({
+                ...previous,
+                [name]:
+                    type === "checkbox"
+                        ? checked
+                        : value,
+            })
+        );
+    };
+
+    // =====================================================
+    // SKILL CHANGE
+    // =====================================================
+
+    const handleSkillChange = (skillId) => {
+
+        setForm(
+            (previous) => ({
+                ...previous,
+                skillId,
+            })
+        );
+    };
+
+    // =====================================================
+    // SAVE
+    // =====================================================
+
+    const handleSave = async (event) => {
+
+        event.preventDefault();
+
+        if (
+            !form.title.trim() ||
+            !form.skillId
+        ) {
+
+            setError(
+                "Course title and skill are required."
+            );
+
+            return;
+        }
+
         try {
+
+            setSaving(true);
+            setError("");
+
             const payload = {
-                title: form.title,
-                description: form.description,
-                skillId: Number(form.skillId),
-                source: form.source,
-                provider: form.provider,
-                externalUrl: form.externalUrl,
-                durationHours: form.durationHours ? Number(form.durationHours) : null,
-                difficulty: form.difficulty,
-                thumbnailUrl: form.thumbnailUrl,
-                isActive: form.isActive,
+
+                title:
+                    form.title.trim(),
+
+                description:
+                    form.description.trim(),
+
+                skillId:
+                    Number(form.skillId),
+
+                source:
+                    form.source,
+
+                provider:
+                    form.provider.trim(),
+
+                externalUrl:
+                    form.externalUrl.trim(),
+
+                durationHours:
+                    form.durationHours
+                        ? Number(
+                            form.durationHours
+                        )
+                        : null,
+
+                difficulty:
+                    form.difficulty,
+
+                thumbnailUrl:
+                    form.thumbnailUrl.trim(),
+
+                isActive:
+                    form.isActive,
             };
+
             if (editingId) {
-                await updateCourse(editingId, payload);
+
+                await updateCourse(
+                    editingId,
+                    payload
+                );
+
             } else {
-                await createCourse(payload);
+
+                await createCourse(
+                    payload
+                );
+
             }
-            setShowModal(false);
-            fetchAll();
+
+            closeForm();
+
+            await fetchAll();
+
         } catch (err) {
-            setError(err.response?.data?.message || "Save failed.");
+
+            console.error(
+                "Failed to save course:",
+                err
+            );
+
+            setError(
+                err.response?.data?.message ||
+                "Failed to save course."
+            );
+
         } finally {
+
             setSaving(false);
+
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Delete this course?")) return;
+    // =====================================================
+    // VIEW
+    // =====================================================
+
+    const openDetails = (course) => {
+
+        setSelectedCourse(course);
+        setDetailsOpen(true);
+    };
+
+    const closeDetails = () => {
+
+        setSelectedCourse(null);
+        setDetailsOpen(false);
+    };
+
+    // =====================================================
+    // DELETE
+    // =====================================================
+
+    const openDeleteModal = (course) => {
+
+        setCourseToDelete(course);
+        setDeleteOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+
+        setCourseToDelete(null);
+        setDeleteOpen(false);
+    };
+
+    const confirmDelete = async () => {
+
+        if (!courseToDelete) {
+            return;
+        }
+
         try {
-            await deleteCourse(id);
-            fetchAll();
+
+            setSaving(true);
+            setError("");
+
+            await deleteCourse(
+                courseToDelete.id
+            );
+
+            closeDeleteModal();
+
+            await fetchAll();
+
         } catch (err) {
-            setError(err.response?.data?.message || "Delete failed.");
+
+            console.error(
+                "Failed to delete course:",
+                err
+            );
+
+            setError(
+                err.response?.data?.message ||
+                "Failed to delete course."
+            );
+
+        } finally {
+
+            setSaving(false);
+
         }
     };
+
+    // =====================================================
+    // PAGE
+    // =====================================================
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Courses</h1>
-                    <p className="text-sm text-gray-500 mt-1">Manage the organization's course catalog</p>
+
+            {/* HEADER */}
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                <div className="flex items-center gap-3">
+
+                    <div className="w-11 h-11 bg-indigo-50 rounded-xl flex items-center justify-center">
+
+                        <BookOpen
+                            size={22}
+                            className="text-indigo-600"
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            Course Management
+                        </h1>
+
+                        <p className="text-sm text-gray-500 mt-1">
+                            Manage the organization's learning catalog.
+                        </p>
+
+                    </div>
+
                 </div>
+
                 <button
+                    type="button"
                     onClick={openAddModal}
-                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition shadow-sm"
+                    className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition shadow-sm"
                 >
-                    <Plus size={16} /> Add Course
+                    <Plus size={17} />
+                    Add Course
                 </button>
+
             </div>
 
+            {/* ERROR */}
+
             {error && (
-                <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
-                    {error}
+
+                <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl text-red-700 text-sm">
+
+                    <AlertCircle size={18} />
+
+                    <span className="flex-1">
+                        {error}
+                    </span>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setError("")
+                        }
+                    >
+                        <X size={17} />
+                    </button>
+
                 </div>
+
             )}
+
+            {/* SUMMARY */}
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        Total Courses
+                    </p>
+
+                    <div className="flex items-center justify-between mt-2">
+
+                        <p className="text-2xl font-bold text-gray-900">
+                            {totalCourses}
+                        </p>
+
+                        <BookOpen
+                            size={19}
+                            className="text-indigo-500"
+                        />
+
+                    </div>
+
+                </div>
+
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        Active
+                    </p>
+
+                    <div className="flex items-center justify-between mt-2">
+
+                        <p className="text-2xl font-bold text-green-600">
+                            {activeCourses}
+                        </p>
+
+                        <CheckCircle2
+                            size={19}
+                            className="text-green-500"
+                        />
+
+                    </div>
+
+                </div>
+
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        Inactive
+                    </p>
+
+                    <div className="flex items-center justify-between mt-2">
+
+                        <p className="text-2xl font-bold text-gray-600">
+                            {inactiveCourses}
+                        </p>
+
+                        <XCircle
+                            size={19}
+                            className="text-gray-400"
+                        />
+
+                    </div>
+
+                </div>
+
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        Skills Covered
+                    </p>
+
+                    <div className="flex items-center justify-between mt-2">
+
+                        <p className="text-2xl font-bold text-indigo-600">
+                            {skillsCovered}
+                        </p>
+
+                        <Layers3
+                            size={19}
+                            className="text-indigo-500"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {/* SEARCH */}
+
+            {/* SEARCH & FILTERS */}
+
+            <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4">
+
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_auto] gap-3">
+
+                    {/* Search */}
+
+                    <div className="relative">
+
+                        <Search
+                            size={18}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(event) =>
+                                setSearch(event.target.value)
+                            }
+                            placeholder="Search courses, skills, providers..."
+                            className="w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                        />
+
+                    </div>
+
+                    {/* Source */}
+
+                    <select
+                        value={sourceFilter}
+                        onChange={(event) =>
+                            setSourceFilter(event.target.value)
+                        }
+                        className="px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-w-[170px]"
+                    >
+
+                        <option value="ALL">
+                            All Sources
+                        </option>
+
+                        <option value="INTERNAL">
+                            Internal
+                        </option>
+
+                        <option value="COURSERA">
+                            Coursera
+                        </option>
+
+                        <option value="UDEMY">
+                            Udemy
+                        </option>
+
+                        <option value="LINKEDIN_LEARNING">
+                            LinkedIn Learning
+                        </option>
+
+                        <option value="OTHER">
+                            Other
+                        </option>
+
+                    </select>
+
+                    {/* Difficulty */}
+
+                    <select
+                        value={difficultyFilter}
+                        onChange={(event) =>
+                            setDifficultyFilter(event.target.value)
+                        }
+                        className="px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-w-[150px]"
+                    >
+
+                        <option value="ALL">
+                            All Levels
+                        </option>
+
+                        <option value="BEGINNER">
+                            Beginner
+                        </option>
+
+                        <option value="INTERMEDIATE">
+                            Intermediate
+                        </option>
+
+                        <option value="ADVANCED">
+                            Advanced
+                        </option>
+
+                    </select>
+
+                </div>
+
+                {/* Results */}
+
+                <div className="flex items-center justify-between mt-3 px-1">
+
+                    <p className="text-xs text-gray-400">
+
+                        Showing{" "}
+
+                        <span className="font-semibold text-gray-600">
+                            {filteredCourses.length}
+                        </span>{" "}
+
+                        of{" "}
+
+                        <span className="font-semibold text-gray-600">
+                            {courses.length}
+                        </span>{" "}
+                        courses
+
+                    </p>
+
+                    {(search ||
+                        sourceFilter !== "ALL" ||
+                        difficultyFilter !== "ALL") && (
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSearch("");
+                                    setSourceFilter("ALL");
+                                    setDifficultyFilter("ALL");
+                                }}
+                                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
+                            >
+                                Clear Filters
+                            </button>
+
+                        )}
+
+                </div>
+
+            </div>
+
+            {/* CONTENT */}
 
             {loading ? (
-                <p className="text-sm text-gray-500">Loading...</p>
-            ) : courses.length === 0 ? (
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 text-center text-gray-400 text-sm">
-                    No courses yet. Add one to get started.
+
+                <div className="bg-white border border-gray-100 rounded-2xl p-14 text-center">
+
+                    <BookOpen
+                        size={28}
+                        className="mx-auto text-indigo-500 animate-pulse"
+                    />
+
+                    <p className="text-sm text-gray-500 mt-3">
+                        Loading courses...
+                    </p>
+
                 </div>
+
+            ) : filteredCourses.length === 0 ? (
+
+                <div className="bg-white border border-gray-100 rounded-2xl p-14 text-center">
+
+                    <div className="w-14 h-14 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center">
+
+                        <BookOpen
+                            size={25}
+                            className="text-gray-400"
+                        />
+
+                    </div>
+
+                    <h3 className="text-base font-semibold text-gray-800 mt-4">
+                        No courses found
+                    </h3>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                        {search
+                            ? "Try a different search term."
+                            : "Add your first course to get started."}
+                    </p>
+
+                </div>
+
             ) : (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th className="text-left px-5 py-3 font-semibold text-gray-600">Title</th>
-                                <th className="text-left px-5 py-3 font-semibold text-gray-600">Skill</th>
-                                <th className="text-left px-5 py-3 font-semibold text-gray-600">Source</th>
-                                <th className="text-left px-5 py-3 font-semibold text-gray-600">Difficulty</th>
-                                <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
-                                <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {courses.map((course) => (
-                                <tr key={course.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50">
-                                    <td className="px-5 py-3">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="p-2 bg-indigo-50 rounded-lg">
-                                                <BookOpen className="text-indigo-600" size={15} />
-                                            </div>
-                                            <span className="font-semibold text-gray-800">{course.title}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-600">{skillName(course.skillId)}</td>
-                                    <td className="px-5 py-3 text-gray-600">{course.source}</td>
-                                    <td className="px-5 py-3 text-gray-600">{course.difficulty || "-"}</td>
-                                    <td className="px-5 py-3">
-                                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${course.isActive ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-500"}`}>
-                                            {course.isActive ? "Active" : "Inactive"}
-                                        </span>
-                                    </td>
-                                    <td className="px-5 py-3">
-                                        <div className="flex items-center justify-end gap-1">
-                                            <button
-                                                onClick={() => openEditModal(course)}
-                                                className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
-                                            >
-                                                <Pencil size={15} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(course.id)}
-                                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                                            >
-                                                <Trash2 size={15} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+                    {filteredCourses.map(
+                        (course) => (
+
+                            <CourseCard
+                                key={course.id}
+                                course={course}
+                                skillName={
+                                    skillName
+                                }
+                                onView={
+                                    openDetails
+                                }
+                                onEdit={
+                                    openEditModal
+                                }
+                                onDelete={
+                                    openDeleteModal
+                                }
+                            />
+
+                        )
+                    )}
+
                 </div>
+
             )}
 
-            {showModal && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-bold text-gray-900">
-                                {editingId ? "Edit Course" : "Add Course"}
-                            </h2>
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="text-gray-400 hover:text-gray-600"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <form onSubmit={handleSave} className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                    Title
-                                </label>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    value={form.title}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Advanced React Patterns"
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                    autoFocus
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                    Description
-                                </label>
-                                <textarea
-                                    name="description"
-                                    value={form.description}
-                                    onChange={handleChange}
-                                    rows={2}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm resize-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                    Skill
-                                </label>
-                                <select
-                                    name="skillId"
-                                    value={form.skillId}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                >
-                                    <option value="">Select skill</option>
-                                    {skills.map((s) => (
-                                        <option key={s.id} value={s.id}>{s.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                        Source
-                                    </label>
-                                    <select
-                                        name="source"
-                                        value={form.source}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                    >
-                                        {SOURCES.map((s) => (
-                                            <option key={s} value={s}>{s}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                        Difficulty
-                                    </label>
-                                    <select
-                                        name="difficulty"
-                                        value={form.difficulty}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                    >
-                                        {DIFFICULTIES.map((d) => (
-                                            <option key={d} value={d}>{d}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                    Provider
-                                </label>
-                                <input
-                                    type="text"
-                                    name="provider"
-                                    value={form.provider}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Internal Training Team"
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                    External URL
-                                </label>
-                                <input
-                                    type="text"
-                                    name="externalUrl"
-                                    value={form.externalUrl}
-                                    onChange={handleChange}
-                                    placeholder="https://..."
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                                    Duration (hours)
-                                </label>
-                                <input
-                                    type="number"
-                                    step="0.5"
-                                    name="durationHours"
-                                    value={form.durationHours}
-                                    onChange={handleChange}
-                                    placeholder="e.g. 4"
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="isActive"
-                                    name="isActive"
-                                    checked={form.isActive}
-                                    onChange={handleChange}
-                                    className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                />
-                                <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
-                            </div>
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition text-sm disabled:opacity-60"
-                            >
-                                {saving ? "Saving..." : "Save"}
-                            </button>
-                        </form>
-                    </div>
-                </div>
+            {/* FORM */}
+
+            <CourseFormModal
+                open={formOpen}
+                editingId={editingId}
+                form={form}
+                skills={skills}
+                saving={saving}
+                onChange={handleChange}
+                onSkillChange={
+                    handleSkillChange
+                }
+                onSubmit={handleSave}
+                onClose={closeForm}
+            />
+
+            {/* DETAILS */}
+
+            {detailsOpen && (
+
+                <CourseDetailsModal
+                    course={selectedCourse}
+                    skillName={skillName}
+                    onClose={closeDetails}
+                />
+
             )}
+
+            {/* DELETE */}
+
+            <ConfirmDeleteModal
+                open={deleteOpen}
+                title="Delete Course"
+                itemName={
+                    courseToDelete?.title
+                }
+                message="This course will be permanently removed from the course catalog. Existing learning paths or recommendations referencing it may also be affected."
+                loading={saving}
+                onCancel={
+                    closeDeleteModal
+                }
+                onConfirm={
+                    confirmDelete
+                }
+            />
+
         </div>
     );
 }

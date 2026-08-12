@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @Builder
@@ -30,4 +33,9 @@ public class UserResponse {
     private Boolean isActive;
 
     private Boolean emailVerified;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    private List<String> roles;
 }

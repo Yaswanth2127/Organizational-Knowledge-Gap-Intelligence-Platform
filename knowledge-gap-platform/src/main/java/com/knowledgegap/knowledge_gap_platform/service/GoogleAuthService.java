@@ -50,20 +50,26 @@ public class GoogleAuthService {
 
     private AuthenticationResponse buildAuthenticationResponse(User user){
         List<SimpleGrantedAuthority> authorities =
-                userRoleRepository.findByUser(user)
+                userRoleRepository.findByUserId(user.getId())
                         .stream()
-                        .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getName()))
+                        .map(ur -> new SimpleGrantedAuthority(
+                                "ROLE_" + ur.getRole().getName()
+                        ))
                         .toList();
 
-        String role = authorities.get(0)
-                .getAuthority()
-                .replace("ROLE_", "");
+        List<String> roles = authorities.stream()
+                .map(authority ->
+                        authority.getAuthority().replace("ROLE_", "")
+                )
+                .toList();
 
-        String token=jwtService.generateToken(new CustomUserDetails(user,authorities));
+        String token = jwtService.generateToken(
+                new CustomUserDetails(user, authorities)
+        );
 
         return AuthenticationResponse.builder()
                 .token(token)
-                .role(role)
+                .roles(roles)
                 .userId(user.getId())
                 .fullName(user.getFullName())
                 .build();

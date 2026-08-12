@@ -9,9 +9,10 @@ import com.knowledgegap.knowledge_gap_platform.entity.enums.ProficiencyLevel;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.ExpertDirectoryRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
-import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.ExpertDirectoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,21 +23,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExpertDirectoryServiceImpl implements ExpertDirectoryService {
     private final ExpertDirectoryRepository expertDirectoryRepository;
-    private final UserRepository userRepository;
     private final SkillRepository skillRepository;
+    private final AuthenticationService authenticationService;
 
     @Override
     public ExpertDirectoryResponse addExpert(ExpertDirectoryRequest request) {
+        User user=authenticationService.getCurrentUser();
         if (expertDirectoryRepository.existsByUserIdAndSkillId(
-                request.getUserId(),
+                user.getId(),
                 request.getSkillId())) {
 
             throw new IllegalArgumentException(
                     "Expert already exists for this user and skill."
             );
         }
-        User user=userRepository.findById(request.getUserId()).orElseThrow(()->
-                new ResourceNotFoundException("User not found "));
 
         Skill skill=skillRepository.findById(request.getSkillId()).orElseThrow(()->
                 new ResourceNotFoundException("Skill not found "));
@@ -55,16 +55,22 @@ public class ExpertDirectoryServiceImpl implements ExpertDirectoryService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Expert directory not found"));
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+        User user = authenticationService.getCurrentUser();
+
+        if (!expertDirectory.getUser().getId()
+                .equals(user.getId())) {
+
+            throw new AccessDeniedException(
+                    "You are not authorized to update this expert profile."
+            );
+        }
 
         Skill skill = skillRepository.findById(request.getSkillId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Skill not found"));
 
         expertDirectoryRepository.findByUserIdAndSkillId(
-                request.getUserId(),
+                user.getId(),
                 request.getSkillId()
         ).ifPresent(existing -> {
             if (!existing.getId().equals(expertDirectory.getId())) {
@@ -72,6 +78,7 @@ public class ExpertDirectoryServiceImpl implements ExpertDirectoryService {
                         "Expert already exists for this user and skill.");
             }
         });
+
 
         expertDirectory.setUser(user);
         expertDirectory.setSkill(skill);
@@ -85,10 +92,23 @@ public class ExpertDirectoryServiceImpl implements ExpertDirectoryService {
 
     @Override
     public void deleteExpert(Long id) {
-        if(!expertDirectoryRepository.existsById(id)){
-            throw new RuntimeException("Expert Directory is not found ");
+        User currentUser = authenticationService.getCurrentUser();
+
+        ExpertDirectory expertDirectory =
+                expertDirectoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Expert directory not found"));
+
+        if (!expertDirectory.getUser().getId()
+                .equals(currentUser.getId())) {
+
+            throw new AccessDeniedException(
+                    "You are not authorized to delete this expert profile."
+            );
         }
-        expertDirectoryRepository.deleteById(id);
+
+        expertDirectoryRepository.delete(expertDirectory);
     }
 
     @Override
@@ -125,6 +145,21 @@ public class ExpertDirectoryServiceImpl implements ExpertDirectoryService {
         return expertDirectoryRepository.findBySkillIdAndExpertiseLevel(skillId,level)
                 .stream().map(this::mapToExpertDirectoryResponse).toList();
     }
+
+    @Override
+    public List<ExpertDirectoryResponse> getAllExperts() {
+        return expertDirectoryRepository.findAll()
+                .stream().map(this::mapToExpertDirectoryResponse).toList();
+    }
+
+    @Override
+    public List<ExpertDirectoryResponse> getMyExpertise() {
+
+        User user=authenticationService.getCurrentUser();
+        return expertDirectoryRepository.findByUserId(user.getId())
+                .stream().map(this::mapToExpertDirectoryResponse).toList();
+    }
+
     private ExpertDirectoryResponse mapToExpertDirectoryResponse(ExpertDirectory expertDirectory){
         return ExpertDirectoryResponse.builder()
                 .id(expertDirectory.getId())

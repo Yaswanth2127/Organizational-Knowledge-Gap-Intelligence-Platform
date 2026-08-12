@@ -10,8 +10,7 @@ import lombok.*;
 @Builder
 public class KnowledgeArticleRequest {
 
-    @NotNull
-    private Long authorId;
+
 
     @NotNull
     private Long skillId;

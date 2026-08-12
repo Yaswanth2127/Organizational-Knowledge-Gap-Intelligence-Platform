@@ -26,4 +26,10 @@ public interface KnowledgeArticleRepository extends JpaRepository<KnowledgeArtic
     @Override
     @EntityGraph(attributePaths = {"author","skill"})
     List<KnowledgeArticle> findAll();
+
+    @EntityGraph(attributePaths = {"author", "skill"})
+    Optional<KnowledgeArticle> findByIdAndAuthorId(
+            Long id,
+            Long authorId
+    );
 }

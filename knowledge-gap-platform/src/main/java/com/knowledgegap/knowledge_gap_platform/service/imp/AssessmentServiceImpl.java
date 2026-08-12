@@ -147,7 +147,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 
         // Get logged-in manager
        User reviewer=authenticationService.getCurrentUser();
-        List<UserRole> reviewerRoles = userRoleRepository.findByUser(reviewer);
+        List<UserRole> reviewerRoles = userRoleRepository.findByUserId(reviewer.getId());
         boolean isAdminOrHR = reviewerRoles.stream()
                 .map(userRole -> userRole.getRole().getName())
                 .anyMatch(role ->
