@@ -3,6 +3,7 @@ import { Bell, LogOut } from "lucide-react";
 
 import notificationService from "../../services/notificationService";
 import NotificationDropdown from "../notifications/NotificationDropdown";
+import DashboardSwitcher from "./DashboardSwitcher";
 
 const Header = () => {
 
@@ -94,19 +95,25 @@ const Header = () => {
 
             {/* Logo */}
 
-            <div>
+            <div className="flex items-center gap-6">
 
-                <h1 className="text-xl font-bold text-white">
+                {/* Logo */}
 
-                    KnowledgeGap{" "}
+                <div className="flex items-center gap-2">
 
-                    <span className="text-indigo-400">
+                    <h1 className="text-white font-bold">
+                        KnowledgeGap
+                        <span className="text-indigo-400">
+                            {" "}Intelligence
+                        </span>
+                    </h1>
 
-                        Intelligence
+                </div>
 
-                    </span>
 
-                </h1>
+                {/* Dashboard Switcher */}
+
+                <DashboardSwitcher />
 
             </div>
 

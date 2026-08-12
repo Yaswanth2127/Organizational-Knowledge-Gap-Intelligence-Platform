@@ -1,34 +1,41 @@
 package com.knowledgegap.knowledge_gap_platform.service.imp;
 
+import com.knowledgegap.knowledge_gap_platform.dto.ArticleDeletionRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.KnowledgeArticleRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.KnowledgeArticleResponse;
 import com.knowledgegap.knowledge_gap_platform.entity.KnowledgeArticle;
 import com.knowledgegap.knowledge_gap_platform.entity.Skill;
 import com.knowledgegap.knowledge_gap_platform.entity.User;
+import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.KnowledgeArticleRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.KnowledgeArticleService;
+import com.knowledgegap.knowledge_gap_platform.service.NotificationHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class KnowledgeArticleServiceImpl implements KnowledgeArticleService {
 
     private final KnowledgeArticleRepository knowledgeArticleRepository;
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
+    private final AuthenticationService authenticationService;
+    private final NotificationHelper notificationHelper;
 
     @Override
     public KnowledgeArticleResponse createArticle(KnowledgeArticleRequest request) {
 
-        User author = userRepository.findById(request.getAuthorId())
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Author not found"));
+        User author = authenticationService.getCurrentUser();
 
         Skill skill = skillRepository.findById(request.getSkillId())
                 .orElseThrow(() ->
@@ -47,23 +54,29 @@ public class KnowledgeArticleServiceImpl implements KnowledgeArticleService {
         return mapToResponse(article);
     }
 
+    @Transactional
     @Override
     public KnowledgeArticleResponse updateArticle(Long id,
                                                   KnowledgeArticleRequest request) {
 
-        KnowledgeArticle article = knowledgeArticleRepository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Article not found"));
 
-        User author = userRepository.findById(request.getAuthorId())
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Author not found"));
+
+        User currentUser = authenticationService.getCurrentUser();
+
+        KnowledgeArticle article =
+                knowledgeArticleRepository
+                        .findByIdAndAuthorId(id, currentUser.getId())
+                        .orElseThrow(() ->
+                                new AccessDeniedException(
+                                        "You are not authorized to update this article."
+                                ));
+
 
         Skill skill = skillRepository.findById(request.getSkillId())
                 .orElseThrow(() ->
                         new EntityNotFoundException("Skill not found"));
 
-        article.setAuthor(author);
+
         article.setSkill(skill);
         article.setTitle(request.getTitle());
         article.setContent(request.getContent());
@@ -75,11 +88,17 @@ public class KnowledgeArticleServiceImpl implements KnowledgeArticleService {
     }
 
     @Override
-    public void deleteArticle(Long id) {
+    public void deleteOwnArticle(Long id) {
 
         KnowledgeArticle article = knowledgeArticleRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Article not found"));
+
+        User currentUser=authenticationService.getCurrentUser();
+
+        if(!article.getAuthor().getId().equals(currentUser.getId())){
+            throw new AccessDeniedException("You are not Authorised to delete this article");
+        }
 
         knowledgeArticleRepository.delete(article);
     }
@@ -137,6 +156,17 @@ public class KnowledgeArticleServiceImpl implements KnowledgeArticleService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    @Override
+    public void deleteArticleByAdmin(Long id, ArticleDeletionRequest request) {
+
+        KnowledgeArticle article=knowledgeArticleRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Article not found "));
+
+        notificationHelper.articleDeletionByAdmin(article,request);
+        knowledgeArticleRepository.delete(article);
+
+
     }
 
     private KnowledgeArticleResponse mapToResponse(KnowledgeArticle article) {

@@ -27,17 +27,6 @@ export default function EmployeeDashboard() {
     const [assessments, setAssessments] = useState([]);
     const [dashboardStats, setDashboardStats] = useState(null);
 
-    /* ============================================
-            Temporary Demo Data
-       Replace these with API responses later
-    ============================================ */
-
-
-
-    
-
-
-
     const displayValue = (value, fallback = "Not Available") => {
         if (value === null || value === undefined || value === "") {
             return fallback;
@@ -55,26 +44,26 @@ export default function EmployeeDashboard() {
         try {
 
             const userId = localStorage.getItem("userId");
-            
+
             const [
-    userResponse,
-    assessmentResponse,
-    dashboardResponse,
-] = await Promise.all([
+                userResponse,
+                assessmentResponse,
+                dashboardResponse,
+            ] = await Promise.all([
 
-    api.get(`/api/users/${userId}`),
+                api.get(`/api/users/${userId}`),
 
-    assessmentService.getMyAssessments(),
+                assessmentService.getMyAssessments(),
 
-    getEmployeeDashboard(),
+                getEmployeeDashboard(),
 
-]);
+            ]);
 
-setUser(userResponse.data);
+            setUser(userResponse.data);
 
-setAssessments(assessmentResponse.data || []);
+            setAssessments(assessmentResponse.data || []);
 
-setDashboardStats(dashboardResponse.data);
+            setDashboardStats(dashboardResponse.data);
 
         } catch (err) {
 
@@ -91,17 +80,17 @@ setDashboardStats(dashboardResponse.data);
     };
     const competency = {
 
-    score: dashboardStats?.competencyScore ?? 0,
+        score: dashboardStats?.competencyScore ?? 0,
 
-    technical: dashboardStats?.competencyScore ?? 0,
+        technical: dashboardStats?.competencyScore ?? 0,
 
-    assessments: dashboardStats?.completedAssessments ?? 0,
+        assessments: dashboardStats?.completedAssessments ?? 0,
 
-    certifications: dashboardStats?.certifications ?? 0,
+        certifications: dashboardStats?.certifications ?? 0,
 
-    learning: dashboardStats?.profileCompletion ?? 0,
+        learning: dashboardStats?.profileCompletion ?? 0,
 
-};
+    };
 
     if (loading) {
         return (
@@ -125,15 +114,15 @@ setDashboardStats(dashboardResponse.data);
                 )}
 
                 <WelcomeBanner
-    user={user}
-    displayValue={displayValue}
-    profileCompletion={
-        dashboardStats?.profileCompletion ?? 0
-    }
-    competencyScore={
-        dashboardStats?.competencyScore ?? 0
-    }
-/>
+                    user={user}
+                    displayValue={displayValue}
+                    profileCompletion={
+                        dashboardStats?.profileCompletion ?? 0
+                    }
+                    competencyScore={
+                        dashboardStats?.competencyScore ?? 0
+                    }
+                />
 
                 <DashboardStats
                     stats={dashboardStats}

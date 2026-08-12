@@ -1,8 +1,10 @@
 package com.knowledgegap.knowledge_gap_platform.service.imp;
 
+import com.knowledgegap.knowledge_gap_platform.dto.ArticleDeletionRequest;
 import com.knowledgegap.knowledge_gap_platform.dto.NotificationRequest;
 import com.knowledgegap.knowledge_gap_platform.entity.Assessment;
 import com.knowledgegap.knowledge_gap_platform.entity.Certification;
+import com.knowledgegap.knowledge_gap_platform.entity.KnowledgeArticle;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationChannel;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.NotificationType;
 import com.knowledgegap.knowledge_gap_platform.service.NotificationHelper;
@@ -92,5 +94,25 @@ public class NotificationHelperImpl implements NotificationHelper {
         notificationService.createNotification(request);
 
 
+    }
+
+    @Override
+    public void articleDeletionByAdmin(KnowledgeArticle knowledgeArticle, ArticleDeletionRequest request) {
+        NotificationRequest notificationRequest =
+                NotificationRequest.builder()
+                        .userId(knowledgeArticle.getAuthor().getId())
+                        .channel(NotificationChannel.IN_APP)
+                        .type(NotificationType.ARTICLE_DELETED_BY_ADMIN)
+                        .title("Knowledge Article Deleted")
+                        .message(
+                                "Your article \"" +
+                                        knowledgeArticle.getTitle() +
+                                        "\" was deleted by an administrator. " +
+                                        "Reason: " +
+                                        request.getReason()
+                        )
+                        .build();
+
+        notificationService.createNotification(notificationRequest);
     }
 }

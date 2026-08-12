@@ -21,6 +21,10 @@ import CertificationManagement from "./pages/admin/CertificationManagement";
 import CourseManagement from "./pages/admin/CourseManagement";
 import FrameworkRequiredSkillManagement from "./pages/admin/FrameworkRequiredSkillManagement";
 import SkillGapManagement from "./pages/admin/SkillGapManagement";
+import ManagementKnowledgeArticle
+    from "./pages/admin/ManagementKnowledgeArticle";
+
+import RoleAssignment from "./pages/admin/RoleAssignment";
 
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import SkillAssessment from "./pages/employee/SkillAssessment";
@@ -30,9 +34,12 @@ import LearningPath from "./pages/employee/LearningPath";
 import EmployeeCertifications from "./pages/employee/EmployeeCertifications";
 import EmployeeSkills from "./pages/employee/EmployeeSkills";
 import EmployeeRatings from "./pages/employee/EmployeeRatings";
+import KnowledgeArticles from "./pages/employee/KnowledgeArticles";
+import ExpertDirectory from "./pages/employee/ExpertDirectory";
 
 import AdminLayout from "./layouts/AdminLayout";
 import EmployeeLayout from "./layouts/EmployeeLayout";
+import WorkspaceLayout from "./layouts/WorkspaceLayout";
 
 
 import TakeAssessment from "./pages/employee/TakeAssessment";
@@ -40,12 +47,16 @@ import AssessmentHistory from "./pages/employee/AssessmentHistory";
 
 import PendingApprovals from "./pages/admin/PendingApprovals";
 import AssessmentStatistics from "./pages/admin/AssessmentStatistics";
+
+
+import DashboardRedirect from "./pages/DashboardRedirect";
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
 
 
 import Notifications from "./pages/notifications/Notifications";
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem('token');
+
     if (!token) {
         return <Navigate to="/login" replace />;
     }
@@ -109,9 +120,9 @@ function App() {
                     path="/profile"
                     element={
                         <ProtectedRoute>
-                            <RoleBasedLayout>
+                            <WorkspaceLayout>
                                 <Profile />
-                            </RoleBasedLayout>
+                            </WorkspaceLayout>
                         </ProtectedRoute>
                     }
                 />
@@ -352,9 +363,53 @@ function App() {
                     path="/notifications"
                     element={
                         <ProtectedRoute>
-                            <RoleBasedLayout>
+                            <WorkspaceLayout>
                                 <Notifications />
-                            </RoleBasedLayout>
+                            </WorkspaceLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="employee/knowledge-articles"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <KnowledgeArticles />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/knowledge-articles"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <ManagementKnowledgeArticle />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/employee/expert-directory"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <ExpertDirectory />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/dashboard"
+                    element={<DashboardRedirect />}
+                />
+                <Route
+                    path="/role-assignment"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <RoleAssignment />
+                            </AdminLayout>
                         </ProtectedRoute>
                     }
                 />
@@ -364,15 +419,7 @@ function App() {
         </BrowserRouter>
     );
 }
-function RoleBasedLayout({ children }) {
-    const role = localStorage.getItem("role");
 
-    if (role === "EMPLOYEE") {
-        return <EmployeeLayout>{children}</EmployeeLayout>;
-    }
-
-    return <AdminLayout>{children}</AdminLayout>;
-}
 export default App;
 
 

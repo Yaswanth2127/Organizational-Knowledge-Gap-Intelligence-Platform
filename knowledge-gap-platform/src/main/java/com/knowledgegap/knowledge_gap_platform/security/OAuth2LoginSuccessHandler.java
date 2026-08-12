@@ -45,13 +45,26 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                         picture
                 );
 
+        String roles = String.join(
+                ",",
+                authResponse.getRoles()
+        );
+
         String redirectUrl =
                 "http://localhost:5173/oauth-success"
-                        + "?token=" + URLEncoder.encode(authResponse.getToken(), StandardCharsets.UTF_8)
-                        + "&role=" + authResponse.getRole()
+                        + "?token=" + URLEncoder.encode(
+                        authResponse.getToken(),
+                        StandardCharsets.UTF_8
+                )
+                        + "&roles=" + URLEncoder.encode(
+                        roles,
+                        StandardCharsets.UTF_8
+                )
                         + "&userId=" + authResponse.getUserId()
-                        + "&fullName=" + URLEncoder.encode(authResponse.getFullName(), StandardCharsets.UTF_8);
-
+                        + "&fullName=" + URLEncoder.encode(
+                        authResponse.getFullName(),
+                        StandardCharsets.UTF_8
+                );
         response.sendRedirect(redirectUrl);
     }
 

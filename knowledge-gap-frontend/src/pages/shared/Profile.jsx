@@ -24,12 +24,20 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const roleNames = {
         SYS_ADMIN: "System Administrator",
+        LND_ADMIN: "L&D Administrator",
+        DEPARTMENT_HEAD: "Department Head",
         HR_SPECIALIST: "HR Specialist",
-        EMPLOYEE: "Employee"
+        MANAGER: "Manager",
+        EMPLOYEE: "Employee",
     };
-    const role =
-        roleNames[localStorage.getItem("role")] ||
-        localStorage.getItem("role");
+
+    const roles = JSON.parse(
+        localStorage.getItem("roles") || "[]"
+    );
+
+    const role = roles
+        .map((roleName) => roleNames[roleName] || roleName)
+        .join(", ");
 
     const displayValue = (value, fallback = "Not Available") => {
 
@@ -96,707 +104,706 @@ export default function Profile() {
 
     return (
 
-<div className="max-w-7xl mx-auto p-6 space-y-6">
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
 
-    {/* ===========================
+            {/* ===========================
             PROFILE HEADER
     ============================ */}
 
-    <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-700 rounded-3xl shadow-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-700 rounded-3xl shadow-xl overflow-hidden">
 
-        <div className="p-8 flex flex-col lg:flex-row justify-between items-center">
+                <div className="p-8 flex flex-col lg:flex-row justify-between items-center">
 
-            <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-6">
 
-                <div className="w-28 h-28 rounded-3xl overflow-hidden bg-white shadow-lg flex items-center justify-center">
+                        <div className="w-28 h-28 rounded-3xl overflow-hidden bg-white shadow-lg flex items-center justify-center">
 
-                    {userProfile.profileImageUrl ? (
+                            {userProfile.profileImageUrl ? (
 
-                        <img
-                            src={userProfile.profileImageUrl}
-                            alt="Profile"
-                            className="w-full h-full object-cover"
-                        />
+                                <img
+                                    src={userProfile.profileImageUrl}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
 
-                    ) : (
+                            ) : (
 
-                        <span className="text-5xl font-bold text-indigo-600">
+                                <span className="text-5xl font-bold text-indigo-600">
 
-                            {userProfile.fullName.charAt(0)}
+                                    {userProfile.fullName.charAt(0)}
 
-                        </span>
+                                </span>
 
-                    )}
+                            )}
 
-                </div>
+                        </div>
 
-                <div>
+                        <div>
 
-                    <h1 className="text-4xl font-bold text-white">
+                            <h1 className="text-4xl font-bold text-white">
 
-                        {displayValue(userProfile.fullName)}
+                                {displayValue(userProfile.fullName)}
 
-                    </h1>
+                            </h1>
 
-                    <p className="text-indigo-100 mt-2">
+                            <p className="text-indigo-100 mt-2">
 
-                        {displayValue(userProfile.jobRoleName)}
+                                {displayValue(userProfile.jobRoleName)}
 
-                    </p>
+                            </p>
 
-                    <div className="flex flex-wrap gap-3 mt-4">
+                            <div className="flex flex-wrap gap-3 mt-4">
 
-            {/* Department */}
+                                {/* Department */}
 
-            <span className="bg-white/20 backdrop-blur text-white px-3 py-1 rounded-full text-sm">
+                                <span className="bg-white/20 backdrop-blur text-white px-3 py-1 rounded-full text-sm">
 
-                {displayValue(userProfile.departmentName)}
+                                    {displayValue(userProfile.departmentName)}
 
-            </span>
+                                </span>
 
-            {/* Role */}
+                                {/* Role */}
 
-            <span className="bg-white/20 backdrop-blur text-white px-3 py-1 rounded-full text-sm">
+                                <span className="bg-white/20 backdrop-blur text-white px-3 py-1 rounded-full text-sm">
 
-                {role}
+                                    {role}
 
-            </span>
+                                </span>
 
-            {/* Status */}
+                                {/* Status */}
 
-            <span
-                className={`px-3 py-1 rounded-full text-sm ${
-                    userProfile.isActive
-                        ? "bg-green-500/20 text-green-100"
-                        : "bg-red-500/20 text-red-100"
-                }`}
-            >
+                                <span
+                                    className={`px-3 py-1 rounded-full text-sm ${userProfile.isActive
+                                            ? "bg-green-500/20 text-green-100"
+                                            : "bg-red-500/20 text-red-100"
+                                        }`}
+                                >
 
-                {userProfile.isActive ? "Active" : "Inactive"}
+                                    {userProfile.isActive ? "Active" : "Inactive"}
 
-            </span>
+                                </span>
 
-        </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className="mt-6 lg:mt-0">
+
+                        <button
+
+                            onClick={() => navigate("/edit-profile")}
+
+                            className="flex items-center gap-2 bg-white text-indigo-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition"
+
+                        >
+
+                            <Edit2 size={18} />
+
+                            Edit Profile
+
+                        </button>
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <div className="mt-6 lg:mt-0">
-
-                <button
-
-                    onClick={() => navigate("/edit-profile")}
-
-                    className="flex items-center gap-2 bg-white text-indigo-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition"
-
-                >
-
-                    <Edit2 size={18} />
-
-                    Edit Profile
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {/* ===========================
+            {/* ===========================
             PROFILE OVERVIEW
     ============================ */}
 
-    <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid lg:grid-cols-4 gap-6">
 
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-            <User
-                className="text-indigo-600 mb-4"
-                size={28}
-            />
+                    <User
+                        className="text-indigo-600 mb-4"
+                        size={28}
+                    />
 
-            <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500">
 
-                Full Name
+                        Full Name
 
-            </p>
+                    </p>
 
-            <h3 className="font-bold text-gray-800 mt-2">
+                    <h3 className="font-bold text-gray-800 mt-2">
 
-                {displayValue(userProfile.fullName)}
+                        {displayValue(userProfile.fullName)}
 
-            </h3>
+                    </h3>
 
-        </div>
+                </div>
 
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-            <Mail
-                className="text-green-600 mb-4"
-                size={28}
-            />
+                    <Mail
+                        className="text-green-600 mb-4"
+                        size={28}
+                    />
 
-            <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500">
 
-                Email Address
+                        Email Address
 
-            </p>
+                    </p>
 
-            <h3 className="font-bold text-gray-800 mt-2 break-all">
+                    <h3 className="font-bold text-gray-800 mt-2 break-all">
 
-                {displayValue(userProfile.email)}
+                        {displayValue(userProfile.email)}
 
-            </h3>
+                    </h3>
 
-        </div>
+                </div>
 
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-            <Building2
-                className="text-orange-600 mb-4"
-                size={28}
-            />
+                    <Building2
+                        className="text-orange-600 mb-4"
+                        size={28}
+                    />
 
-            <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500">
 
-                Department
+                        Department
 
-            </p>
+                    </p>
 
-            <h3 className="font-bold text-gray-800 mt-2">
+                    <h3 className="font-bold text-gray-800 mt-2">
 
-                {displayValue(userProfile.departmentName)}
+                        {displayValue(userProfile.departmentName)}
 
-            </h3>
+                    </h3>
 
-        </div>
+                </div>
 
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-            <Briefcase
-                className="text-purple-600 mb-4"
-                size={28}
-            />
+                    <Briefcase
+                        className="text-purple-600 mb-4"
+                        size={28}
+                    />
 
-            <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500">
 
-                Job Role
+                        Job Role
 
-            </p>
+                    </p>
 
-            <h3 className="font-bold text-gray-800 mt-2">
+                    <h3 className="font-bold text-gray-800 mt-2">
 
-                {displayValue(userProfile.jobRoleName)}
+                        {displayValue(userProfile.jobRoleName)}
 
-            </h3>
+                    </h3>
 
-        </div>
+                </div>
 
-    </div>
-    {/* ===========================
+            </div>
+            {/* ===========================
         ACCOUNT SUMMARY
 =========================== */}
 
-<div className="grid lg:grid-cols-2 gap-6">
+            <div className="grid lg:grid-cols-2 gap-6">
 
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-        <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-6">
 
-            <ShieldCheck
-                className="text-indigo-600"
-                size={24}
-            />
+                        <ShieldCheck
+                            className="text-indigo-600"
+                            size={24}
+                        />
 
-            <h2 className="text-xl font-bold text-gray-800">
+                        <h2 className="text-xl font-bold text-gray-800">
 
-                Account Summary
+                            Account Summary
 
-            </h2>
+                        </h2>
 
-        </div>
+                    </div>
 
-        <div className="grid grid-cols-2 gap-y-5">
+                    <div className="grid grid-cols-2 gap-y-5">
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Account Status
+                                Account Status
 
-                </p>
+                            </p>
 
-                <h4 className="font-semibold mt-1">
+                            <h4 className="font-semibold mt-1">
 
-                    {userProfile.isActive ? (
+                                {userProfile.isActive ? (
 
-                        <span className="text-green-600">
+                                    <span className="text-green-600">
 
-                            ● Active
+                                        ● Active
 
-                        </span>
+                                    </span>
 
-                    ) : (
+                                ) : (
 
-                        <span className="text-red-600">
+                                    <span className="text-red-600">
 
-                            ● Inactive
+                                        ● Inactive
 
-                        </span>
+                                    </span>
 
-                    )}
+                                )}
 
-                </h4>
+                            </h4>
 
-            </div>
+                        </div>
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Email Verification
+                                Email Verification
 
-                </p>
+                            </p>
 
-                <h4 className="font-semibold mt-1">
+                            <h4 className="font-semibold mt-1">
 
-                    {userProfile.emailVerified ? (
+                                {userProfile.emailVerified ? (
 
-                        <span className="text-green-600">
+                                    <span className="text-green-600">
 
-                            Verified
+                                        Verified
 
-                        </span>
+                                    </span>
 
-                    ) : (
+                                ) : (
 
-                        <span className="text-orange-600">
+                                    <span className="text-orange-600">
 
-                            Pending
+                                        Pending
 
-                        </span>
+                                    </span>
 
-                    )}
+                                )}
 
-                </h4>
+                            </h4>
 
-            </div>
+                        </div>
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Department
+                                Department
 
-                </p>
+                            </p>
 
-                <h4 className="font-semibold mt-1">
+                            <h4 className="font-semibold mt-1">
 
-                    {displayValue(userProfile.departmentName)}
+                                {displayValue(userProfile.departmentName)}
 
-                </h4>
+                            </h4>
 
-            </div>
+                        </div>
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Job Role
+                                Job Role
 
-                </p>
+                            </p>
 
-                <h4 className="font-semibold mt-1">
+                            <h4 className="font-semibold mt-1">
 
-                    {displayValue(userProfile.jobRoleName)}
+                                {displayValue(userProfile.jobRoleName)}
 
-                </h4>
+                            </h4>
 
-            </div>
+                        </div>
 
-        </div>
+                    </div>
 
-    </div>
+                </div>
 
 
 
-    {/* ===========================
+                {/* ===========================
         PROFESSIONAL INFORMATION
     =========================== */}
 
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-        <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-6">
 
-            <Briefcase
-                className="text-purple-600"
-                size={24}
-            />
+                        <Briefcase
+                            className="text-purple-600"
+                            size={24}
+                        />
 
-            <h2 className="text-xl font-bold text-gray-800">
+                        <h2 className="text-xl font-bold text-gray-800">
 
-                Professional Information
+                            Professional Information
 
-            </h2>
+                        </h2>
 
-        </div>
+                    </div>
 
-        <div className="space-y-5">
+                    <div className="space-y-5">
 
-            <div className="flex justify-between border-b pb-3">
+                        <div className="flex justify-between border-b pb-3">
 
-                <span className="text-gray-500">
+                            <span className="text-gray-500">
 
-                    Department
+                                Department
 
-                </span>
+                            </span>
 
-                <span className="font-semibold">
+                            <span className="font-semibold">
 
-                    {displayValue(userProfile.departmentName)}
+                                {displayValue(userProfile.departmentName)}
 
-                </span>
+                            </span>
+
+                        </div>
+
+                        <div className="flex justify-between border-b pb-3">
+
+                            <span className="text-gray-500">
+
+                                Job Role
+
+                            </span>
+
+                            <span className="font-semibold">
+
+                                {displayValue(userProfile.jobRoleName)}
+
+                            </span>
+
+                        </div>
+
+                        <div className="flex justify-between border-b pb-3">
+
+                            <span className="text-gray-500">
+
+                                Manager
+
+                            </span>
+
+                            <span className="font-semibold">
+
+                                {displayValue(userProfile.managerName)}
+
+                            </span>
+
+                        </div>
+
+                        <div className="flex justify-between">
+
+                            <span className="text-gray-500">
+
+                                Employee Status
+
+                            </span>
+
+                            <span className="font-semibold">
+
+                                {userProfile.isActive ? "Active" : "Inactive"}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
-            <div className="flex justify-between border-b pb-3">
-
-                <span className="text-gray-500">
-
-                    Job Role
-
-                </span>
-
-                <span className="font-semibold">
-
-                    {displayValue(userProfile.jobRoleName)}
-
-                </span>
-
-            </div>
-
-            <div className="flex justify-between border-b pb-3">
-
-                <span className="text-gray-500">
-
-                    Manager
-
-                </span>
-
-                <span className="font-semibold">
-
-                    {displayValue(userProfile.managerName)}
-
-                </span>
-
-            </div>
-
-            <div className="flex justify-between">
-
-                <span className="text-gray-500">
-
-                    Employee Status
-
-                </span>
-
-                <span className="font-semibold">
-
-                    {userProfile.isActive ? "Active" : "Inactive"}
-
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 
 
-
-{/* ===========================
+            {/* ===========================
         CONTACT INFORMATION
 =========================== */}
 
-<div className="grid lg:grid-cols-2 gap-6 mt-6">
+            <div className="grid lg:grid-cols-2 gap-6 mt-6">
 
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-        <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-6">
 
-            <Phone
-                className="text-green-600"
-                size={24}
-            />
+                        <Phone
+                            className="text-green-600"
+                            size={24}
+                        />
 
-            <h2 className="text-xl font-bold text-gray-800">
+                        <h2 className="text-xl font-bold text-gray-800">
 
-                Contact Information
+                            Contact Information
 
-            </h2>
+                        </h2>
 
-        </div>
+                    </div>
 
-        <div className="space-y-5">
+                    <div className="space-y-5">
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Email Address
+                                Email Address
 
-                </p>
+                            </p>
 
-                <p className="font-semibold mt-1 break-all">
+                            <p className="font-semibold mt-1 break-all">
 
-                    {displayValue(userProfile.email)}
+                                {displayValue(userProfile.email)}
 
-                </p>
+                            </p>
 
-            </div>
+                        </div>
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Phone Number
+                                Phone Number
 
-                </p>
+                            </p>
 
-                <p className="font-semibold mt-1">
+                            <p className="font-semibold mt-1">
 
-                    {displayValue(userProfile.phoneNumber)}
+                                {displayValue(userProfile.phoneNumber)}
 
-                </p>
+                            </p>
 
-            </div>
+                        </div>
 
-            <div>
+                        <div>
 
-                <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500">
 
-                    Profile Image URL
+                                Profile Image URL
 
-                </p>
+                            </p>
 
-                <p className="font-semibold mt-1 break-all">
+                            <p className="font-semibold mt-1 break-all">
 
-                    {displayValue(userProfile.profileImageUrl)}
+                                {displayValue(userProfile.profileImageUrl)}
 
-                </p>
+                            </p>
 
-            </div>
+                        </div>
 
-        </div>
+                    </div>
 
-    </div>
+                </div>
 
 
 
-    {/* ===========================
+                {/* ===========================
         ACCOUNT INFORMATION
     =========================== */}
 
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
-        <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-6">
 
-            <Calendar
-                className="text-orange-600"
-                size={24}
-            />
+                        <Calendar
+                            className="text-orange-600"
+                            size={24}
+                        />
 
-            <h2 className="text-xl font-bold text-gray-800">
+                        <h2 className="text-xl font-bold text-gray-800">
 
-                Account Information
+                            Account Information
 
-            </h2>
+                        </h2>
 
-        </div>
+                    </div>
 
-        <div className="space-y-5">
+                    <div className="space-y-5">
 
-            <div className="flex justify-between border-b pb-3">
+                        <div className="flex justify-between border-b pb-3">
 
-                <span className="text-gray-500">
+                            <span className="text-gray-500">
 
-                    Created On
+                                Created On
 
-                </span>
+                            </span>
 
-                <span className="font-semibold">
+                            <span className="font-semibold">
 
-                    {displayValue(
+                                {displayValue(
 
-                        userProfile.createdAt
-                            ? new Date(userProfile.createdAt).toLocaleDateString()
-                            : null
+                                    userProfile.createdAt
+                                        ? new Date(userProfile.createdAt).toLocaleDateString()
+                                        : null
 
-                    )}
+                                )}
 
-                </span>
+                            </span>
+
+                        </div>
+
+                        <div className="flex justify-between border-b pb-3">
+
+                            <span className="text-gray-500">
+
+                                Last Updated
+
+                            </span>
+
+                            <span className="font-semibold">
+
+                                {displayValue(
+
+                                    userProfile.updatedAt
+                                        ? new Date(userProfile.updatedAt).toLocaleDateString()
+                                        : null
+
+                                )}
+
+                            </span>
+
+                        </div>
+
+                        <div className="flex justify-between border-b pb-3">
+
+                            <span className="text-gray-500">
+
+                                Email Verified
+
+                            </span>
+
+                            <span className="font-semibold">
+
+                                {userProfile.emailVerified ? "Yes" : "No"}
+
+                            </span>
+
+                        </div>
+
+                        <div className="flex justify-between">
+
+                            <span className="text-gray-500">
+
+                                Profile Status
+
+                            </span>
+
+                            <span className="font-semibold">
+
+                                {userProfile.isActive ? "Active" : "Inactive"}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
-
-            <div className="flex justify-between border-b pb-3">
-
-                <span className="text-gray-500">
-
-                    Last Updated
-
-                </span>
-
-                <span className="font-semibold">
-
-                    {displayValue(
-
-                        userProfile.updatedAt
-                            ? new Date(userProfile.updatedAt).toLocaleDateString()
-                            : null
-
-                    )}
-
-                </span>
-
-            </div>
-
-            <div className="flex justify-between border-b pb-3">
-
-                <span className="text-gray-500">
-
-                    Email Verified
-
-                </span>
-
-                <span className="font-semibold">
-
-                    {userProfile.emailVerified ? "Yes" : "No"}
-
-                </span>
-
-            </div>
-
-            <div className="flex justify-between">
-
-                <span className="text-gray-500">
-
-                    Profile Status
-
-                </span>
-
-                <span className="font-semibold">
-
-                    {userProfile.isActive ? "Active" : "Inactive"}
-
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-{/* ===========================
+            {/* ===========================
         PROFILE COMPLETION
 =========================== */}
 
-<div className="bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl shadow-xl p-8 mt-6 text-white">
+            <div className="bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl shadow-xl p-8 mt-6 text-white">
 
-    <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center">
 
-        <div>
+                    <div>
 
-            <h2 className="text-2xl font-bold">
+                        <h2 className="text-2xl font-bold">
 
-                Profile Completion
+                            Profile Completion
 
-            </h2>
+                        </h2>
 
-            <p className="text-indigo-100 mt-2">
+                        <p className="text-indigo-100 mt-2">
 
-                Keep your profile updated to help HR maintain accurate employee information.
-
-            </p>
-
-        </div>
-
-        <div className="text-right">
-
-            {(() => {
-
-                let completed = 0;
-
-                if (userProfile.fullName) completed++;
-                if (userProfile.email) completed++;
-                if (userProfile.phoneNumber) completed++;
-                if (userProfile.departmentName) completed++;
-                if (userProfile.jobRoleName) completed++;
-                if (userProfile.profileImageUrl) completed++;
-
-                const percentage = Math.round((completed / 6) * 100);
-
-                return (
-
-                    <>
-
-                        <h1 className="text-5xl font-bold">
-
-                            {percentage}%
-
-                        </h1>
-
-                        <p className="text-indigo-100 mt-1">
-
-                            Completed
+                            Keep your profile updated to help HR maintain accurate employee information.
 
                         </p>
 
-                    </>
+                    </div>
 
-                );
+                    <div className="text-right">
 
-            })()}
+                        {(() => {
 
-        </div>
+                            let completed = 0;
 
-    </div>
+                            if (userProfile.fullName) completed++;
+                            if (userProfile.email) completed++;
+                            if (userProfile.phoneNumber) completed++;
+                            if (userProfile.departmentName) completed++;
+                            if (userProfile.jobRoleName) completed++;
+                            if (userProfile.profileImageUrl) completed++;
 
-</div>
+                            const percentage = Math.round((completed / 6) * 100);
+
+                            return (
+
+                                <>
+
+                                    <h1 className="text-5xl font-bold">
+
+                                        {percentage}%
+
+                                    </h1>
+
+                                    <p className="text-indigo-100 mt-1">
+
+                                        Completed
+
+                                    </p>
+
+                                </>
+
+                            );
+
+                        })()}
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
 
-{/* ===========================
+            {/* ===========================
         PROFILE TIPS
 =========================== */}
 
-<div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mt-6">
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mt-6">
 
-    <h2 className="text-xl font-bold text-blue-900">
+                <h2 className="text-xl font-bold text-blue-900">
 
-        Profile Tips
+                    Profile Tips
 
-    </h2>
+                </h2>
 
-    <ul className="mt-4 space-y-3 text-sm text-blue-800">
+                <ul className="mt-4 space-y-3 text-sm text-blue-800">
 
-        <li>• Upload a professional profile picture.</li>
+                    <li>• Upload a professional profile picture.</li>
 
-        <li>• Add your phone number for easier communication.</li>
+                    <li>• Add your phone number for easier communication.</li>
 
-        <li>• Keep your profile information up to date.</li>
+                    <li>• Keep your profile information up to date.</li>
 
-        <li>• Contact HR if your department or job role is incorrect.</li>
+                    <li>• Contact HR if your department or job role is incorrect.</li>
 
-    </ul>
+                </ul>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-);
+    );
 
 }
