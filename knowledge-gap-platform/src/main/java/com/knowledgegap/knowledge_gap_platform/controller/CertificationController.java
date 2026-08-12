@@ -16,12 +16,15 @@ import java.util.List;
 @RequestMapping("/api/certifications")
 @RequiredArgsConstructor
 @CrossOrigin("*")
-@PreAuthorize("hasAnyRole('SYS_ADMIN','HR_SPECIALIST')")
+@PreAuthorize("hasAnyRole('SYS_ADMIN', 'HR_SPECIALIST')")
 public class CertificationController {
 
     private final CertificationService certificationService;
 
-    // Upload Certification
+    /**
+     * Add Certification
+     * Supports optional certificate file upload.
+     */
     @PostMapping(
             value = "/add",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
@@ -34,12 +37,15 @@ public class CertificationController {
             @RequestPart(value = "file", required = false)
             MultipartFile file) {
 
-        return ResponseEntity.ok(
-                certificationService.addCertification(request, file)
-        );
+        CertificationResponse response =
+                certificationService.addCertification(request, file);
+
+        return ResponseEntity.ok(response);
     }
 
-    // Get All Certifications
+    /**
+     * Get all certifications.
+     */
     @GetMapping
     public ResponseEntity<List<CertificationResponse>> getAllCertifications() {
 
@@ -48,9 +54,11 @@ public class CertificationController {
         );
     }
 
-    // Get Certification By Id
+    /**
+     * Get certification by ID.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<CertificationResponse> getById(
+    public ResponseEntity<CertificationResponse> getCertificationById(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -58,12 +66,16 @@ public class CertificationController {
         );
     }
 
-    // Update Certification
+    /**
+     * Update certification.
+     * File is optional, so the existing file URL can be retained
+     * when no new file is uploaded.
+     */
     @PutMapping(
             value = "/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<CertificationResponse> update(
+    public ResponseEntity<CertificationResponse> updateCertification(
 
             @PathVariable Long id,
 
@@ -73,18 +85,21 @@ public class CertificationController {
             @RequestPart(value = "file", required = false)
             MultipartFile file) {
 
-        return ResponseEntity.ok(
+        CertificationResponse response =
                 certificationService.updateCertification(
                         id,
                         request,
                         file
-                )
-        );
+                );
+
+        return ResponseEntity.ok(response);
     }
 
-    // Delete Certification
+    /**
+     * Delete certification by ID.
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteCertification(
             @PathVariable Long id) {
 
         certificationService.deleteCertificationById(id);
