@@ -1,11 +1,16 @@
 import React from "react";
 
+import SkillSearchSelect
+    from "../knowledge/SkillSearchSelect";
+
+
 const DEFAULT_FILTERS = {
     mentorId: "",
     menteeId: "",
     skillId: "",
     status: "",
 };
+
 
 const MentorshipMatchFilters = ({
     filters = DEFAULT_FILTERS,
@@ -15,38 +20,89 @@ const MentorshipMatchFilters = ({
     skills = [],
 }) => {
 
-    // Prevent crashes if parent accidentally sends null/invalid values
+    // Prevent crashes if invalid values are passed
     const safeFilters = {
         ...DEFAULT_FILTERS,
         ...(filters || {}),
     };
 
-    const safeUsers = Array.isArray(users) ? users : [];
-    const safeSkills = Array.isArray(skills) ? skills : [];
+    const safeUsers =
+        Array.isArray(users)
+            ? users
+            : [];
+
+    const safeSkills =
+        Array.isArray(skills)
+            ? skills
+            : [];
+
 
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="
+            rounded-xl
+            border
+            border-gray-200
+            bg-white
+            p-5
+            shadow-sm
+        ">
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="
+                grid
+                grid-cols-1
+                gap-4
+                md:grid-cols-2
+                lg:grid-cols-4
+            ">
 
-                {/* Mentor */}
+
+                {/* =================================================
+                    MENTOR
+                ================================================= */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Mentor
                     </label>
+
 
                     <select
                         value={safeFilters.mentorId}
                         onChange={(e) =>
-                            onChange("mentorId", e.target.value)
+                            onChange(
+                                "mentorId",
+                                e.target.value
+                            )
                         }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="
+                            w-full
+                            rounded-lg
+                            border
+                            border-gray-300
+                            px-3
+                            py-2.5
+                            text-sm
+                            outline-none
+                            focus:border-indigo-500
+                            focus:ring-1
+                            focus:ring-indigo-500
+                        "
                     >
+
                         <option value="">
                             All Mentors
                         </option>
 
+
                         {safeUsers.map((user) => (
+
                             <option
                                 key={user.id}
                                 value={user.id}
@@ -56,28 +112,61 @@ const MentorshipMatchFilters = ({
                                     user.email ||
                                     `User #${user.id}`}
                             </option>
+
                         ))}
+
                     </select>
+
                 </div>
 
-                {/* Mentee */}
+
+                {/* =================================================
+                    MENTEE
+                ================================================= */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Mentee
                     </label>
+
 
                     <select
                         value={safeFilters.menteeId}
                         onChange={(e) =>
-                            onChange("menteeId", e.target.value)
+                            onChange(
+                                "menteeId",
+                                e.target.value
+                            )
                         }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="
+                            w-full
+                            rounded-lg
+                            border
+                            border-gray-300
+                            px-3
+                            py-2.5
+                            text-sm
+                            outline-none
+                            focus:border-indigo-500
+                            focus:ring-1
+                            focus:ring-indigo-500
+                        "
                     >
+
                         <option value="">
                             All Mentees
                         </option>
 
+
                         {safeUsers.map((user) => (
+
                             <option
                                 key={user.id}
                                 value={user.id}
@@ -87,51 +176,86 @@ const MentorshipMatchFilters = ({
                                     user.email ||
                                     `User #${user.id}`}
                             </option>
+
                         ))}
+
                     </select>
+
                 </div>
 
-                {/* Skill */}
+
+                {/* =================================================
+                    SKILL
+                ================================================= */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Skill
                     </label>
 
-                    <select
-                        value={safeFilters.skillId}
-                        onChange={(e) =>
-                            onChange("skillId", e.target.value)
-                        }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    >
-                        <option value="">
-                            All Skills
-                        </option>
 
-                        {safeSkills.map((skill) => (
-                            <option
-                                key={skill.id}
-                                value={skill.id}
-                            >
-                                {skill.name || `Skill #${skill.id}`}
-                            </option>
-                        ))}
-                    </select>
+                    <SkillSearchSelect
+                        skills={safeSkills}
+                        value={safeFilters.skillId}
+                        onChange={(value) =>
+                            onChange(
+                                "skillId",
+                                value
+                            )
+                        }
+                        placeholder="Search and select skill..."
+                    />
+
                 </div>
 
-                {/* Status */}
+
+                {/* =================================================
+                    STATUS
+                ================================================= */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Status
                     </label>
+
 
                     <select
                         value={safeFilters.status}
                         onChange={(e) =>
-                            onChange("status", e.target.value)
+                            onChange(
+                                "status",
+                                e.target.value
+                            )
                         }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="
+                            w-full
+                            rounded-lg
+                            border
+                            border-gray-300
+                            px-3
+                            py-2.5
+                            text-sm
+                            outline-none
+                            focus:border-indigo-500
+                            focus:ring-1
+                            focus:ring-indigo-500
+                        "
                     >
+
                         <option value="">
                             All Statuses
                         </option>
@@ -151,18 +275,39 @@ const MentorshipMatchFilters = ({
                         <option value="CANCELLED">
                             Cancelled
                         </option>
+
                     </select>
+
                 </div>
 
             </div>
 
-            {/* Reset */}
-            <div className="mt-4 flex justify-end">
+
+            {/* =================================================
+                RESET
+            ================================================= */}
+
+            <div className="
+                mt-4
+                flex
+                justify-end
+            ">
 
                 <button
                     type="button"
                     onClick={onReset}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100"
+                    className="
+                        rounded-lg
+                        border
+                        border-gray-300
+                        px-4
+                        py-2
+                        text-sm
+                        font-medium
+                        text-gray-600
+                        transition
+                        hover:bg-gray-100
+                    "
                 >
                     Reset Filters
                 </button>
@@ -172,5 +317,6 @@ const MentorshipMatchFilters = ({
         </div>
     );
 };
+
 
 export default MentorshipMatchFilters;

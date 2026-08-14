@@ -7,19 +7,50 @@ import com.knowledgegap.knowledge_gap_platform.entity.enums.MentorshipStatus;
 import java.util.List;
 
 public interface MentorshipMatchService {
-    MentorshipMatchResponse createMatch(MentorshipMatchRequest request);
+    // Create
+    MentorshipMatchResponse createMatch(
+            MentorshipMatchRequest request
+    );
 
-    MentorshipMatchResponse updateMatch(Long id, MentorshipMatchRequest request);
+    // Update
+    MentorshipMatchResponse updateMatch(
+            Long id,
+            MentorshipMatchRequest request
+    );
 
+    // Delete
     void deleteMatch(Long id);
 
+    // Get by ID
     MentorshipMatchResponse getMatchById(Long id);
 
-    List<MentorshipMatchResponse> getMatchesByMentor(Long mentorId);
+    // Get by mentor
+    List<MentorshipMatchResponse> getMatchesByMentor(
+            Long mentorId
+    );
 
-    List<MentorshipMatchResponse> getMatchesByMentee(Long menteeId);
+    // Get by mentee
+    List<MentorshipMatchResponse> getMatchesByMentee(
+            Long menteeId
+    );
 
-    List<MentorshipMatchResponse> getMatchesBySkill(Long skillId);
+    // Get by skill
+    List<MentorshipMatchResponse> getMatchesBySkill(
+            Long skillId
+    );
 
-    List<MentorshipMatchResponse> getMatchesByStatus(MentorshipStatus status);
+    // Get by status
+    List<MentorshipMatchResponse> getMatchesByStatus(
+            MentorshipStatus status
+    );
+
+    // Get all - Admin
+    List<MentorshipMatchResponse> getAllMatches();
+
+    // Mentorship lifecycle
+    MentorshipMatchResponse acceptMatch(Long id);
+
+    MentorshipMatchResponse completeMatch(Long id);
+
+    MentorshipMatchResponse cancelMatch(Long id);
 }

@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/knowledge-sessions")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class KnowledgeSessionController {
 
     private final KnowledgeSessionService knowledgeSessionService;
-
     // Create Knowledge Session
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -26,6 +26,7 @@ public class KnowledgeSessionController {
 
         return knowledgeSessionService.createSession(request);
     }
+
 
     // Update Knowledge Session
     @PutMapping("/{id}")
@@ -36,13 +37,24 @@ public class KnowledgeSessionController {
         return knowledgeSessionService.updateSession(id, request);
     }
 
+
     // Delete Knowledge Session
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSession(@PathVariable Long id) {
+    public void deleteSession(
+            @PathVariable Long id) {
 
         knowledgeSessionService.deleteSession(id);
     }
+
+
+    // Get All Knowledge Sessions
+    @GetMapping
+    public List<KnowledgeSessionResponse> getAllSessions() {
+
+        return knowledgeSessionService.getAllSessions();
+    }
+
 
     // Get Session by ID
     @GetMapping("/{id}")
@@ -52,6 +64,7 @@ public class KnowledgeSessionController {
         return knowledgeSessionService.getSessionById(id);
     }
 
+
     // Get Sessions by Host
     @GetMapping("/host/{hostId}")
     public List<KnowledgeSessionResponse> getSessionsByHost(
@@ -60,6 +73,7 @@ public class KnowledgeSessionController {
         return knowledgeSessionService.getSessionsByHost(hostId);
     }
 
+
     // Get Sessions by Skill
     @GetMapping("/skill/{skillId}")
     public List<KnowledgeSessionResponse> getSessionsBySkill(
@@ -67,6 +81,7 @@ public class KnowledgeSessionController {
 
         return knowledgeSessionService.getSessionsBySkill(skillId);
     }
+
 
     // Get Sessions by Status
     @GetMapping("/status/{status}")

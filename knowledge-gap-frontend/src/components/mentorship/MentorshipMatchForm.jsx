@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 
+import SkillSearchSelect
+    from "../knowledge/SkillSearchSelect";
+
+
 const MentorshipMatchForm = ({
     initialData = null,
     users = [],
@@ -13,29 +17,52 @@ const MentorshipMatchForm = ({
         mentorId: "",
         menteeId: "",
         skillId: "",
-        status: "PENDING",
     });
 
+
+    // =========================================================
+    // INITIAL DATA
+    // =========================================================
+
     useEffect(() => {
+
         if (initialData) {
+
             setFormData({
-                mentorId: initialData.mentorId || "",
-                menteeId: initialData.menteeId || "",
-                skillId: initialData.skillId || "",
-                status: initialData.status || "PENDING",
+                mentorId:
+                    initialData.mentorId || "",
+
+                menteeId:
+                    initialData.menteeId || "",
+
+                skillId:
+                    initialData.skillId || "",
             });
+
         } else {
+
             setFormData({
                 mentorId: "",
                 menteeId: "",
                 skillId: "",
-                status: "PENDING",
             });
+
         }
+
     }, [initialData]);
 
+
+    // =========================================================
+    // CHANGE HANDLER
+    // =========================================================
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
+
+        const {
+            name,
+            value,
+        } = e.target;
+
 
         setFormData((prev) => ({
             ...prev,
@@ -43,149 +70,357 @@ const MentorshipMatchForm = ({
         }));
     };
 
+
+    // =========================================================
+    // SUBMIT
+    // =========================================================
+
     const handleSubmit = (e) => {
+
         e.preventDefault();
 
+
         if (!formData.mentorId) {
+
             alert("Please select a mentor.");
+
             return;
         }
+
 
         if (!formData.menteeId) {
+
             alert("Please select a mentee.");
+
             return;
         }
+
 
         if (!formData.skillId) {
+
             alert("Please select a skill.");
+
             return;
         }
 
-        if (formData.mentorId === formData.menteeId) {
-            alert("Mentor and mentee cannot be the same.");
+
+        if (
+            String(formData.mentorId) ===
+            String(formData.menteeId)
+        ) {
+
+            alert(
+                "Mentor and mentee cannot be the same."
+            );
+
             return;
         }
+
+
+        /*
+         * IMPORTANT:
+         *
+         * Status is intentionally NOT sent here.
+         *
+         * New matches are created as PENDING
+         * by the backend.
+         *
+         * Status changes happen through:
+         *
+         * /accept
+         * /complete
+         * /cancel
+         */
 
         onSubmit({
-            mentorId: Number(formData.mentorId),
-            menteeId: Number(formData.menteeId),
-            skillId: Number(formData.skillId),
-            status: formData.status,
+
+            mentorId:
+                Number(formData.mentorId),
+
+            menteeId:
+                Number(formData.menteeId),
+
+            skillId:
+                Number(formData.skillId),
+
         });
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Mentor */}
+    // =========================================================
+    // RENDER
+    // =========================================================
+
+    return (
+
+        <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+        >
+
+
+            {/* =================================================
+                MENTOR
+            ================================================= */}
+
             <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                <label className="
+                    mb-1
+                    block
+                    text-sm
+                    font-medium
+                    text-gray-700
+                ">
                     Mentor
                 </label>
+
 
                 <select
                     name="mentorId"
                     value={formData.mentorId}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    disabled={loading}
+                    className="
+                        w-full
+                        rounded-lg
+                        border
+                        border-gray-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        outline-none
+                        transition
+                        focus:border-indigo-500
+                        focus:ring-2
+                        focus:ring-indigo-100
+                        disabled:cursor-not-allowed
+                        disabled:bg-gray-100
+                    "
                 >
-                    <option value="">Select Mentor</option>
+
+                    <option value="">
+                        Select Mentor
+                    </option>
+
 
                     {users.map((user) => (
-                        <option key={user.id} value={user.id}>
-                            {user.fullName || user.name || user.email}
+
+                        <option
+                            key={user.id}
+                            value={user.id}
+                        >
+                            {user.fullName ||
+                                user.name ||
+                                user.email ||
+                                `User #${user.id}`}
                         </option>
+
                     ))}
+
                 </select>
+
             </div>
 
-            {/* Mentee */}
+
+            {/* =================================================
+                MENTEE
+            ================================================= */}
+
             <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                <label className="
+                    mb-1
+                    block
+                    text-sm
+                    font-medium
+                    text-gray-700
+                ">
                     Mentee
                 </label>
+
 
                 <select
                     name="menteeId"
                     value={formData.menteeId}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    disabled={loading}
+                    className="
+                        w-full
+                        rounded-lg
+                        border
+                        border-gray-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        outline-none
+                        transition
+                        focus:border-indigo-500
+                        focus:ring-2
+                        focus:ring-indigo-100
+                        disabled:cursor-not-allowed
+                        disabled:bg-gray-100
+                    "
                 >
-                    <option value="">Select Mentee</option>
+
+                    <option value="">
+                        Select Mentee
+                    </option>
+
 
                     {users.map((user) => (
-                        <option key={user.id} value={user.id}>
-                            {user.fullName || user.name || user.email}
+
+                        <option
+                            key={user.id}
+                            value={user.id}
+                        >
+                            {user.fullName ||
+                                user.name ||
+                                user.email ||
+                                `User #${user.id}`}
                         </option>
+
                     ))}
+
                 </select>
+
             </div>
 
-            {/* Skill */}
+
+            {/* =================================================
+                SKILL
+            ================================================= */}
+
             <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                <label className="
+                    mb-1
+                    block
+                    text-sm
+                    font-medium
+                    text-gray-700
+                ">
                     Skill
                 </label>
 
-                <select
-                    name="skillId"
+
+                <SkillSearchSelect
+                    skills={skills}
                     value={formData.skillId}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                    <option value="">Select Skill</option>
+                    disabled={loading}
+                    onChange={(value) =>
+                        setFormData((prev) => ({
+                            ...prev,
+                            skillId: value,
+                        }))
+                    }
+                    placeholder="Search and select a skill..."
+                />
 
-                    {skills.map((skill) => (
-                        <option key={skill.id} value={skill.id}>
-                            {skill.name}
-                        </option>
-                    ))}
-                </select>
             </div>
 
-            {/* Status */}
-            <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Status
-                </label>
 
-                <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                    <option value="PENDING">Pending</option>
-                    <option value="ACTIVE">Active</option>
-                    <option value="COMPLETED">Completed</option>
-                    <option value="CANCELLED">Cancelled</option>
-                </select>
+            {/* =================================================
+                STATUS INFORMATION
+            ================================================= */}
+
+            <div className="
+                rounded-lg
+                border
+                border-yellow-100
+                bg-yellow-50
+                px-4
+                py-3
+            ">
+
+                <p className="
+                    text-xs
+                    leading-5
+                    text-yellow-700
+                ">
+
+                    {initialData ? (
+                        <>
+                            The mentorship status is managed
+                            separately using the mentorship
+                            lifecycle actions. Editing this
+                            match will not change its status.
+                        </>
+                    ) : (
+                        <>
+                            New mentorship matches are created
+                            with <strong>Pending</strong> status.
+                            The mentor can accept the match
+                            after it is created.
+                        </>
+                    )}
+
+                </p>
+
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end gap-3 border-t pt-5">
+
+            {/* =================================================
+                BUTTONS
+            ================================================= */}
+
+            <div className="
+                flex
+                justify-end
+                gap-3
+                border-t
+                pt-5
+            ">
 
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                    disabled={loading}
+                    className="
+                        rounded-lg
+                        border
+                        border-gray-300
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-medium
+                        text-gray-700
+                        transition
+                        hover:bg-gray-100
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                    "
                 >
                     Cancel
                 </button>
 
+
                 <button
                     type="submit"
                     disabled={loading}
-                    className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="
+                        rounded-lg
+                        bg-indigo-600
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-white
+                        transition
+                        hover:bg-indigo-700
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                    "
                 >
+
                     {loading
                         ? "Saving..."
                         : initialData
                             ? "Update Match"
                             : "Create Match"}
+
                 </button>
 
             </div>
@@ -193,5 +428,6 @@ const MentorshipMatchForm = ({
         </form>
     );
 };
+
 
 export default MentorshipMatchForm;
