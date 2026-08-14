@@ -23,8 +23,10 @@ import FrameworkRequiredSkillManagement from "./pages/admin/FrameworkRequiredSki
 import SkillGapManagement from "./pages/admin/SkillGapManagement";
 import ManagementKnowledgeArticle
     from "./pages/admin/ManagementKnowledgeArticle";
+import AdminKnowledgeSessions from "./pages/admin/AdminKnowledgeSessions";
 
 import RoleAssignment from "./pages/admin/RoleAssignment";
+import AdminMentorshipMatch from "./pages/admin/AdminMentorshipMatch";
 
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import SkillAssessment from "./pages/employee/SkillAssessment";
@@ -36,6 +38,9 @@ import EmployeeSkills from "./pages/employee/EmployeeSkills";
 import EmployeeRatings from "./pages/employee/EmployeeRatings";
 import KnowledgeArticles from "./pages/employee/KnowledgeArticles";
 import ExpertDirectory from "./pages/employee/ExpertDirectory";
+import KnowledgeSessions from "./pages/employee/KnowledgeSessions";
+import MentorshipMatch from "./pages/employee/MentorshipMatch";
+
 
 import AdminLayout from "./layouts/AdminLayout";
 import EmployeeLayout from "./layouts/EmployeeLayout";
@@ -413,7 +418,46 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
+                <Route
+                    path="/employee/knowledge-sessions"
+                    element={
+                        <ProtectedRoute>
+                            <EmployeeLayout>
+                                <KnowledgeSessions />
+                            </EmployeeLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/employee/mentorship"
+                    element={
+                        <ProtectedRoute>
+                            <WorkspaceLayout>
+                                <MentorshipMatch />
+                            </WorkspaceLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/knowledge-sessions"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <AdminKnowledgeSessions />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/mentorship"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <AdminMentorshipMatch />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
             </Routes>
 
         </BrowserRouter>

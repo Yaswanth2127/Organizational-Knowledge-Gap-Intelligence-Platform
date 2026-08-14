@@ -14,6 +14,10 @@ const mentorshipMatchApi = {
     deleteMatch: (id) =>
         api.delete(`/api/mentorship-matches/${id}`),
 
+    // Get all mentorship matches - Admin
+    getAllMatches: () =>
+        api.get("/api/mentorship-matches/all"),
+
     // Get match by ID
     getMatchById: (id) =>
         api.get(`/api/mentorship-matches/${id}`),
@@ -34,6 +38,17 @@ const mentorshipMatchApi = {
     getMatchesByStatus: (status) =>
         api.get(`/api/mentorship-matches/status/${status}`),
 
+    // Accept mentorship
+    acceptMatch: (id) =>
+        api.post(`/api/mentorship-matches/${id}/accept`),
+
+    // Complete mentorship
+    completeMatch: (id) =>
+        api.post(`/api/mentorship-matches/${id}/complete`),
+
+    // Cancel mentorship
+    cancelMatch: (id) =>
+        api.post(`/api/mentorship-matches/${id}/cancel`),
 };
 
 export default mentorshipMatchApi;

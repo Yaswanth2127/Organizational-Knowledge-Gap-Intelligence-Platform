@@ -14,11 +14,13 @@ public interface MentorshipMatchRepository extends JpaRepository<MentorshipMatch
     @EntityGraph(attributePaths = {"mentor","mentee","skill"})
     Optional<MentorshipMatch> findById(Long aLong);
 
-    @EntityGraph(attributePaths = {"mentor","mentee","skill"})
-    Optional<MentorshipMatch> findByMentorIdAndMenteeIdAndSkillId(
+    @EntityGraph(attributePaths = {"mentor", "mentee", "skill"})
+    List<MentorshipMatch>
+    findByMentorIdAndMenteeIdAndSkillIdAndStatusIn(
             Long mentorId,
             Long menteeId,
-            Long skillId
+            Long skillId,
+            List<MentorshipStatus> statuses
     );
 
     @EntityGraph(attributePaths = {"mentor","mentee","skill"})
