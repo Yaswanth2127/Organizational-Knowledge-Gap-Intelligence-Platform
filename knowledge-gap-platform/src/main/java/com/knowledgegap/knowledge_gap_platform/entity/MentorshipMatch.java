@@ -36,17 +36,13 @@ public class MentorshipMatch {
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
-
-
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private MentorshipStatus status=MentorshipStatus.PENDING;
 
-
-
-    @Column(name = "matched_at",nullable = false)
+    @Column(name = "matched_at")
     private  LocalDateTime matchedAt;
 
     @Column(name = "ended_at")
@@ -61,9 +57,6 @@ public class MentorshipMatch {
     @PrePersist
     public void updateTime(){
         LocalDateTime now=LocalDateTime.now();
-        if(matchedAt==null){
-            matchedAt=now;
-        }
         if(createdAt==null){
             createdAt=now;
         }

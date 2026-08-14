@@ -21,4 +21,5 @@ public interface KnowledgeSessionService {
     List<KnowledgeSessionResponse> getSessionsBySkill(Long skillId);
 
     List<KnowledgeSessionResponse> getSessionsByStatus(SessionStatus status);
+    List<KnowledgeSessionResponse> getAllSessions();
 }

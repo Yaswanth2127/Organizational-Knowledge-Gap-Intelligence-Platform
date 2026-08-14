@@ -24,6 +24,7 @@ public class KnowledgeSessionResponse {
     private String skillName;
 
     private LocalDateTime scheduledAt;
+    private LocalDateTime endedAt;
 
     private String locationLink;
 

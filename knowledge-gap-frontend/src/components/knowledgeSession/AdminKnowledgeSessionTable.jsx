@@ -3,13 +3,11 @@ import {
     Eye,
     Pencil,
     Trash2,
-    ExternalLink,
     CalendarDays,
 } from "lucide-react";
 
-const KnowledgeSessionTable = ({
+const AdminKnowledgeSessionTable = ({
     sessions = [],
-    currentUserId,
     onEdit,
     onDelete,
     onView,
@@ -94,7 +92,7 @@ const KnowledgeSessionTable = ({
                     text-sm
                     text-gray-500
                 ">
-                    Create a knowledge session to see it here.
+                    No sessions match the selected filters.
                 </p>
 
             </div>
@@ -103,7 +101,6 @@ const KnowledgeSessionTable = ({
 
 
     return (
-
         <div className="
             overflow-hidden
             rounded-xl
@@ -187,7 +184,7 @@ const KnowledgeSessionTable = ({
                                 tracking-wider
                                 text-gray-500
                             ">
-                                Scheduled At
+                                Start
                             </th>
 
                             <th className="
@@ -200,7 +197,7 @@ const KnowledgeSessionTable = ({
                                 tracking-wider
                                 text-gray-500
                             ">
-                                Ended At
+                                End
                             </th>
 
                             <th className="
@@ -242,27 +239,20 @@ const KnowledgeSessionTable = ({
                         {sessions.map(
                             (session, index) => {
 
-                                const isHost =
-                                    Number(session.hostId) ===
-                                    Number(currentUserId);
+                                /*
+                                 * Admin can manage scheduled
+                                 * and ongoing sessions.
+                                 *
+                                 * Completed and cancelled
+                                 * sessions are view-only.
+                                 */
 
-                                const isScheduled =
-                                    session.status === "SCHEDULED";
-
-                                const isOngoing =
+                                const canManage =
+                                    session.status === "SCHEDULED" ||
                                     session.status === "ONGOING";
 
-                                const canEditOrDelete =
-                                    isHost && isScheduled;
-
-                                const canJoin =
-                                    isOngoing &&
-                                    Boolean(
-                                        session.locationLink
-                                    );
 
                                 return (
-
                                     <tr
                                         key={session.id}
                                         className="
@@ -271,7 +261,7 @@ const KnowledgeSessionTable = ({
                                         "
                                     >
 
-                                        {/* Number */}
+                                        {/* # */}
 
                                         <td className="
                                             whitespace-nowrap
@@ -292,25 +282,21 @@ const KnowledgeSessionTable = ({
                                             py-4
                                         ">
 
-                                            <div>
+                                            <p className="
+                                                font-semibold
+                                                text-gray-800
+                                            ">
+                                                {session.title ||
+                                                    "Untitled Session"}
+                                            </p>
 
-                                                <p className="
-                                                    font-semibold
-                                                    text-gray-800
-                                                ">
-                                                    {session.title ||
-                                                        "Untitled Session"}
-                                                </p>
-
-                                                <p className="
-                                                    mt-0.5
-                                                    text-xs
-                                                    text-gray-400
-                                                ">
-                                                    Session ID: {session.id}
-                                                </p>
-
-                                            </div>
+                                            <p className="
+                                                mt-0.5
+                                                text-xs
+                                                text-gray-400
+                                            ">
+                                                Session ID: {session.id}
+                                            </p>
 
                                         </td>
 
@@ -403,14 +389,14 @@ const KnowledgeSessionTable = ({
                                             whitespace-nowrap
                                             px-5
                                             py-4
+                                            text-sm
+                                            text-gray-600
                                         ">
 
                                             <div className="
                                                 flex
                                                 items-center
                                                 gap-2
-                                                text-sm
-                                                text-gray-600
                                             ">
 
                                                 <CalendarDays
@@ -484,44 +470,7 @@ const KnowledgeSessionTable = ({
                                                 gap-1.5
                                             ">
 
-                                                {/* Join
-                                                    ONGOING only
-                                                */}
-
-                                                {canJoin && (
-
-                                                    <a
-                                                        href={
-                                                            session.locationLink
-                                                        }
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        title="Join session"
-                                                        className="
-                                                            inline-flex
-                                                            h-9
-                                                            w-9
-                                                            items-center
-                                                            justify-center
-                                                            rounded-lg
-                                                            border
-                                                            border-green-200
-                                                            text-green-600
-                                                            transition
-                                                            hover:bg-green-50
-                                                        "
-                                                    >
-                                                        <ExternalLink
-                                                            size={16}
-                                                        />
-                                                    </a>
-
-                                                )}
-
-
-                                                {/* View
-                                                    Always available
-                                                */}
+                                                {/* View - always */}
 
                                                 <button
                                                     type="button"
@@ -549,11 +498,9 @@ const KnowledgeSessionTable = ({
                                                 </button>
 
 
-                                                {/* Edit
-                                                    Host + Scheduled only
-                                                */}
+                                                {/* Edit */}
 
-                                                {canEditOrDelete && (
+                                                {canManage && (
 
                                                     <button
                                                         type="button"
@@ -585,11 +532,9 @@ const KnowledgeSessionTable = ({
                                                 )}
 
 
-                                                {/* Delete
-                                                    Host + Scheduled only
-                                                */}
+                                                {/* Delete */}
 
-                                                {canEditOrDelete && (
+                                                {canManage && (
 
                                                     <button
                                                         type="button"
@@ -625,7 +570,6 @@ const KnowledgeSessionTable = ({
                                         </td>
 
                                     </tr>
-
                                 );
                             }
                         )}
@@ -640,4 +584,4 @@ const KnowledgeSessionTable = ({
     );
 };
 
-export default KnowledgeSessionTable;
+export default AdminKnowledgeSessionTable;

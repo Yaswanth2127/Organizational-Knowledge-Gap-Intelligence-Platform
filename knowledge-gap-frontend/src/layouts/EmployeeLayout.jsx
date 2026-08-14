@@ -10,6 +10,8 @@ import {
     ClipboardList,
     FileText,
     Users,
+    BookOpen,
+    Handshake,
 } from "lucide-react";
 
 import Header from "../components/layout/Header";
@@ -84,6 +86,16 @@ const EmployeeLayout = ({ children }) => {
             href: "/employee/expert-directory",
             icon: Users,
         },
+        {
+            name: "Knowledge Sessions",
+            href: "/employee/knowledge-sessions",
+            icon: BookOpen,
+        },
+        {
+            name: "Mentorship",
+            href: "/employee/mentorship",
+            icon: Handshake,
+        },
     ];
 
     return (
@@ -113,10 +125,9 @@ const EmployeeLayout = ({ children }) => {
                         duration-300
                         ease-in-out
                         z-20
-                        ${
-                            isSidebarOpen
-                                ? "translate-x-0"
-                                : "-translate-x-full md:translate-x-0"
+                        ${isSidebarOpen
+                            ? "translate-x-0"
+                            : "-translate-x-full md:translate-x-0"
                         }
                     `}
                 >
@@ -141,10 +152,9 @@ const EmployeeLayout = ({ children }) => {
                                         rounded-xl
                                         font-medium text-sm
                                         transition-all
-                                        ${
-                                            isActive
-                                                ? "bg-indigo-50 text-indigo-600 shadow-sm"
-                                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                        ${isActive
+                                            ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                         }
                                     `}
                                 >

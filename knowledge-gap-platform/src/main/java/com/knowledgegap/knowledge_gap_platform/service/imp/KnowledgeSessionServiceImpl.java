@@ -9,9 +9,11 @@ import com.knowledgegap.knowledge_gap_platform.entity.enums.SessionStatus;
 import com.knowledgegap.knowledge_gap_platform.exception.ResourceNotFoundException;
 import com.knowledgegap.knowledge_gap_platform.repository.KnowledgeSessionRepository;
 import com.knowledgegap.knowledge_gap_platform.repository.SkillRepository;
-import com.knowledgegap.knowledge_gap_platform.repository.UserRepository;
+import com.knowledgegap.knowledge_gap_platform.repository.UserRoleRepository;
+import com.knowledgegap.knowledge_gap_platform.service.AuthenticationService;
 import com.knowledgegap.knowledge_gap_platform.service.KnowledgeSessionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +23,25 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class KnowledgeSessionServiceImpl implements KnowledgeSessionService {
-    private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
     private final SkillRepository skillRepository;
     private final KnowledgeSessionRepository knowledgeSessionRepository;
+    private final AuthenticationService authenticationService;
 
 
     @Override
     public KnowledgeSessionResponse createSession(KnowledgeSessionRequest request) {
-        User host = userRepository.findById(request.getHostId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Host not found"));
+        User host = authenticationService.getCurrentUser();
 
         Skill topicSkill = skillRepository.findById(request.getTopicSkillId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Skill not found"));
+
+        if (!request.getEndedAt().isAfter(request.getScheduledAt())) {
+            throw new IllegalArgumentException(
+                    "Session end time must be after start time"
+            );
+        }
 
         KnowledgeSession knowledgeSession = KnowledgeSession.builder()
                 .host(host)
@@ -42,6 +49,7 @@ public class KnowledgeSessionServiceImpl implements KnowledgeSessionService {
                 .topicSkill(topicSkill)
                 .scheduledAt(request.getScheduledAt())
                 .locationLink(request.getLocationLink())
+                .endedAt(request.getEndedAt())
                 .build();
 
         return mapToKnowledgeSessionResponse(
@@ -54,19 +62,40 @@ public class KnowledgeSessionServiceImpl implements KnowledgeSessionService {
         KnowledgeSession knowledgeSession = knowledgeSessionRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Knowledge session not found"));
+        if (!request.getEndedAt().isAfter(request.getScheduledAt())) {
+            throw new IllegalArgumentException(
+                    "Session end time must be after start time"
+            );
+        }
 
-        User host = userRepository.findById(request.getHostId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Host not found"));
+        User currentUser = authenticationService.getCurrentUser();
+        boolean isHost = knowledgeSession.getHost()
+                .getId()
+                .equals(currentUser.getId());
+
+        boolean isAdmin = userRoleRepository
+                .findByUserId(currentUser.getId())
+                .stream()
+                .anyMatch(userRole ->
+                        "ADMIN".equalsIgnoreCase(
+                                userRole.getRole().getName()
+                        )
+                );
+
+        if (!isHost && !isAdmin) {
+            throw new AccessDeniedException(
+                    "You are not authorized to edit this session"
+            );
+        }
 
         Skill topicSkill = skillRepository.findById(request.getTopicSkillId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Skill not found"));
 
-        knowledgeSession.setHost(host);
         knowledgeSession.setTitle(request.getTitle());
         knowledgeSession.setTopicSkill(topicSkill);
         knowledgeSession.setScheduledAt(request.getScheduledAt());
+        knowledgeSession.setEndedAt(request.getEndedAt());
         knowledgeSession.setLocationLink(request.getLocationLink());
 
         return mapToKnowledgeSessionResponse(
@@ -76,8 +105,27 @@ public class KnowledgeSessionServiceImpl implements KnowledgeSessionService {
 
     @Override
     public void deleteSession(Long id) {
-        if(!knowledgeSessionRepository.existsById(id)){
-            throw new ResourceNotFoundException("Knowledge Session not found ");
+        KnowledgeSession knowledgeSession = knowledgeSessionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Knowledge session not found"));
+        User currentUser=authenticationService.getCurrentUser();
+        boolean isHost = knowledgeSession.getHost()
+                .getId()
+                .equals(currentUser.getId());
+
+        boolean isAdmin = userRoleRepository
+                .findByUserId(currentUser.getId())
+                .stream()
+                .anyMatch(userRole ->
+                        "ADMIN".equalsIgnoreCase(
+                                userRole.getRole().getName()
+                        )
+                );
+
+        if (!isHost && !isAdmin) {
+            throw new AccessDeniedException(
+                    "You are not authorized to delete this session"
+            );
         }
         knowledgeSessionRepository.deleteById(id);
     }
@@ -107,6 +155,14 @@ public class KnowledgeSessionServiceImpl implements KnowledgeSessionService {
         return knowledgeSessionRepository.findByStatus(status)
                 .stream().map(this::mapToKnowledgeSessionResponse).toList();
     }
+    @Override
+    public List<KnowledgeSessionResponse> getAllSessions() {
+
+        return knowledgeSessionRepository.findAll()
+                .stream()
+                .map(this::mapToKnowledgeSessionResponse)
+                .toList();
+    }
 
     private KnowledgeSessionResponse mapToKnowledgeSessionResponse(KnowledgeSession knowledgeSession){
         return KnowledgeSessionResponse.builder()
@@ -121,6 +177,7 @@ public class KnowledgeSessionServiceImpl implements KnowledgeSessionService {
                 .status(knowledgeSession.getStatus())
                 .createdAt(knowledgeSession.getCreatedAt())
                 .updatedAt(knowledgeSession.getUpdatedAt())
+                .endedAt(knowledgeSession.getEndedAt())
                 .build();
 
     }
