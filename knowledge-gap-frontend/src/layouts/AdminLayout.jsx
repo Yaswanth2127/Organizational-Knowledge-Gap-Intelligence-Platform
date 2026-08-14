@@ -17,6 +17,8 @@ import {
   BarChart3,
   FileText ,
   ShieldCheck,
+  CalendarDays,
+  Handshake,
 } from "lucide-react";
 
 import Header from "../components/layout/Header";
@@ -127,6 +129,17 @@ const AdminLayout = ({ children }) => {
     href: "/admin/knowledge-articles",
     icon: FileText,
     roles: ["SYS_ADMIN", "HR_SPECIALIST"],
+},
+{
+    name: "Knowledge Sessions",
+    href: "/admin/knowledge-sessions",
+    icon: CalendarDays,
+    roles: ["SYS_ADMIN" ],
+},{
+    name: "Mentorship",
+    href: "/admin/mentorship",
+    icon: Handshake,
+    roles: ["SYS_ADMIN" ],
 },
 ];
 

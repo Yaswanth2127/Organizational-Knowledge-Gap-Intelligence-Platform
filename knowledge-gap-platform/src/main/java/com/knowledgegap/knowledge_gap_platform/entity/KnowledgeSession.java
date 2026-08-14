@@ -51,6 +51,8 @@ public class KnowledgeSession {
 
     @Column(name = "updated_at",nullable = false)
     private LocalDateTime updatedAt;
+    @Column(name = "ended_at", nullable = false)
+    private LocalDateTime endedAt;
 
     @PrePersist
     public void onCreatedAt(){

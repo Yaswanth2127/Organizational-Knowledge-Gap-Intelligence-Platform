@@ -1,16 +1,22 @@
 import React from "react";
+import { Search } from "lucide-react";
+
+import SkillSearchSelect from "../knowledge/SkillSearchSelect";
+// Change this import path if your SkillSearchSelect is in a different folder.
+
 
 const DEFAULT_FILTERS = {
-    hostId: "",
+    hostSearch: "",
     skillId: "",
+    date: "",
     status: "",
 };
+
 
 const KnowledgeSessionFilters = ({
     filters = DEFAULT_FILTERS,
     onChange = () => {},
     onReset = () => {},
-    users = [],
     skills = [],
 }) => {
 
@@ -19,80 +25,200 @@ const KnowledgeSessionFilters = ({
         ...(filters || {}),
     };
 
-    const safeUsers = Array.isArray(users) ? users : [];
-    const safeSkills = Array.isArray(skills) ? skills : [];
+
+    const safeSkills =
+        Array.isArray(skills)
+            ? skills
+            : [];
+
 
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="
+            rounded-xl
+            border
+            border-gray-200
+            bg-white
+            p-5
+            shadow-sm
+        ">
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="
+                grid
+                grid-cols-1
+                gap-4
+                md:grid-cols-2
+                xl:grid-cols-4
+            ">
 
-                {/* Host */}
+                {/* Host Search */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Host
                     </label>
 
-                    <select
-                        value={safeFilters.hostId}
-                        onChange={(e) =>
-                            onChange("hostId", e.target.value)
-                        }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    >
-                        <option value="">
-                            All Hosts
-                        </option>
+                    <div className="relative">
 
-                        {safeUsers.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.fullName ||
-                                    user.name ||
-                                    user.email ||
-                                    `User #${user.id}`}
-                            </option>
-                        ))}
-                    </select>
+                        <Search
+                            size={17}
+                            className="
+                                absolute
+                                left-3
+                                top-1/2
+                                -translate-y-1/2
+                                text-gray-400
+                            "
+                        />
+
+                        <input
+                            type="text"
+                            value={safeFilters.hostSearch}
+                            onChange={(e) =>
+                                onChange(
+                                    "hostSearch",
+                                    e.target.value
+                                )
+                            }
+                            placeholder="Search host..."
+                            className="
+                                w-full
+                                rounded-xl
+                                border
+                                border-gray-300
+                                bg-white
+                                py-3
+                                pl-10
+                                pr-3
+                                text-sm
+                                outline-none
+                                transition
+                                focus:border-indigo-500
+                                focus:ring-2
+                                focus:ring-indigo-100
+                            "
+                        />
+
+                    </div>
+
                 </div>
 
+
                 {/* Skill */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Skill
                     </label>
 
-                    <select
+                    <SkillSearchSelect
+                        skills={safeSkills}
                         value={safeFilters.skillId}
-                        onChange={(e) =>
-                            onChange("skillId", e.target.value)
+                        onChange={(value) =>
+                            onChange(
+                                "skillId",
+                                value
+                            )
                         }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    >
-                        <option value="">
-                            All Skills
-                        </option>
+                        placeholder="Search and select a skill..."
+                    />
 
-                        {safeSkills.map((skill) => (
-                            <option key={skill.id} value={skill.id}>
-                                {skill.name || `Skill #${skill.id}`}
-                            </option>
-                        ))}
-                    </select>
                 </div>
 
-                {/* Status */}
+
+                {/* Date */}
+
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        value={safeFilters.date}
+                        onChange={(e) =>
+                            onChange(
+                                "date",
+                                e.target.value
+                            )
+                        }
+                        className="
+                            w-full
+                            rounded-xl
+                            border
+                            border-gray-300
+                            px-3
+                            py-3
+                            text-sm
+                            outline-none
+                            transition
+                            focus:border-indigo-500
+                            focus:ring-2
+                            focus:ring-indigo-100
+                        "
+                    />
+
+                </div>
+
+
+                {/* Status */}
+
+                <div>
+
+                    <label className="
+                        mb-1
+                        block
+                        text-sm
+                        font-medium
+                        text-gray-700
+                    ">
                         Status
                     </label>
 
                     <select
                         value={safeFilters.status}
                         onChange={(e) =>
-                            onChange("status", e.target.value)
+                            onChange(
+                                "status",
+                                e.target.value
+                            )
                         }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="
+                            w-full
+                            rounded-xl
+                            border
+                            border-gray-300
+                            px-3
+                            py-3
+                            text-sm
+                            outline-none
+                            transition
+                            focus:border-indigo-500
+                            focus:ring-2
+                            focus:ring-indigo-100
+                        "
                     >
+
                         <option value="">
                             All Statuses
                         </option>
@@ -112,17 +238,37 @@ const KnowledgeSessionFilters = ({
                         <option value="CANCELLED">
                             Cancelled
                         </option>
+
                     </select>
+
                 </div>
 
             </div>
 
-            <div className="mt-4 flex justify-end">
+
+            {/* Reset */}
+
+            <div className="
+                mt-4
+                flex
+                justify-end
+            ">
 
                 <button
                     type="button"
                     onClick={onReset}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100"
+                    className="
+                        rounded-lg
+                        border
+                        border-gray-300
+                        px-4
+                        py-2
+                        text-sm
+                        font-medium
+                        text-gray-600
+                        transition
+                        hover:bg-gray-100
+                    "
                 >
                     Reset Filters
                 </button>
@@ -132,5 +278,6 @@ const KnowledgeSessionFilters = ({
         </div>
     );
 };
+
 
 export default KnowledgeSessionFilters;

@@ -5,6 +5,7 @@ import com.knowledgegap.knowledge_gap_platform.entity.enums.SessionStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,19 @@ public interface KnowledgeSessionRepository extends JpaRepository<KnowledgeSessi
             SessionStatus status
     );
 
+    @Override
+    @EntityGraph(attributePaths = {"host","topicSkill"})
+    List<KnowledgeSession> findAll();
+
+    @EntityGraph(attributePaths = {"host","topicSkill"})
+    List<KnowledgeSession> findByStatusAndScheduledAtLessThanEqual(
+            SessionStatus status,
+            LocalDateTime time
+    );
+
+    @EntityGraph(attributePaths = {"host","topicSkill"})
+    List<KnowledgeSession> findByStatusAndEndedAtLessThanEqual(
+            SessionStatus status,
+            LocalDateTime time
+    );
 }

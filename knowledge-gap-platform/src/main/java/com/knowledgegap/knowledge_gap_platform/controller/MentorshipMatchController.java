@@ -15,11 +15,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/mentorship-matches")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class MentorshipMatchController {
 
     private final MentorshipMatchService mentorshipMatchService;
 
-    // Create Match
+
+    // =========================================================
+    // ADMIN - GET ALL MATCHES
+    // =========================================================
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MentorshipMatchResponse>> getAllMatches() {
+
+        return ResponseEntity.ok(
+                mentorshipMatchService.getAllMatches()
+        );
+    }
+
+
+    // =========================================================
+    // CREATE
+    // =========================================================
+
     @PostMapping
     public ResponseEntity<MentorshipMatchResponse> createMatch(
             @Valid @RequestBody MentorshipMatchRequest request) {
@@ -30,7 +48,11 @@ public class MentorshipMatchController {
         );
     }
 
-    // Update Match
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
     @PutMapping("/{id}")
     public ResponseEntity<MentorshipMatchResponse> updateMatch(
             @PathVariable Long id,
@@ -41,17 +63,27 @@ public class MentorshipMatchController {
         );
     }
 
-    // Delete Match
+
+    // =========================================================
+    // DELETE
+    // =========================================================
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMatch(
             @PathVariable Long id) {
 
         mentorshipMatchService.deleteMatch(id);
 
-        return ResponseEntity.ok("Mentorship Match deleted successfully.");
+        return ResponseEntity.ok(
+                "Mentorship Match deleted successfully."
+        );
     }
 
-    // Get Match By Id
+
+    // =========================================================
+    // GET BY ID
+    // =========================================================
+
     @GetMapping("/{id}")
     public ResponseEntity<MentorshipMatchResponse> getMatchById(
             @PathVariable Long id) {
@@ -61,9 +93,14 @@ public class MentorshipMatchController {
         );
     }
 
-    // Get Matches By Mentor
+
+    // =========================================================
+    // GET BY MENTOR
+    // =========================================================
+
     @GetMapping("/mentor/{mentorId}")
-    public ResponseEntity<List<MentorshipMatchResponse>> getMatchesByMentor(
+    public ResponseEntity<List<MentorshipMatchResponse>>
+    getMatchesByMentor(
             @PathVariable Long mentorId) {
 
         return ResponseEntity.ok(
@@ -71,9 +108,14 @@ public class MentorshipMatchController {
         );
     }
 
-    // Get Matches By Mentee
+
+    // =========================================================
+    // GET BY MENTEE
+    // =========================================================
+
     @GetMapping("/mentee/{menteeId}")
-    public ResponseEntity<List<MentorshipMatchResponse>> getMatchesByMentee(
+    public ResponseEntity<List<MentorshipMatchResponse>>
+    getMatchesByMentee(
             @PathVariable Long menteeId) {
 
         return ResponseEntity.ok(
@@ -81,9 +123,14 @@ public class MentorshipMatchController {
         );
     }
 
-    // Get Matches By Skill
+
+    // =========================================================
+    // GET BY SKILL
+    // =========================================================
+
     @GetMapping("/skill/{skillId}")
-    public ResponseEntity<List<MentorshipMatchResponse>> getMatchesBySkill(
+    public ResponseEntity<List<MentorshipMatchResponse>>
+    getMatchesBySkill(
             @PathVariable Long skillId) {
 
         return ResponseEntity.ok(
@@ -91,13 +138,60 @@ public class MentorshipMatchController {
         );
     }
 
-    // Get Matches By Status
+
+    // =========================================================
+    // GET BY STATUS
+    // =========================================================
+
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<MentorshipMatchResponse>> getMatchesByStatus(
+    public ResponseEntity<List<MentorshipMatchResponse>>
+    getMatchesByStatus(
             @PathVariable MentorshipStatus status) {
 
         return ResponseEntity.ok(
                 mentorshipMatchService.getMatchesByStatus(status)
+        );
+    }
+
+
+    // =========================================================
+    // ACCEPT
+    // =========================================================
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<MentorshipMatchResponse> acceptMatch(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                mentorshipMatchService.acceptMatch(id)
+        );
+    }
+
+
+    // =========================================================
+    // COMPLETE
+    // =========================================================
+
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<MentorshipMatchResponse> completeMatch(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                mentorshipMatchService.completeMatch(id)
+        );
+    }
+
+
+    // =========================================================
+    // CANCEL
+    // =========================================================
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<MentorshipMatchResponse> cancelMatch(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                mentorshipMatchService.cancelMatch(id)
         );
     }
 }
