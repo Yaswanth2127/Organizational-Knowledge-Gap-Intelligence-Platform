@@ -227,6 +227,7 @@ public class AIServiceImp implements AIService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to parse Gemini assessment response.", e);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Failed to generate assessment.", e);
         }
 

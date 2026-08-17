@@ -56,6 +56,11 @@ public class AssessmentServiceImpl implements AssessmentService {
                 .findByUserAndSkill(user, skill)
                 .orElseThrow(() -> new ResourceNotFoundException("Skill gap not found"));
 
+
+        boolean exists= assessmentRepository.existsByUserAndSkillAndStatus(user,skill,AssessmentStatus.PENDING);
+        if(exists){
+            throw new IllegalStateException("Pending assessment already exists ");
+        }
         Double gapScore = gap.getGapScore() != null
                 ? gap.getGapScore().doubleValue()
                 : null;
@@ -71,10 +76,6 @@ public class AssessmentServiceImpl implements AssessmentService {
         }
         if (generatedAssessment.getQuestions().size() != 10) {
             throw new AIException("Expected 10 questions.");
-        }
-        boolean exists= assessmentRepository.existsByUserAndSkillAndStatus(user,skill,AssessmentStatus.PENDING);
-        if(exists){
-            throw new IllegalStateException("Pending assessment already exists ");
         }
         Assessment assessment = Assessment.builder()
                 .user(user)
