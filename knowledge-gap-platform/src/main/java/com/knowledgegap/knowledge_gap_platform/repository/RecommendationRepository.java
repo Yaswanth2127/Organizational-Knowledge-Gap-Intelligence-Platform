@@ -34,4 +34,17 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
     void deleteByUserId(@Param("userId") Long userId);
 
     void deleteAllBySkillGapIn(List<SkillGap> gaps);
+
+    @Query("""
+            SELECT r
+            FROM Recommendation r
+            JOIN FETCH r.course
+            LEFT JOIN FETCH r.skillGap
+            JOIN FETCH r.learningPath
+            WHERE r.user.id = :userId
+            ORDER BY r.generatedAt DESC
+            """)
+    List<Recommendation> findRecommendationsForReport(
+            @Param("userId") Long userId
+    );
 }

@@ -18,51 +18,65 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class KnowledgeSession {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_id",nullable = false)
+    @JoinColumn(name = "host_id", nullable = false)
     private User host;
 
-    @Column(length = 200,nullable = false)
-    private String  title;
+    @Column(length = 200, nullable = false)
+    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_skill_id")
     private Skill topicSkill;
 
-    @Column(name = "scheduled_at",nullable = false)
+    @Column(name = "scheduled_at", nullable = false)
     private LocalDateTime scheduledAt;
 
-    @Column(name = "location_link",length = 500)
+    @Column(name = "location_link", length = 500)
     private String locationLink;
-
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Builder.Default
-    private SessionStatus status=SessionStatus.SCHEDULED;
+    private SessionStatus status = SessionStatus.SCHEDULED;
 
-    @Column(name = "created_at",nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at",nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-    @Column(name = "ended_at", nullable = false)
+
+    /*
+     * Session end time.
+     *
+     * NULL while the session is scheduled or ongoing.
+     * Set this when the session actually ends.
+     */
+    @Column(name = "ended_at")
     private LocalDateTime endedAt;
 
     @PrePersist
-    public void onCreatedAt(){
-        LocalDateTime now=LocalDateTime.now();
-        if(createdAt==null)createdAt=now;
-        if(updatedAt==null)updatedAt=now;
+    public void onCreatedAt() {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (createdAt == null) {
+            createdAt = now;
+        }
+
+        if (updatedAt == null) {
+            updatedAt = now;
+        }
     }
 
     @PreUpdate
-    public void onUpdatedAt(){
-        updatedAt=LocalDateTime.now();
+    public void onUpdatedAt() {
+        updatedAt = LocalDateTime.now();
     }
 }

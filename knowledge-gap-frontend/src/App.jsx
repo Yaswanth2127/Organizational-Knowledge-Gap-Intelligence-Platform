@@ -53,6 +53,9 @@ import AssessmentHistory from "./pages/employee/AssessmentHistory";
 import PendingApprovals from "./pages/admin/PendingApprovals";
 import AssessmentStatistics from "./pages/admin/AssessmentStatistics";
 
+import Analytics from "./pages/admin/Analytics";
+import Reports from "./pages/admin/Reports";
+
 
 import DashboardRedirect from "./pages/DashboardRedirect";
 // Protected Route wrapper â€” token check karke hi andar jaane deta hai
@@ -435,6 +438,28 @@ function App() {
                             <WorkspaceLayout>
                                 <MentorshipMatch />
                             </WorkspaceLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/analytics"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <Analytics />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports"
+                    element={
+                        <ProtectedRoute>
+                            <AdminLayout>
+                                <Reports />
+                            </AdminLayout>
                         </ProtectedRoute>
                     }
                 />

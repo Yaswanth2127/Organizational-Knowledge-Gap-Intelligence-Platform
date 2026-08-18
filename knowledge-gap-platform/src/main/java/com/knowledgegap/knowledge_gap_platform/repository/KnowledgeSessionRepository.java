@@ -4,45 +4,90 @@ import com.knowledgegap.knowledge_gap_platform.entity.KnowledgeSession;
 import com.knowledgegap.knowledge_gap_platform.entity.enums.SessionStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface KnowledgeSessionRepository extends JpaRepository<KnowledgeSession,Long> {
+public interface KnowledgeSessionRepository
+        extends JpaRepository<KnowledgeSession, Long> {
+
+    // =====================================================
+    // GET BY ID
+    // =====================================================
 
     @Override
-    @EntityGraph(attributePaths = {"host","topicSkill"})
-    Optional<KnowledgeSession> findById(Long aLong);
+    @EntityGraph(attributePaths = {"host", "topicSkill"})
+    Optional<KnowledgeSession> findById(Long id);
 
-    @EntityGraph(attributePaths = {"host","topicSkill"})
+
+    // =====================================================
+    // GET BY HOST
+    // =====================================================
+
+    @EntityGraph(attributePaths = {"host", "topicSkill"})
     List<KnowledgeSession> findByHostId(Long hostId);
 
-    @EntityGraph(attributePaths = {"host","topicSkill"})
+
+    // =====================================================
+    // GET BY SKILL
+    // =====================================================
+
+    @EntityGraph(attributePaths = {"host", "topicSkill"})
     List<KnowledgeSession> findByTopicSkillId(Long skillId);
 
-    @EntityGraph(attributePaths = {"host","topicSkill"})
+
+    // =====================================================
+    // GET BY STATUS
+    // =====================================================
+
+    @EntityGraph(attributePaths = {"host", "topicSkill"})
     List<KnowledgeSession> findByStatus(SessionStatus status);
 
-    @EntityGraph(attributePaths = {"host","topicSkill"})
+
+    // =====================================================
+    // GET BY HOST + STATUS
+    // =====================================================
+
+    @EntityGraph(attributePaths = {"host", "topicSkill"})
     List<KnowledgeSession> findByHostIdAndStatus(
             Long hostId,
             SessionStatus status
     );
 
-    @Override
-    @EntityGraph(attributePaths = {"host","topicSkill"})
-    List<KnowledgeSession> findAll();
 
-    @EntityGraph(attributePaths = {"host","topicSkill"})
+    // =====================================================
+    // SCHEDULER
+    // =====================================================
+
+    // SCHEDULED -> ONGOING
     List<KnowledgeSession> findByStatusAndScheduledAtLessThanEqual(
             SessionStatus status,
-            LocalDateTime time
+            LocalDateTime scheduledAt
     );
 
-    @EntityGraph(attributePaths = {"host","topicSkill"})
+
+    // ONGOING -> COMPLETED
     List<KnowledgeSession> findByStatusAndEndedAtLessThanEqual(
             SessionStatus status,
-            LocalDateTime time
+            LocalDateTime endedAt
+    );
+
+
+    // =====================================================
+    // ANALYTICS
+    // =====================================================
+
+    @Query("""
+    SELECT COUNT(k)
+    FROM KnowledgeSession k
+    WHERE k.status = :status
+    AND k.scheduledAt >= :dateTime
+    """)
+    long countUpcomingSessions(
+        @Param("status") SessionStatus status,
+        @Param("dateTime") LocalDateTime dateTime
     );
 }
